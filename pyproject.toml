@@ -1,26 +1,25 @@
-[project]
+[tool.poetry]
 name = "studigo"
 version = "0.1.0"
 description = ""
-authors = [{ name = "minjukim", email = "minjuju0518@naver.com" }]
+authors = ["minjukim <minjuju0518@naver.com>"]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "django>=6.0.1,<7.0.0",
-    "gunicorn>=23.0.0,<24.0.0",
-]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^6.0.1"
+gunicorn = "^23.0.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.12.0"
+isort = "^7.0.0"
+mypy = "^1.19.1"
+django-stubs = "^5.2.8"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[dependency-groups]
-dev = [
-    "black>=25.12.0,<26.0.0",
-    "isort>=7.0.0,<8.0.0",
-    "mypy>=1.19.1,<2.0.0",
-    "django-stubs>=5.2.8,<6.0.0",
-]
 
 [tool.black]
 line-length = 88
@@ -38,9 +37,7 @@ exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 88
-known_django = ["django"]
 known_first_party = ["apps", "config"]
-sections = ["FUTURE","STDLIB","THIRDPARTY","DJANGO","FIRSTPARTY","LOCALFOLDER"]
 skip = ["migrations", "staticfiles"]
 
 [tool.mypy]
@@ -50,7 +47,6 @@ ignore_missing_imports = true
 strict = true
 warn_unused_configs = true
 exclude = 'migrations|staticfiles'
-
 
 [tool.django-stubs]
 django_settings_module = "config.settings"

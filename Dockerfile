@@ -15,6 +15,6 @@ RUN pip install --no-cache-dir poetry
 RUN poetry config virtualenvs.create false
 
 COPY pyproject.toml poetry.lock /studigo/
-RUN poetry install --no-interaction --no-ansi --no-root
+RUN poetry install --no-interaction --no-ansi --no-root --with dev
 
 COPY . /studigo/
