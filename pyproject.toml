@@ -1,0 +1,62 @@
+[project]
+name = "studigo"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django (>=6.0.1,<7.0.0)",
+    "gunicorn (>=23.0.0,<24.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "black (>=25.12.0,<26.0.0)",
+    "isort (>=7.0.0,<8.0.0)",
+    "mypy (>=1.19.1,<2.0.0)",
+    "django-stubs (>=5.2.8,<6.0.0)"
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+exclude = '''
+/(
+    migrations
+  | venv
+  | .venv
+  | node_modules
+  | staticfiles
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+known_django = ["django"]
+known_first_party = ["apps", "config"]
+sections = ["FUTURE","STDLIB","THIRDPARTY","DJANGO","FIRSTPARTY","LOCALFOLDER"]
+skip = ["migrations", "staticfiles"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+strict = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+exclude = 'migrations|staticfiles'
+
+[mypy.plugin.django-stubs]
+django_settings_module = "config.settings"
+
+
