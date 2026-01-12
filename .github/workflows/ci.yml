@@ -1,10 +1,8 @@
-name: Django CI
+name: CI
 
 on:
   push:
-    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main", "develop" ]
 
 jobs:
   test:
@@ -29,6 +27,7 @@ jobs:
         image: redis:latest
         ports:
           - 6379:6379
+
 
     steps:
       - name: Checkout

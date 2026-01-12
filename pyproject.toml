@@ -1,26 +1,43 @@
+# =========================
+# Poetry 프로젝트 메타데이터
+# =========================
 [tool.poetry]
 name = "studigo"
 version = "0.1.0"
 description = ""
 authors = ["minjukim <minjuju0518@naver.com>"]
 readme = "README.md"
-package-mode = false
+package-mode = false  # 앱 패키징 안 하고 의존성 관리만 사용
 
+# =========================
+# 런타임 의존성
+# =========================
 [tool.poetry.dependencies]
 python = "^3.12"
 django = "^6.0.1"
 gunicorn = "^23.0.0"
+psycopg = {version = "^3.3.2", extras = ["binary"]}
 
+
+# =========================
+# 개발 전용 도구
+# =========================
 [tool.poetry.group.dev.dependencies]
 black = "^25.12.0"
 isort = "^7.0.0"
 mypy = "^1.19.1"
 django-stubs = "^5.2.8"
 
+# =========================
+# 빌드 설정
+# =========================
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+# =========================
+# Black 설정 (코드 포맷터)
+# =========================
 [tool.black]
 line-length = 88
 target-version = ["py312"]
@@ -34,12 +51,18 @@ exclude = '''
 )/
 '''
 
+# =========================
+# isort 설정 (import 정렬)
+# =========================
 [tool.isort]
 profile = "black"
 line_length = 88
 known_first_party = ["apps", "config"]
 skip = ["migrations", "staticfiles"]
 
+# =========================
+# mypy 설정 (타입 검사)
+# =========================
 [tool.mypy]
 python_version = "3.12"
 plugins = ["mypy_django_plugin.main"]
@@ -48,6 +71,9 @@ strict = true
 warn_unused_configs = true
 exclude = 'migrations|staticfiles'
 
+# =========================
+# django-stubs 설정
+# =========================
 [tool.django-stubs]
 django_settings_module = "config.settings"
 strict_settings = true
