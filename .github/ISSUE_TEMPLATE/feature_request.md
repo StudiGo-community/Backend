@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: 새로운 기능이나 개선사항을 제안하고 싶은것을 작성힙니
-title: "[feature] "
+title: "[✨feature] "
 labels: ''
 assignees: ''
 
