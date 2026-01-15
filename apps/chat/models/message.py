@@ -1,6 +1,9 @@
 from django.db import models
 
-class Message(models.Model):
+from apps.core.models import TimeStampedModel
+
+
+class Message(TimeStampedModel):
     class Status(models.TextChoices):
         SENT = "SENT"
         DELETED_BY_ADMIN = "DELETED_BY_ADMIN"
@@ -18,9 +21,6 @@ class Message(models.Model):
     status = models.CharField(
         max_length=50, choices=Status.choices, default=Status.SENT
     )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "chat_message"

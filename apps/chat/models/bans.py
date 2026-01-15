@@ -2,8 +2,10 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
+from apps.core.models import TimeStampedModel
 
-class Bans(models.Model):
+
+class Bans(TimeStampedModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -17,8 +19,6 @@ class Bans(models.Model):
 
     ends_at = models.DateTimeField(null=True, blank=True)  # null 이면 영구
     is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = "chat_bans"
