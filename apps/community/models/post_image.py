@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class PostImage(models.Model):
     post = models.ForeignKey("Posts", on_delete=models.CASCADE)
     image_url = models.URLField(max_length=255)
@@ -8,11 +9,7 @@ class PostImage(models.Model):
 
     class Meta:
         db_table = "post_image"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["post", "image_url"]
-            )
-        ]
+        constraints = [models.UniqueConstraint(fields=["post", "image_url"])]
         indexes = [
             models.Index(fields=["post", "sort_order"]),
         ]

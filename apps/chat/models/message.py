@@ -7,8 +7,8 @@ class Status(models.TextChoices):
     SENT = "SENT"
     DELETED_BY_ADMIN = "DELETED_BY_ADMIN"
 
-class Message(TimeStampedModel):
 
+class Message(TimeStampedModel):
 
     room = (
         models.ForeignKey("room", on_delete=models.CASCADE, related_name="message"),
