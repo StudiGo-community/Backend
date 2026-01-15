@@ -19,5 +19,5 @@ class Room(models.Model):
             models.Index(fields=["last_message_at"]),
         ]
 
-    def __str__(self) -> str :
+    def __str__(self) -> str:
         return f"{self.name} {self.description} {self.participant_count}"

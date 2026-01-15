@@ -20,14 +20,12 @@ class Membership(models.Model):
     class Meta:
         db_table = "chat_membership"
         constraints = [
-            models.UniqueConstraint(
-                fields=["room", "user"], name="unique_membership"
-            )
+            models.UniqueConstraint(fields=["room", "user"], name="unique_membership")
         ]
         indexes = [
             models.Index(fields=["user", "joined_at"], name="idx_chat_user_joined_at"),
         ]
 
-    def __str__(self) -> str :
+    def __str__(self) -> str:
         status = "IN" if self.left_at is None else "OUT"
         return f"{self.user} {status} {self.room}"

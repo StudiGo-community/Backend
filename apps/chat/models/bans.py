@@ -42,6 +42,6 @@ class Bans(models.Model):
             ),
         ]
 
-    def __str__(self) -> str :
+    def __str__(self) -> str:
         scope = "GLOBAL" if self.room is None else f"ROOM:{self.room}"
         return f"user={self.user} scope={scope} active={self.is_active} ends_at={self.ends_at}"
