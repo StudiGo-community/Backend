@@ -6,10 +6,10 @@ from apps.accounts.models.user_enumerate import (
     UserRoleChoices,
     UserStatus,
 )
-from apps.accounts.models.user_timestamp import UserTimeStampedModel
+from apps.core.models import TimeStampedModel
 
 
-class User(AbstractBaseUser, UserTimeStampedModel):
+class User(AbstractBaseUser, TimeStampedModel):
     email = models.EmailField(unique=True)
     nickname = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=10)
