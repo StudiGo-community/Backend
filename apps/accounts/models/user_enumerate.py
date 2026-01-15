@@ -16,3 +16,7 @@ class UserRoleChoices(models.TextChoices):
     ADMIN = "ADMIN"
     USER = "USER"
     INSTRUCTOR = "INSTRUCTOR"
+
+class SocialProviderChoices(models.TextChoices):
+    G = "GOOGLE"
+    K = "KAKAO"
