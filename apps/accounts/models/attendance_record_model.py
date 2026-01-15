@@ -6,7 +6,6 @@ from apps.accounts.models.user import User
 class AttendanceRecord(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    created_date = models.DateField(auto_now_add=True)
 
     class Meta:
         db_table = "attendance_record"
