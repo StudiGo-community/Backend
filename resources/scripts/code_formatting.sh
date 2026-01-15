@@ -29,7 +29,7 @@ echo "OK"
 # -----------------------------------------------------------
 echo "Starting Django check"
 export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-config.settings}"
-export DATABASE_URL="${DATABASE_URL:-postgres://postgres:postgres@localhost:5432/studigo}"
+export DATABASE_URL="${DATABASE_URL:-postgres://postgres:postgres@localhost:5433/studigo}"
 
 poetry run python manage.py check
 echo "OK"
