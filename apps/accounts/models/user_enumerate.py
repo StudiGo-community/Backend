@@ -23,6 +23,7 @@ class SocialProviderChoices(models.TextChoices):
     G = "GOOGLE"
     K = "KAKAO"
 
+
 class VerificationPurpose(models.TextChoices):
     SIGNUP = "SIGNUP"
     PASSWORD_RESET = "PASSWORD_RESET"

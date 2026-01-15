@@ -1,5 +1,7 @@
 from django.db import models
+
 from apps.accounts.models.user import User
+
 
 class PasswordResetRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

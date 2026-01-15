@@ -16,6 +16,7 @@ class TimeStampedModel(models.Model):
     class Meta:
         abstract = True  # 테이블을 생성하지 않음
 
+
 class VerificationTimeStampedModel(models.Model):
     """
     인증번호를 발송할 시 사용되는 만료/생성 시간을 기록하는 추상 클래스
@@ -29,5 +30,6 @@ class VerificationTimeStampedModel(models.Model):
     expires_at = models.DateTimeField(null=True, blank=True)
     verified_at = models.DateTimeField(null=True, blank=True)
     used_at = models.DateTimeField(null=True, blank=True)
+
     class Meta:
         abstract = True
