@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "apps.accounts",
     "apps.chat",
     "apps.community",
+    "apps.core",
 ]
 
 MIDDLEWARE = [
