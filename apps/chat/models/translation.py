@@ -4,7 +4,7 @@ from apps.core.models import TimeStampedModel
 
 
 class Language(models.TextChoices):
-    K0 = "ko"
+    KO = "ko"
     ES = "es"
 
 
