@@ -12,7 +12,7 @@ class Translation(TimeStampedModel):
 
     message = models.ForeignKey("Message", on_delete=models.CASCADE)  # 번역할 메세지 id
     target_language = models.CharField(
-        choices=Language, default=Language.K0
+        choices=Language, default=Language.KO
     )  # 번역할 언어 (ko or es)
     translated_text = models.TextField()  # 번역 완료한 메세지
 
