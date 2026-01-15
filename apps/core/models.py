@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class TimeStampedModel(models.Model):
     """
     모든 모델에 공통으로 사용되는 생성/수정 시간을 기록하는 추상 클래스
