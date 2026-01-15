@@ -1,8 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
-
 class GenderChoices(models.TextChoices):
     MALE = "M"
     FEMALE = "F"
