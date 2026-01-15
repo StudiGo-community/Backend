@@ -3,14 +3,16 @@ from django.db import models
 from apps.core.models import TimeStampedModel
 
 
+class Language(models.TextChoices):
+    KO = "ko"
+    ES = "es"
+
+
 class Translation(TimeStampedModel):
-    class Language(models.TextChoices):
-        K0 = "ko"
-        ES = "es"
 
     message = models.ForeignKey("Message", on_delete=models.CASCADE)  # 번역할 메세지 id
     target_language = models.CharField(
-        choices=Language, default=Language.K0
+        choices=Language, default=Language.KO
     )  # 번역할 언어 (ko or es)
     translated_text = models.TextField()  # 번역 완료한 메세지
 
