@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class GenderChoices(models.TextChoices):
     MALE = "M"
     FEMALE = "F"
@@ -16,6 +17,7 @@ class UserRoleChoices(models.TextChoices):
     ADMIN = "ADMIN"
     USER = "USER"
     INSTRUCTOR = "INSTRUCTOR"
+
 
 class SocialProviderChoices(models.TextChoices):
     G = "GOOGLE"
