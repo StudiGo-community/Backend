@@ -1,5 +1,7 @@
 from django.db import models
+
 from apps.core.models import TimeStampedModel
+
 
 class DailyQuote(TimeStampedModel):
     quote_date = models.DateField(unique=True)
