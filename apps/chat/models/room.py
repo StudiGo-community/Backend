@@ -7,7 +7,7 @@ class Room(models.Model):
         max_length=200, null=True, blank=True
     )  # 채팅방 설명 (해시태그)
     participant_count = models.IntegerField()  # 채팅방 인원 수
-    last_message_at = models.DateTimeField(
+    updated_at = models.DateTimeField(
         null=True, default=None
     )  # 마지막 메세지 시각
 
@@ -16,7 +16,7 @@ class Room(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["created_at"]),
-            models.Index(fields=["last_message_at"]),
+            models.Index(fields=["updated_at"]),
         ]
 
     def __str__(self) -> str:

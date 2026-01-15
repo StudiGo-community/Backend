@@ -22,22 +22,21 @@ class Bans(models.Model):
 
     class Meta:
         db_table = "chat_bans"
-        unique_together = ("user_id", "room_id")
         indexes = [
             models.Index(fields=["user", "is_active"]),
             models.Index(fields=["room", "is_active"]),
         ]
-        constraint = [
+        constraints = [
             # 특정 방 차단 (활성화시 user/room 중복 방지)
             models.UniqueConstraint(
                 fields=["user", "room"],
-                condition=Q(is_active=True) & Q(room___isnull=False),
+                condition=Q(is_active=True) & Q(room__isnull=False),
                 name="unique_bans",
             ),
             # 전체 방 차단 (활성 상태에서 user당 id 1개 허용)
             models.UniqueConstraint(
                 fields=["user"],
-                condition=Q(is_active=True) & Q(room___isnull=True),
+                condition=Q(is_active=True) & Q(room__isnull=True),
                 name="unique_bans_user",
             ),
         ]

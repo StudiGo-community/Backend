@@ -1,9 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-from apps.chat.models import room
-
-
 class Membership(models.Model):
     room = models.ForeignKey(
         "room", on_delete=models.CASCADE, related_name="membership", db_index=True

@@ -1,8 +1,5 @@
 from django.db import models
 
-from apps.chat.models import membership
-
-
 class Message(models.Model):
     class Status(models.TextChoices):
         SENT = "SENT"
@@ -19,7 +16,7 @@ class Message(models.Model):
     content = models.TextField()
 
     status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.SENT
+        max_length=50, choices=Status.choices, default=Status.SENT
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
