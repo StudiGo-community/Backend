@@ -18,7 +18,7 @@ class PostReport(models.Model):
     )  # 징행 상태
 
     class Meta:
-        db_table = "post_report"
+        db_table = "post_reports"
         constraints = [models.UniqueConstraint(fields=["post", "reporter"])]
         indexes = [
             models.Index(fields=["post", "created_at"]),

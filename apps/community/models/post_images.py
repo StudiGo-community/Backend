@@ -8,7 +8,7 @@ class PostImage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "post_image"
+        db_table = "post_images"
         constraints = [models.UniqueConstraint(fields=["post", "image_url"])]
         indexes = [
             models.Index(fields=["post", "sort_order"]),

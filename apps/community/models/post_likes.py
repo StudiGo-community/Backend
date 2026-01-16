@@ -3,7 +3,7 @@ from django.db import models
 from apps.core.models import TimeStampedModel
 
 
-class PostLikes(TimeStampedModel):
+class PostLike(TimeStampedModel):
     post = models.ForeignKey("Posts", on_delete=models.CASCADE)  # 게시글
     user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)  # 사용자
 

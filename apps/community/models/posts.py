@@ -3,7 +3,7 @@ from django.db import models
 from apps.core.models import TimeStampedModel
 
 
-class Posts(TimeStampedModel):
+class Post(TimeStampedModel):
     class Category(models.TextChoices):
         TEST = "TEST", "DELE(델레) / 시험 대비"
         Travel = "Travel", "여행 & 현지 경험"

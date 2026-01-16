@@ -17,7 +17,7 @@ class CommentReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "comment_report"
+        db_table = "comment_reports"
         constraints = [models.UniqueConstraint(fields=["comment", "reporter"])]
         indexes = [
             models.Index(fields=["status", "created_at"]),
