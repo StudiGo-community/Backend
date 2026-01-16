@@ -1,12 +1,7 @@
 from django.db import models
 
+from apps.core.enumeration.community_enumerations import PostCommentStatus
 from apps.core.models import TimeStampedModel
-
-
-class Status(models.TextChoices):
-    ACTIVE = "ACTIVE", "공개"
-    BLINDED = "BLINDED", "비공개"
-    DELETED = "DELETED", "삭제"
 
 
 class Comment(TimeStampedModel):
@@ -20,7 +15,7 @@ class Comment(TimeStampedModel):
     content = models.TextField()  # 댓글 내용
 
     status = models.CharField(
-        choices=Status.choices, default=Status.ACTIVE
+        choices=PostCommentStatus.choices, default=PostCommentStatus.ACTIVE
     )  # 댓글 상태
     blinded_reason = models.CharField(
         max_length=100, null=True, blank=True

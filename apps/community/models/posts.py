@@ -1,20 +1,10 @@
 from django.db import models
 
+from apps.core.enumeration.community_enumerations import PostCategory, PostCommentStatus
 from apps.core.models import TimeStampedModel
 
 
 class Post(TimeStampedModel):
-    class Category(models.TextChoices):
-        TEST = "TEST", "DELE(델레) / 시험 대비"
-        Travel = "Travel", "여행 & 현지 경험"
-        Movie = "Movie", "영화 & 드라마"
-        Free = "Free", "자유"
-
-    class Status(models.TextChoices):
-        ACTIVE = "ACTIVE", "공개"
-        BLINDED = "BLINDED", "비공개"
-        DELETED = "DELETED", "삭제"
-
     author = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="posts"
     )  # user ID
@@ -22,11 +12,13 @@ class Post(TimeStampedModel):
     title = models.CharField(max_length=100)  # 제목
     content = models.TextField()  # 내용
     category = models.CharField(
-        max_length=10, choices=Category.choices, default=Category.Free
+        max_length=10, choices=PostCategory.choices, default=PostCategory.FREE
     )  # 카테고리 4개 중 선택 가능, 기본은 자유
 
     status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.ACTIVE
+        max_length=10,
+        choices=PostCommentStatus.choices,
+        default=PostCommentStatus.ACTIVE,
     )  # 게시물 활성화 상태
     blinded_reason = models.CharField(
         max_length=100, null=True, blank=True
