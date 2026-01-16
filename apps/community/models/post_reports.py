@@ -19,7 +19,11 @@ class PostReport(models.Model):
 
     class Meta:
         db_table = "post_reports"
-        constraints = [models.UniqueConstraint(fields=["post", "reporter"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["post", "reporter"], name="unique_post_reports_post_reporter"
+            )
+        ]
         indexes = [
             models.Index(fields=["post", "created_at"]),
             models.Index(fields=["reporter", "created_at"]),

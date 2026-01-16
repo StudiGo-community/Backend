@@ -9,7 +9,11 @@ class PostLike(TimeStampedModel):
 
     class Meta:
         db_table = "post_likes"
-        constraints = [models.UniqueConstraint(fields=["user", "post"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "post"], name="unique_post_likes_user_post"
+            )
+        ]
         Indexes = [
             models.Index(fields=["user", "created_at"])  # 마이페이지 > 내가 좋아한 글
         ]

@@ -9,7 +9,11 @@ class PostImage(models.Model):
 
     class Meta:
         db_table = "post_images"
-        constraints = [models.UniqueConstraint(fields=["post", "image_url"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["post", "image_url"], name="unique_post_images_post_image_url"
+            )
+        ]
         indexes = [
             models.Index(fields=["post", "sort_order"]),
         ]

@@ -20,7 +20,12 @@ class CommentReport(models.Model):
 
     class Meta:
         db_table = "comment_reports"
-        constraints = [models.UniqueConstraint(fields=["comment", "reporter"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["comment", "reporter"],
+                name="unique_comment_reports_comment_reporter",
+            )
+        ]
         indexes = [
             models.Index(fields=["status", "created_at"]),
             models.Index(fields=["comment", "created_at"]),
