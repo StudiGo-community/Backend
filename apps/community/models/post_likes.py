@@ -4,8 +4,12 @@ from apps.core.models import TimeStampedModel
 
 
 class PostLike(TimeStampedModel):
-    post = models.ForeignKey("Posts", on_delete=models.CASCADE)  # 게시글
-    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE)  # 사용자
+    post = models.ForeignKey(
+        "Posts", on_delete=models.CASCADE, related_name="likes"
+    )  # 게시글
+    user = models.ForeignKey(
+        "accounts.User", on_delete=models.CASCADE, related_name="likes"
+    )  # 사용자
 
     class Meta:
         db_table = "post_likes"
@@ -14,7 +18,7 @@ class PostLike(TimeStampedModel):
                 fields=["user", "post"], name="unique_post_likes_user_post"
             )
         ]
-        Indexes = [
+        indexes = [
             models.Index(fields=["user", "created_at"])  # 마이페이지 > 내가 좋아한 글
         ]
 

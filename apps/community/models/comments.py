@@ -11,8 +11,12 @@ class Status(models.TextChoices):
 
 class Comment(TimeStampedModel):
 
-    post = models.ForeignKey("Posts", on_delete=models.CASCADE)  # 게시글 id
-    author = models.ForeignKey("accounts.User", on_delete=models.CASCADE)  # 유저 id
+    post = models.ForeignKey(
+        "Posts", on_delete=models.CASCADE, related_name="comments"
+    )  # 게시글 id
+    author = models.ForeignKey(
+        "accounts.User", on_delete=models.CASCADE, related_name="comments"
+    )  # 유저 id
     content = models.TextField()  # 댓글 내용
 
     status = models.CharField(

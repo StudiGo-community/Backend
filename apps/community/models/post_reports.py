@@ -7,9 +7,11 @@ class PostReport(models.Model):
         RESOLVED = "RESOLVED", "승인"
         REJECTED = "REJECTED", "거부"
 
-    post = models.ForeignKey("Posts", on_delete=models.CASCADE)  # 게시글 id
+    post = models.ForeignKey(
+        "Posts", on_delete=models.CASCADE, related_name="reports"
+    )  # 게시글 id
     reporter = models.ForeignKey(
-        "accounts.User", on_delete=models.CASCADE
+        "accounts.User", on_delete=models.CASCADE, related_name="reports"
     )  # 차단 대상 id
     reason = models.CharField(max_length=100)  # 차단 사유
     created_at = models.DateTimeField(auto_now_add=True)

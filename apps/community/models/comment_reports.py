@@ -10,8 +10,12 @@ class Status(models.TextChoices):
 
 
 class CommentReport(models.Model):
-    comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
-    reporter = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    comment = models.ForeignKey(
+        "Comment", on_delete=models.CASCADE, related_name="reports"
+    )
+    reporter = models.ForeignKey(
+        "accounts.User", on_delete=models.CASCADE, related_name="reports"
+    )
     reason = models.CharField(max_length=100)
     status = models.CharField(
         max_length=10, default=Status.PENDING, choices=Status.choices
