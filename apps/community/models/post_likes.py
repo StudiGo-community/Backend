@@ -5,7 +5,7 @@ from apps.core.models import TimeStampedModel
 
 class PostLike(TimeStampedModel):
     post = models.ForeignKey(
-        "Posts", on_delete=models.CASCADE, related_name="likes"
+        "Post", on_delete=models.CASCADE, related_name="likes"
     )  # 게시글
     user = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="likes"
