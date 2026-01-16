@@ -1,0 +1,1 @@
+# 방 생성/캐시 갱신(last_message_at 등)
