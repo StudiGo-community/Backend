@@ -11,15 +11,13 @@ from apps.core.models import TimeStampedModel
 
 
 class User(AbstractBaseUser, TimeStampedModel):
-    email = models.CharField(max_length=30, unique=True)  # 50~100 정도로 수정?
+    email = models.CharField(max_length=150, unique=True)
     nickname = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=10)
     gender = models.CharField(choices=GenderChoices.choices, max_length=1)
     phone = models.CharField(max_length=15)
     birthday = models.DateField(null=True, blank=True)
-    profile_image_url = models.CharField(
-        max_length=255, null=True, blank=True
-    )  # URLField?
+    profile_image_url = models.URLField(null=True, blank=True)
     status = models.CharField(
         choices=UserStatus.choices, max_length=12, default=UserStatus.ACTIVE
     )
