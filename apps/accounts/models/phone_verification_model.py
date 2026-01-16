@@ -8,7 +8,8 @@ class PhoneVerification(VerificationTimeStampedModel):
     phone = models.CharField(max_length=30)
     code = models.CharField(max_length=255)
     purpose = models.CharField(
-        choices=VerificationPurpose.choices, default=VerificationPurpose.PHONE_VERIFICATION
+        choices=VerificationPurpose.choices,
+        default=VerificationPurpose.PHONE_VERIFICATION,
     )
 
     class Meta:
