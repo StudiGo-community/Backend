@@ -1,12 +1,9 @@
 from django.db import models
 
+from apps.core.enumeration.community_enumerations import ReportStatus
+
 
 class PostReport(models.Model):
-    class Status(models.TextChoices):
-        PENDING = "PENDING", "진행중"
-        RESOLVED = "RESOLVED", "승인"
-        REJECTED = "REJECTED", "거부"
-
     post = models.ForeignKey(
         "Posts", on_delete=models.CASCADE, related_name="reports"
     )  # 게시글 id
@@ -16,7 +13,7 @@ class PostReport(models.Model):
     reason = models.CharField(max_length=100)  # 차단 사유
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.PENDING
+        max_length=10, choices=ReportStatus.choices, default=ReportStatus.PENDING
     )  # 징행 상태
 
     class Meta:

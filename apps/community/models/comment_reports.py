@@ -1,12 +1,6 @@
 from django.db import models
 
-from apps import accounts
-
-
-class Status(models.TextChoices):
-    PENDING = "PENDING", "진행중"
-    RESOLVED = "RESOLVED", "승인"
-    REJECTED = "REJECTED", "거부"
+from apps.core.enumeration.community_enumerations import ReportStatus
 
 
 class CommentReport(models.Model):
@@ -18,7 +12,7 @@ class CommentReport(models.Model):
     )
     reason = models.CharField(max_length=100)
     status = models.CharField(
-        max_length=10, default=Status.PENDING, choices=Status.choices
+        max_length=10, default=ReportStatus.PENDING, choices=ReportStatus.choices
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
