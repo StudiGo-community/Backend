@@ -14,7 +14,7 @@ class PostReport(models.Model):
     reason = models.CharField(max_length=100)  # 차단 사유
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
-        choices=Status.choices, default=Status.PENDING
+        max_length=10, choices=Status.choices, default=Status.PENDING
     )  # 징행 상태
 
     class Meta:
