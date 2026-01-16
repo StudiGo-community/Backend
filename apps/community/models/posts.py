@@ -3,7 +3,7 @@ from django.db import models
 from apps.core.models import TimeStampedModel
 
 
-class Posts(TimeStampedModel):
+class Post(TimeStampedModel):
     class Category(models.TextChoices):
         TEST = "TEST", "DELE(델레) / 시험 대비"
         Travel = "Travel", "여행 & 현지 경험"
@@ -22,11 +22,11 @@ class Posts(TimeStampedModel):
     title = models.CharField(max_length=100)  # 제목
     content = models.TextField()  # 내용
     category = models.CharField(
-        choices=Category.choices, default=Category.Free
+        max_length=10, choices=Category.choices, default=Category.Free
     )  # 카테고리 4개 중 선택 가능, 기본은 자유
 
     status = models.CharField(
-        choices=Status.choices, default=Status.ACTIVE
+        max_length=10, choices=Status.choices, default=Status.ACTIVE
     )  # 게시물 활성화 상태
     blinded_reason = models.CharField(
         max_length=100, null=True, blank=True
@@ -40,8 +40,8 @@ class Posts(TimeStampedModel):
         db_table = "posts"
         indexes = [
             models.Index(fields=["author", "created_at"]),
-            models.Index(fields=["status", "updated_at"]),
+            models.Index(fields=["status", "created_at"]),
         ]
 
     def __str__(self) -> str:
-        return f"[self.category] {self.title}"
+        return f"[{self.category}] {self.title}"

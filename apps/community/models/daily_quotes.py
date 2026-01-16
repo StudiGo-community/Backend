@@ -10,7 +10,7 @@ class DailyQuote(TimeStampedModel):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        db_table = "daily_quote"
+        db_table = "daily_quotes"
 
     def __str__(self) -> str:
         return f"{self.quote_date} {self.content}"

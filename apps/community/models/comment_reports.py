@@ -10,15 +10,26 @@ class Status(models.TextChoices):
 
 
 class CommentReport(models.Model):
-    comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
-    reporter = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    comment = models.ForeignKey(
+        "Comment", on_delete=models.CASCADE, related_name="reports"
+    )
+    reporter = models.ForeignKey(
+        "accounts.User", on_delete=models.CASCADE, related_name="reports"
+    )
     reason = models.CharField(max_length=100)
-    status = models.CharField(default=Status.PENDING, choices=Status.choices)
+    status = models.CharField(
+        max_length=10, default=Status.PENDING, choices=Status.choices
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "comment_report"
-        constraints = [models.UniqueConstraint(fields=["comment", "reporter"])]
+        db_table = "comment_reports"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["comment", "reporter"],
+                name="unique_comment_reports_comment_reporter",
+            )
+        ]
         indexes = [
             models.Index(fields=["status", "created_at"]),
             models.Index(fields=["comment", "created_at"]),

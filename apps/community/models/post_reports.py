@@ -7,19 +7,25 @@ class PostReport(models.Model):
         RESOLVED = "RESOLVED", "승인"
         REJECTED = "REJECTED", "거부"
 
-    post = models.ForeignKey("Posts", on_delete=models.CASCADE)  # 게시글 id
+    post = models.ForeignKey(
+        "Posts", on_delete=models.CASCADE, related_name="reports"
+    )  # 게시글 id
     reporter = models.ForeignKey(
-        "accounts.User", on_delete=models.CASCADE
+        "accounts.User", on_delete=models.CASCADE, related_name="reports"
     )  # 차단 대상 id
     reason = models.CharField(max_length=100)  # 차단 사유
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
-        choices=Status.choices, default=Status.PENDING
+        max_length=10, choices=Status.choices, default=Status.PENDING
     )  # 징행 상태
 
     class Meta:
-        db_table = "post_report"
-        constraints = [models.UniqueConstraint(fields=["post", "reporter"])]
+        db_table = "post_reports"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["post", "reporter"], name="unique_post_reports_post_reporter"
+            )
+        ]
         indexes = [
             models.Index(fields=["post", "created_at"]),
             models.Index(fields=["reporter", "created_at"]),
