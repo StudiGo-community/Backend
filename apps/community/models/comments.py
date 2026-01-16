@@ -7,7 +7,7 @@ from apps.core.models import TimeStampedModel
 class Comment(TimeStampedModel):
 
     post = models.ForeignKey(
-        "Posts", on_delete=models.CASCADE, related_name="comments"
+        "Post", on_delete=models.CASCADE, related_name="comments"
     )  # 게시글 id
     author = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="comments"
