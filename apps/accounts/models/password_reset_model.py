@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.accounts.models.user import User
+from apps.accounts.models.users import User
 
 
 class PasswordResetRequest(models.Model):
@@ -10,4 +10,4 @@ class PasswordResetRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "password_reset_request"
+        db_table = "password_reset_requests"

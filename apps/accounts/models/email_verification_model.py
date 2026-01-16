@@ -12,4 +12,4 @@ class EmailVerification(VerificationTimeStampedModel):
     )
 
     class Meta:
-        db_table = "email_verification"
+        db_table = "email_verifications"

@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.accounts.models.user import User
+from apps.accounts.models.users import User
 
 
 class AttendanceRecord(models.Model):
@@ -8,7 +8,7 @@ class AttendanceRecord(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = "attendance_record"
+        db_table = "attendance_records"
         """
         출석: 하루 1회 허용
         """

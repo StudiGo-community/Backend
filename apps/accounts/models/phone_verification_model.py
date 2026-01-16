@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.core.enumeration.account_user_enumeration import VerificationPurpose
+from apps.core.enumeration.account_verification_enumeration import VerificationPurpose
 from apps.core.models import VerificationTimeStampedModel
 
 
@@ -12,4 +12,4 @@ class PhoneVerification(VerificationTimeStampedModel):
     )
 
     class Meta:
-        db_table = "phone_verification"
+        db_table = "phone_verifications"
