@@ -40,8 +40,8 @@ class Post(TimeStampedModel):
         db_table = "posts"
         indexes = [
             models.Index(fields=["author", "created_at"]),
-            models.Index(fields=["status", "updated_at"]),
+            models.Index(fields=["status", "created_at"]),
         ]
 
     def __str__(self) -> str:
-        return f"[self.category] {self.title}"
+        return f"[{self.category}] {self.title}"
