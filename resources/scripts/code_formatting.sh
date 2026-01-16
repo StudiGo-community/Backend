@@ -4,17 +4,17 @@ COLOR_GREEN=`tput setaf 2;`  # 초록색 출력
 COLOR_NC=`tput sgr0;`        # 색상 초기화
 
 # -----------------------------------------------------------
-# Black (CI: poetry run black . --check)
+# Black (CI: poetry run black .)
 # -----------------------------------------------------------
 echo "Starting Black (check)"
-poetry run black . --check
+poetry run black .
 echo "OK"
 
 # -----------------------------------------------------------
-# Isort (CI: poetry run isort . --check-only)
+# Isort (CI: poetry run isort .)
 # -----------------------------------------------------------
 echo "Starting Isort (check-only)"
-poetry run isort . --check-only
+poetry run isort .
 echo "OK"
 
 # -----------------------------------------------------------
