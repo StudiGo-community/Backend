@@ -13,7 +13,9 @@ class CommentReport(models.Model):
     comment = models.ForeignKey("Comment", on_delete=models.CASCADE)
     reporter = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     reason = models.CharField(max_length=100)
-    status = models.CharField(max_length=10, default=Status.PENDING, choices=Status.choices)
+    status = models.CharField(
+        max_length=10, default=Status.PENDING, choices=Status.choices
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
