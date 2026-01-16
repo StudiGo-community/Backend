@@ -8,7 +8,7 @@ class EmailVerification(VerificationTimeStampedModel):
     email = models.CharField(max_length=150)
     code = models.CharField(max_length=255)
     purpose = models.CharField(
-        choices=VerificationPurpose.choices, default=VerificationPurpose.SIGNUP
+        choices=VerificationPurpose.choices, default=VerificationPurpose.EMAIL_VERIFICATION
     )
 
     class Meta:

@@ -2,7 +2,8 @@ from django.db import models
 
 
 class VerificationPurpose(models.TextChoices):
-    SIGNUP = "SIGNUP"
+    EMAIL_VERIFICATION = "EMAIL_VERIFICATION"
+    PHONE_VERIFICATION = "PHONE_VERIFICATION"
     PASSWORD_RESET = "PASSWORD_RESET"
     EMAIL_CHANGE = "EMAIL_CHANGE"
     PHONE_CHANGE = "PHONE_CHANGE"
