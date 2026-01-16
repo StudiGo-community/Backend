@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
-from apps.accounts.models.user_enumerate import (
+from apps.core.enumeration.account_user_enumeration import (
     GenderChoices,
     SocialProviderChoices,
     UserRoleChoices,
@@ -26,7 +26,7 @@ class User(AbstractBaseUser, TimeStampedModel):
     )
 
     class Meta:
-        db_table = "user"
+        db_table = "users"
 
 
 class OAuthAccount(TimeStampedModel):
@@ -38,7 +38,7 @@ class OAuthAccount(TimeStampedModel):
     refresh_token = models.CharField(max_length=255)
 
     class Meta:
-        db_table = "oauth_account"
+        db_table = "oauth_accounts"
         constraints = [
             models.UniqueConstraint(
                 fields=["provider", "provider_user_id"],

@@ -11,22 +11,35 @@ package-mode = false  # 앱 패키징 안 하고 의존성 관리만 사용
 
 # =========================
 # 런타임 의존성
+# restframework: DRF 쓰기
+# redis: 토큰 관리용
+# simplejwt: JWT 토큰 작성 시 필요
+# cors-headers: FE에 헤더 보낼 때 사용
+# dotenv: env 파일 관리
 # =========================
 [tool.poetry.dependencies]
 python = "^3.12"
 django = ">=5.0,<6.0"
 gunicorn = "^23.0.0"
 psycopg = {version = "^3.3.2", extras = ["binary"]}
-
+djangorestframework = "^3.16.1"
+django-redis = "^6.0.0"
+djangorestframework-simplejwt = "^5.5.1"
+django-cors-headers = "^4.9.0"
+python-dotenv = "^1.2.1"
 
 # =========================
 # 개발 전용 도구
+# drf-spectacular: 스웨거에서 쓸 때 필요
+# DRF stubs: mypy 타입힌트용
 # =========================
 [tool.poetry.group.dev.dependencies]
 black = "^25.12.0"
 isort = "^7.0.0"
 mypy = "^1.19.1"
 django-stubs = "^5.2.8"
+drf-spectacular = "^0.29.0"
+djangorestframework-stubs = "^3.16.7"
 
 # =========================
 # 빌드 설정

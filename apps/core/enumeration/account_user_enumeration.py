@@ -22,10 +22,3 @@ class UserRoleChoices(models.TextChoices):
 class SocialProviderChoices(models.TextChoices):
     G = "GOOGLE"
     K = "KAKAO"
-
-
-class VerificationPurpose(models.TextChoices):
-    SIGNUP = "SIGNUP"
-    PASSWORD_RESET = "PASSWORD_RESET"
-    EMAIL_CHANGE = "EMAIL_CHANGE"
-    PHONE_CHANGE = "PHONE_CHANGE"
