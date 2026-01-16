@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.accounts.models.user_enumerate import VerificationPurpose
+from apps.core.enumeration.account_verification_enumeration import VerificationPurpose
 from apps.core.models import VerificationTimeStampedModel
 
 

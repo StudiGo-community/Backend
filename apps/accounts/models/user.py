@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.db import models
 
-from apps.accounts.models.user_enumerate import (
+from apps.core.enumeration.account_user_enumeration import (
     GenderChoices,
     SocialProviderChoices,
     UserRoleChoices,
