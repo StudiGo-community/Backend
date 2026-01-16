@@ -1,11 +1,12 @@
 from django.db import models
 
+from apps.core.models import TimeStampedModel
 
-class PostImage(models.Model):
+
+class PostImage(TimeStampedModel):
     post = models.ForeignKey("Posts", on_delete=models.CASCADE, related_name="images")
     image_url = models.URLField(max_length=255)
     sort_order = models.PositiveIntegerField(default=1)
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "post_images"
