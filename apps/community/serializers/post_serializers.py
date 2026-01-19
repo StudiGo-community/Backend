@@ -16,23 +16,27 @@ class PostImageInputSerializer(serializers.Serializer[Any]):
     url = serializers.URLField()
     order = serializers.IntegerField(min_value=1)
 
-    def validate(self, attrs: PostImageInput) -> PostImageInput:
-        # url 중복 방지(같은 url 여러 번 들어오는 경우)
-        return attrs
-
 
 class PostCreateSerializer(serializers.Serializer[Any]):
     title = serializers.CharField(min_length=1, max_length=100)
     content = serializers.CharField(min_length=1)
     category = serializers.ChoiceField(choices=PostCategory.choices)
     thumbnail_url = serializers.URLField(required=False, allow_null=True)
-    images = PostImageInputSerializer(many=True, required=False)
+    images = PostImageInputSerializer(many=True, required=False, allow_empty=True)
 
     def validate_images(self, images: list[PostImageInput]) -> list[PostImageInput]:
         # order 중복 방지
         orders = [img["order"] for img in images]
         if len(orders) != len(set(orders)):
             raise serializers.ValidationError("images.order 값이 중복되었습니다.")
+
+        # 1부터 연속된 값인지 검증
+        expected_orders = list(range(1, len(images) + 1))
+        if sorted(orders) != expected_orders:
+            raise serializers.ValidationError(
+                "images.order 값은 1부터 연속된 숫자여야 합니다."
+            )
+
         # url 중복 방지
         urls = [img["url"] for img in images]
         if len(urls) != len(set(urls)):
@@ -42,6 +46,14 @@ class PostCreateSerializer(serializers.Serializer[Any]):
     def validate(self, attrs: Any) -> Any:
         images = attrs.get("images") or []
         thumbnail_url = attrs.get("thumbnail_url", None)
+
+        # 이미지가 없을 때 썸네일 비허용
+        if not images and thumbnail_url is not None:
+            raise serializers.ValidationError(
+                {
+                    "thumbnail_url": "이미지가 있을 때만 thumbnail_url을 지정할 수 있습니다."
+                }
+            )
 
         if thumbnail_url is not None:
             image_urls = {img["url"] for img in images}
@@ -67,7 +79,7 @@ class PostImageResponseSerializer(serializers.ModelSerializer[PostImage]):
 
 
 class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
-    author = serializers.SerializerMethodField()
+    author = PostAuthorSerializer(source="author", read_only=True)
     images = PostImageResponseSerializer(many=True, read_only=True)
 
     class Meta:
@@ -85,11 +97,3 @@ class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
             "comment_count",
             "created_at",
         )
-
-    def get_author(self, obj: Post) -> dict[str, Any]:
-        author = obj.author
-        return {
-            "id": author.id,
-            "nickname": getattr(author, "nickname", "") or "",
-            "profile_image_url": getattr(author, "profile_image_url", None),
-        }
