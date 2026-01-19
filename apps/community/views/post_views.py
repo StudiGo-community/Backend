@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -14,6 +15,14 @@ from apps.community.services.post_services import create_post
 class PostCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=["Posts"],
+        operation_id="posts_create",
+        summary="게시글 등록",
+        description="로그인 사용자가 게시글을 작성하고 등록합니다.",
+        request=PostCreateSerializer,
+        responses={201: PostCreateResponseSerializer},
+    )
     def post(self, request: Request) -> Response:
         serializer = PostCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
