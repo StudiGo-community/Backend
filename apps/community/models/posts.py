@@ -15,6 +15,12 @@ class Post(TimeStampedModel):
         max_length=10, choices=PostCategory.choices, default=PostCategory.FREE
     )  # 카테고리 4개 중 선택 가능, 기본은 자유
 
+    thumbnail_url = models.URLField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+
     status = models.CharField(
         max_length=10,
         choices=PostCommentStatus.choices,

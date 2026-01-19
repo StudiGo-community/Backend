@@ -5,7 +5,7 @@ from apps.core.enumeration.community_enumerations import ReportStatus
 
 class PostReport(models.Model):
     post = models.ForeignKey(
-        "Posts", on_delete=models.CASCADE, related_name="reports"
+        "Post", on_delete=models.CASCADE, related_name="reports"
     )  # 게시글 id
     reporter = models.ForeignKey(
         "accounts.User", on_delete=models.CASCADE, related_name="reports"
