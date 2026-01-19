@@ -79,7 +79,7 @@ class PostImageResponseSerializer(serializers.ModelSerializer[PostImage]):
 
 
 class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
-    author = PostAuthorSerializer(source="author", read_only=True)
+    author = PostAuthorSerializer(read_only=True)
     images = PostImageResponseSerializer(many=True, read_only=True)
 
     class Meta:
