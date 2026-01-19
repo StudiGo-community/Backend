@@ -97,3 +97,37 @@ class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
             "comment_count",
             "created_at",
         )
+
+
+class PostListItemSerializer(serializers.ModelSerializer[Post]):
+    author = PostAuthorSerializer(read_only=True)
+    content_preview = serializers.SerializerMethodField()
+    images = PostImageResponseSerializer(many=True, read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "title",
+            "content_preview",
+            "category",
+            "blinded_reason",
+            "author",
+            "thumbnail_url",
+            "images",
+            "like_count",
+            "comment_count",
+            "is_liked",
+            "created_at",
+            "updated_at",
+        )
+
+    def get_content_preview(self, post: Post) -> str:
+        max_length = 100
+        content = post.content or ""
+        content = content.strip().replace("\n", " ")
+
+        if len(content) <= max_length:
+            return content
+        return content[:max_length].rstrip() + "…"
