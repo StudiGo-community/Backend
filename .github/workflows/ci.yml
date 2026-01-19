@@ -46,6 +46,10 @@ jobs:
           poetry config virtualenvs.create false
           poetry install --no-interaction --no-ansi --no-root
 
+      - name: Create env file
+        run: |
+          echo "${{ secrets.DJANGO_ENVS }}" > .env
+
       - name: Black
         run: poetry run black . --check
 
