@@ -11,9 +11,14 @@ from rest_framework.views import APIView
 from apps.community.serializers.post_serializers import (
     PostCreateResponseSerializer,
     PostCreateSerializer,
+    PostDetailResponseSerializer,
     PostListItemSerializer,
 )
-from apps.community.services.post_services import create_post, get_post_list
+from apps.community.services.post_services import (
+    create_post,
+    get_post_detail,
+    get_post_list,
+)
 from apps.core.enumeration.community_enumerations import PostCategory
 from apps.core.enumeration.parameter_enumeration import SearchField, Sort
 from apps.core.pagination import PostsPagination
@@ -109,3 +114,24 @@ class PostCreateListAPIView(APIView):
         )
         serializer = PostListItemSerializer(paginated_queryset, many=True)
         return paginator.get_paginated_response(serializer.data)
+
+
+class PostDetailAPIView(APIView):
+    @extend_schema(
+        tags=["Posts"],
+        operation_id="posts_detail",
+        summary="게시글 상세 조회",
+        description="특정 게시글의 상세 정보를 조회합니다. (비로그인 가능, 로그인 시 is_liked 제공)",
+        responses={200: PostDetailResponseSerializer},
+    )
+    def get(self, request: Request, post_id: int) -> Response:
+        post = get_post_detail(user=request.user, post_id=post_id)
+        if post is None:
+            return Response(
+                {"detail": "게시글을 찾을 수 없습니다."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(
+            PostDetailResponseSerializer(post).data, status=status.HTTP_200_OK
+        )

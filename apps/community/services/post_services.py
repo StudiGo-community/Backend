@@ -1,8 +1,9 @@
 from typing import Any, Optional, cast
 
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Q, QuerySet
+from django.db.models import Exists, F, OuterRef, Prefetch, Q
 
+from apps.community.models.comments import Comment
 from apps.community.models.post_images import PostImage
 from apps.community.models.post_likes import PostLike
 from apps.community.models.posts import Post
@@ -101,3 +102,50 @@ def get_post_list(
         )
 
     return post_queryset
+
+
+@transaction.atomic
+def get_post_detail(*, user: Any, post_id: int) -> Any | None:
+
+    # 게시글 조회수 증가
+    updated = (
+        cast(Any, Post)
+        .objects.filter(
+            pk=post_id,
+            status=PostCommentStatus.ACTIVE,
+        )
+        .update(view_count=F("view_count") + 1)
+    )
+
+    if updated == 0:
+        return None
+
+    # 좋아요 여부
+    if getattr(user, "is_authenticated", False):
+        liked_subquery = cast(Any, PostLike).objects.filter(
+            user=user,
+            post=OuterRef("pk"),
+        )
+        queryset = cast(Any, Post).objects.annotate(is_liked=Exists(liked_subquery))
+    else:
+        queryset = cast(Any, Post).objects.annotate(
+            is_liked=Exists(cast(Any, PostLike).objects.none())
+        )
+
+    # 댓글 불러오기 (상태가 ACTIVE인 것만)
+    comment_queryset = (
+        cast(Any, Comment)
+        .objects.filter(status=PostCommentStatus.ACTIVE)
+        .select_related("author")
+        .order_by("created_at")
+    )
+
+    post = (
+        queryset.filter(pk=post_id, status=PostCommentStatus.ACTIVE)
+        .select_related("author")
+        .prefetch_related("images")
+        .prefetch_related(Prefetch("comments", queryset=comment_queryset))
+        .get()
+    )
+
+    return post
