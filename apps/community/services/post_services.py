@@ -1,5 +1,7 @@
 from typing import Any, Optional, cast
 
+from django.conf import settings
+from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Exists, F, OuterRef, Prefetch, Q
 
@@ -8,6 +10,8 @@ from apps.community.models.post_images import PostImage
 from apps.community.models.post_likes import PostLike
 from apps.community.models.posts import Post
 from apps.core.enumeration.community_enumerations import PostCategory, PostCommentStatus
+
+VIEW_TTL_SECONDS = settings.POST_VIEW_TTL_SECONDS
 
 
 @transaction.atomic
@@ -104,21 +108,44 @@ def get_post_list(
     return post_queryset
 
 
-@transaction.atomic
-def get_post_detail(*, user: Any, post_id: int) -> Any | None:
+def _get_view_key(*, request: Any, user: Any, post_id: int) -> str:
+    if getattr(user, "is_authenticated", False):
+        return f"post:view:{post_id}:user:{user.id}"
 
-    # 게시글 조회수 증가
-    updated = (
+    # 비로그인: 세션키 기반
+    if not request.session.session_key:
+        request.session.save()
+    return f"post:view:{post_id}:sess:{request.session.session_key}"
+
+
+def _increase_view_if_first(*, request: Any, user: Any, post_id: int) -> None:
+    key = _get_view_key(request=request, user=user, post_id=post_id)
+
+    first = cache.add(key, 1, timeout=VIEW_TTL_SECONDS)
+    if not first:
+        return
+
+    cast(Any, Post).objects.filter(pk=post_id).update(view_count=F("view_count") + 1)
+
+
+@transaction.atomic
+def get_post_detail(*, request: Any, user: Any, post_id: int) -> Any | None:
+
+    # 게시글 존재 여부 확인
+    post_exists = (
         cast(Any, Post)
         .objects.filter(
             pk=post_id,
             status=PostCommentStatus.ACTIVE,
         )
-        .update(view_count=F("view_count") + 1)
+        .exists()
     )
 
-    if updated == 0:
+    if post_exists == 0:
         return None
+
+    # 조회수 증가
+    _increase_view_if_first(request=request, user=user, post_id=post_id)
 
     # 좋아요 여부
     if getattr(user, "is_authenticated", False):

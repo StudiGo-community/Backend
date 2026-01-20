@@ -125,7 +125,7 @@ class PostDetailAPIView(APIView):
         responses={200: PostDetailResponseSerializer},
     )
     def get(self, request: Request, post_id: int) -> Response:
-        post = get_post_detail(user=request.user, post_id=post_id)
+        post = get_post_detail(request=request, user=request.user, post_id=post_id)
         if post is None:
             return Response(
                 {"detail": "게시글을 찾을 수 없습니다."},
