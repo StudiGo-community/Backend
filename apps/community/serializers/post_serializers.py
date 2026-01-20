@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from apps.community.models.post_images import PostImage
 from apps.community.models.posts import Post
+from apps.community.serializers.comment_serializers import CommentResponseSerializer
+from apps.community.serializers.common_serializers import AuthorSerializer
 from apps.core.enumeration.community_enumerations import PostCategory
 
 
@@ -66,12 +68,6 @@ class PostCreateSerializer(serializers.Serializer[Any]):
         return attrs
 
 
-class PostAuthorSerializer(serializers.Serializer[Any]):
-    id = serializers.IntegerField()
-    nickname = serializers.CharField(allow_blank=True, required=False)
-    profile_image_url = serializers.CharField(allow_null=True, required=False)
-
-
 class PostImageResponseSerializer(serializers.ModelSerializer[PostImage]):
     class Meta:
         model = PostImage
@@ -79,7 +75,7 @@ class PostImageResponseSerializer(serializers.ModelSerializer[PostImage]):
 
 
 class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
-    author = PostAuthorSerializer(read_only=True)
+    author = AuthorSerializer(read_only=True)
     images = PostImageResponseSerializer(many=True, read_only=True)
 
     class Meta:
@@ -100,7 +96,7 @@ class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
 
 
 class PostListItemSerializer(serializers.ModelSerializer[Post]):
-    author = PostAuthorSerializer(read_only=True)
+    author = AuthorSerializer(read_only=True)
     content_preview = serializers.SerializerMethodField()
     images = PostImageResponseSerializer(many=True, read_only=True)
     is_liked = serializers.BooleanField(read_only=True)
@@ -131,3 +127,29 @@ class PostListItemSerializer(serializers.ModelSerializer[Post]):
         if len(content) <= max_length:
             return content
         return content[:max_length].rstrip() + "…"
+
+
+class PostDetailResponseSerializer(serializers.ModelSerializer[Post]):
+    author = AuthorSerializer(read_only=True)
+    images = PostImageResponseSerializer(many=True, read_only=True)
+    comments = CommentResponseSerializer(many=True, read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "title",
+            "content",
+            "category",
+            "author",
+            "thumbnail_url",
+            "images",
+            "like_count",
+            "comment_count",
+            "view_count",
+            "is_liked",
+            "created_at",
+            "updated_at",
+            "comments",
+        )
