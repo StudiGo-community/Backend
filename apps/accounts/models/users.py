@@ -1,4 +1,6 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+from typing import Any
+
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 from apps.core.enumeration.account_user_enumeration import (
@@ -8,6 +10,28 @@ from apps.core.enumeration.account_user_enumeration import (
     UserStatus,
 )
 from apps.core.models import TimeStampedModel
+
+
+class UserManager(BaseUserManager["User"]):
+    def create_user(
+        self, email: str, password: str | None = None, **extra_fields: Any
+    ) -> "User":
+        email = self.normalize_email(email).lower().strip()
+
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(
+        self, email: str, password: str, **extra_fields: Any
+    ) -> "User":
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
+
+        return self.create_user(email=email, password=password, **extra_fields)
 
 
 class User(AbstractBaseUser, TimeStampedModel):
@@ -24,6 +48,15 @@ class User(AbstractBaseUser, TimeStampedModel):
     role = models.CharField(
         choices=UserRoleChoices.choices, max_length=20, default=UserRoleChoices.USER
     )
+
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False, null=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["nickname", "name", "gender", "phone", "birthday"]
 
     class Meta:
         db_table = "users"

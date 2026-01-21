@@ -153,3 +153,5 @@ CACHES = {
 }
 
 POST_VIEW_TTL_SECONDS = 60 * 10
+
+AUTH_USER_MODEL = "accounts.User"
