@@ -31,6 +31,7 @@ from apps.community.services.post_services import (
     like_post,
     patch_post,
     unlike_post,
+    delete_post,
 )
 from apps.core.enumeration.community_enumerations import PostCategory
 from apps.core.enumeration.parameter_enumeration import SearchField, Sort
@@ -153,6 +154,41 @@ class PostDetailAPIView(APIView):
         return Response(
             PostDetailResponseSerializer(post).data, status=status.HTTP_200_OK
         )
+
+    @extend_schema(
+        tags=["커뮤니티"],
+        operation_id="posts_delete",
+        summary="게시글 삭제",
+        description="작성자 또는 ADMIN이 게시글을 삭제합니다.",
+        responses={
+            204: OpenApiResponse(description="삭제 완료"),
+            403: OpenApiResponse(
+                description="삭제 권한 없음",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="권한 없음",
+                        value={"detail": "삭제 권한이 없습니다."},
+                    )
+                ],
+            ),
+            404: OpenApiResponse(description="게시글 없음"),
+        },
+    )
+    def delete(self, request: Request, post_id: int) -> Response:
+        post = get_object_or_404(Post, pk=post_id)
+        user = request.user
+
+        is_admin = getattr(user, "role", None) == "ADMIN"
+
+        if post.author != user and not is_admin:
+            return Response(
+                {"detail": "삭제 권한이 없습니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        delete_post(post=post)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
         tags=["커뮤니티"],
