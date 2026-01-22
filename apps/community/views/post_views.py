@@ -1,23 +1,33 @@
 from typing import Any
 
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema
+from drf_spectacular.utils import (
+    OpenApiExample,
+    OpenApiParameter,
+    OpenApiResponse,
+    extend_schema,
+)
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.community.models.posts import Post
 from apps.community.serializers.post_serializers import (
     PostCreateResponseSerializer,
     PostCreateSerializer,
     PostDetailResponseSerializer,
+    PostLikeResponseSerializer,
     PostListItemSerializer,
 )
 from apps.community.services.post_services import (
     create_post,
     get_post_detail,
     get_post_list,
+    like_post,
+    unlike_post,
 )
 from apps.core.enumeration.community_enumerations import PostCategory
 from apps.core.enumeration.parameter_enumeration import SearchField, Sort
@@ -134,4 +144,106 @@ class PostDetailAPIView(APIView):
 
         return Response(
             PostDetailResponseSerializer(post).data, status=status.HTTP_200_OK
+        )
+
+
+class PostLikeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["커뮤니티"],
+        operation_id="posts_like",
+        summary="게시글 좋아요",
+        description="로그인 사용자가 게시글 좋아요를 추가한다.",
+        responses={
+            200: PostLikeResponseSerializer,
+            401: OpenApiResponse(
+                description="로그인 사용자가 아닐 경우",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="인증 필요",
+                        value={"detail": "인증이 필요합니다."},
+                    )
+                ],
+            ),
+            404: OpenApiResponse(
+                description="게시글이 존재하지 않음",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="게시글 없음",
+                        value={"detail": "게시글을 찾을 수 없습니다."},
+                    )
+                ],
+            ),
+        },
+    )
+    def post(self, request: Request, post_id: int) -> Response:
+        assert request.user.is_authenticated
+        post = get_object_or_404(Post, pk=post_id)
+
+        like_count = like_post(
+            user=request.user,
+            post=post,
+        )
+
+        data = {
+            "post_id": post.pk,
+            "liked": True,
+            "like_count": like_count,
+        }
+
+        return Response(
+            PostLikeResponseSerializer(data).data,
+            status=status.HTTP_200_OK,
+        )
+
+    @extend_schema(
+        tags=["커뮤니티"],
+        operation_id="posts_unlike",
+        summary="게시글 좋아요 취소",
+        description="로그인 사용자가 게시글 좋아요를 취소한다.",
+        responses={
+            200: PostLikeResponseSerializer,
+            401: OpenApiResponse(
+                description="로그인 사용자가 아닐 경우",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="인증 필요",
+                        value={"detail": "인증이 필요합니다."},
+                    )
+                ],
+            ),
+            404: OpenApiResponse(
+                description="게시글이 존재하지 않음",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="게시글 없음",
+                        value={"detail": "게시글을 찾을 수 없습니다."},
+                    )
+                ],
+            ),
+        },
+    )
+    def delete(self, request: Request, post_id: int) -> Response:
+        assert request.user.is_authenticated
+        post = get_object_or_404(Post, pk=post_id)
+
+        like_count = unlike_post(
+            user=request.user,
+            post=post,
+        )
+
+        data = {
+            "post_id": post.pk,
+            "liked": False,
+            "like_count": like_count,
+        }
+
+        return Response(
+            PostLikeResponseSerializer(data).data,
+            status=status.HTTP_200_OK,
         )

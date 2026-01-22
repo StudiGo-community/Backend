@@ -153,3 +153,9 @@ class PostDetailResponseSerializer(serializers.ModelSerializer[Post]):
             "updated_at",
             "comments",
         )
+
+
+class PostLikeResponseSerializer(serializers.Serializer[Any]):
+    post_id = serializers.IntegerField(read_only=True)
+    liked = serializers.BooleanField(read_only=True)
+    like_count = serializers.IntegerField(read_only=True)

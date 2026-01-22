@@ -1,6 +1,7 @@
 from typing import Any, Optional, cast
 
 from django.conf import settings
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.cache import cache
 from django.db import transaction
 from django.db.models import Exists, F, OuterRef, Prefetch, Q
@@ -176,3 +177,21 @@ def get_post_detail(*, request: Any, user: Any, post_id: int) -> Any | None:
     )
 
     return post
+
+
+def like_post(*, user: AbstractBaseUser, post: Post) -> int:
+    PostLike.objects.get_or_create(  # type: ignore[attr-defined]
+        user=user,
+        post=post,
+    )
+    post.refresh_from_db(fields=["like_count"])
+    return post.like_count
+
+
+def unlike_post(*, user: AbstractBaseUser, post: Post) -> int:
+    PostLike.objects.filter(  # type: ignore[attr-defined]
+        user=user,
+        post=post,
+    ).delete()
+    post.refresh_from_db(fields=["like_count"])
+    return post.like_count
