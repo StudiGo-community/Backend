@@ -4,6 +4,7 @@ set -euo pipefail
 DJANGO_CONTAINER="django"
 
 read -p "이메일을 입력하세요: " EMAIL
+read -p "닉네임을 입력하세요(중복불가): " NICKNAME
 read -s -p "비밀번호를 입력하세요: " PASSWORD
 echo ""
 
@@ -13,10 +14,15 @@ GENDER="M"
 PHONE_NUMBER="01012345678"
 
 docker exec -i "$DJANGO_CONTAINER" python manage.py shell -c "
-from apps.accounts.models import User
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.tokens import RefreshToken
+
+User = get_user_model()
+
 email='''$EMAIL'''.strip().lower()
 pw='''$PASSWORD'''
 name='''$NAME'''
+nickname='''$NICKNAME'''
 birthday='''$BIRTHDAY'''
 gender='''$GENDER'''
 phone='''$PHONE_NUMBER'''
@@ -28,9 +34,20 @@ else:
         email=email,
         password=pw,
         name=name,
+        nickname=nickname,
         birthday=birthday,
         gender=gender,
         phone=phone,
+        is_active=True,
     )
+
+    refresh = RefreshToken.for_user(user)
+
     print('생성 완료:', user.id, user.email)
+    print()
+    print('---ACCESS TOKEN---')
+    print(refresh.access_token)
+    print()
+    print('---REFRESH TOKEN---')
+    print(refresh)
 "
