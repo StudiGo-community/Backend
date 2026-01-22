@@ -195,3 +195,23 @@ def unlike_post(*, user: AbstractBaseUser, post: Post) -> int:
     ).delete()
     post.refresh_from_db(fields=["like_count"])
     return post.like_count
+
+
+@transaction.atomic
+def patch_post(
+    *,
+    post: Post,
+    validated_data: dict[str, Any],
+) -> Post:
+    for field, value in validated_data.items():
+        setattr(post, field, value)
+
+    post.save()
+
+    return cast(
+        Post,
+        cast(Any, Post)
+        .objects.select_related("author")
+        .prefetch_related("images")
+        .get(pk=post.pk),
+    )
