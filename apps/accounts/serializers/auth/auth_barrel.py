@@ -1,10 +1,10 @@
-from .check_serializer import (
+from apps.accounts.serializers.auth.check_serializer import (
     EmailCheckResponseSerializer,
     EmailCheckSerializer,
     NicknameCheckResponseSerializer,
     NicknameCheckSerializer,
 )
-from .login_serializer import (
+from apps.accounts.serializers.auth.login_serializer import (
     LoginResponseSerializer,
     LoginSerializer,
     LogoutResponseSerializer,
@@ -12,7 +12,10 @@ from .login_serializer import (
     TokenRefreshResponseSerializer,
     TokenRefreshSerializer,
 )
-from .signup_serializer import SignupResponseSerializer, SignupSerializer
+from apps.accounts.serializers.auth.signup_serializer import (
+    SignupResponseSerializer,
+    SignupSerializer
+)
 
 __all__ = [
     "EmailCheckSerializer",
