@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -155,3 +156,35 @@ CACHES = {
 POST_VIEW_TTL_SECONDS = 60 * 10
 
 AUTH_USER_MODEL = "accounts.User"
+
+# SimpleJWT 기본값
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=24),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+# refresh 쿠키 옵션
+AUTH_REFRESH_COOKIE_NAME = "refresh"
+AUTH_REFRESH_COOKIE_PATH = "/"
+AUTH_REFRESH_COOKIE_SECURE = not DEBUG
+AUTH_REFRESH_COOKIE_HTTPONLY = True
+AUTH_REFRESH_COOKIE_SAMESITE = "Lax"
+
+# 로그인 연속 실패 기준
+LOGIN_FAIL_BLOCK_COUNT_1 = 5
+LOGIN_FAIL_BLOCK_COUNT_2 = 10
+
+# 로그인 연속 실패시 차단 시간
+LOGIN_FAIL_BLOCK_TIME_1 = 60 * 10  # 10분
+LOGIN_FAIL_BLOCK_TIME_2 = 60 * 60  # 1시간
+
+# 로그인 연속 실패 기준 시간
+LOGIN_FAIL_COUNTER_TTL = 60 * 60 * 2  # 2시간
+
+# Access Token
+JWT_ACCESS_TOKEN_LIFETIME = 60 * 60  # 1시간
+
+# Refresh Token
+JWT_REFRESH_TOKEN_LIFETIME = 60 * 60 * 24  # 24시간
+JWT_REFRESH_TOKEN_LIFETIME_REMEMBERME = 60 * 60 * 24 * 30  # 30일
