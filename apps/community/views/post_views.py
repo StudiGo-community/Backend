@@ -21,12 +21,15 @@ from apps.community.serializers.post_serializers import (
     PostDetailResponseSerializer,
     PostLikeResponseSerializer,
     PostListItemSerializer,
+    PostPatchResponseSerializer,
+    PostPatchSerializer,
 )
 from apps.community.services.post_services import (
     create_post,
     get_post_detail,
     get_post_list,
     like_post,
+    patch_post,
     unlike_post,
 )
 from apps.core.enumeration.community_enumerations import PostCategory
@@ -127,6 +130,11 @@ class PostCreateListAPIView(APIView):
 
 
 class PostDetailAPIView(APIView):
+    def get_permissions(self) -> Any:
+        if self.request.method == "PATCH":
+            return [IsAuthenticated()]
+        return []
+
     @extend_schema(
         tags=["커뮤니티"],
         operation_id="posts_detail",
@@ -144,6 +152,27 @@ class PostDetailAPIView(APIView):
 
         return Response(
             PostDetailResponseSerializer(post).data, status=status.HTTP_200_OK
+        )
+
+    @extend_schema(
+        tags=["커뮤니티"],
+        operation_id="posts_patch",
+        summary="게시글 수정",
+        description="작성자가 게시글을 부분 수정합니다.",
+        request=PostPatchSerializer,
+        responses={200: PostPatchResponseSerializer},
+    )
+    def patch(self, request: Request, post_id: int) -> Response:
+        # 본인 글만
+        post = get_object_or_404(Post, pk=post_id, author=request.user)
+
+        serializer = PostPatchSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        post = patch_post(post=post, validated_data=serializer.validated_data)
+
+        return Response(
+            PostPatchResponseSerializer(post).data,
+            status=status.HTTP_200_OK,
         )
 
 
