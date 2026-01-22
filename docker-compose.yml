@@ -6,11 +6,12 @@ services:
     build:
       context: .
     working_dir: /studigo
+    #poetry run gunicorn --workers 3 --bind 0.0.0.0:8000 config.wsgi:application"
     command: >
       sh -c "poetry install --no-interaction --no-ansi --no-root &&
              poetry run python manage.py migrate &&
              poetry run python manage.py collectstatic --noinput &&
-             poetry run gunicorn --workers 3 --bind 0.0.0.0:8000 config.wsgi:application"
+             poetry run python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:
