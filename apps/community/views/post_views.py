@@ -31,7 +31,7 @@ class PostCreateListAPIView(APIView):
         return []
 
     @extend_schema(
-        tags=["Posts"],
+        tags=["커뮤니티"],
         operation_id="posts_create",
         summary="게시글 등록",
         description="로그인 사용자가 게시글을 작성하고 등록합니다.",
@@ -56,7 +56,7 @@ class PostCreateListAPIView(APIView):
         )
 
     @extend_schema(
-        tags=["Posts"],
+        tags=["커뮤니티"],
         operation_id="posts_list",
         summary="게시글 목록 조회",
         description="게시글 목록을 조회합니다. (비로그인 사용자도 가능)",
@@ -118,7 +118,7 @@ class PostCreateListAPIView(APIView):
 
 class PostDetailAPIView(APIView):
     @extend_schema(
-        tags=["Posts"],
+        tags=["커뮤니티"],
         operation_id="posts_detail",
         summary="게시글 상세 조회",
         description="특정 게시글의 상세 정보를 조회합니다. (비로그인 가능, 로그인 시 is_liked 제공)",
