@@ -164,7 +164,16 @@ class PostDetailAPIView(APIView):
     )
     def patch(self, request: Request, post_id: int) -> Response:
         # 본인 글만
-        post = get_object_or_404(Post, pk=post_id, author=request.user)
+        post = get_object_or_404(Post, pk=post_id)
+
+        user = request.user
+
+        is_admin = getattr(user, "role", None) == "ADMIN"
+        if post.author != user and not is_admin:
+            return Response(
+                {"detail": "수정 권한이 없습니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = PostPatchSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
