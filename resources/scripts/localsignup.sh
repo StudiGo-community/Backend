@@ -4,6 +4,7 @@ set -euo pipefail
 DJANGO_CONTAINER="django"
 
 read -p "이메일을 입력하세요: " EMAIL
+read -p "닉네임을 입력하세요(중복불가): " NICKNAME
 read -s -p "비밀번호를 입력하세요: " PASSWORD
 echo ""
 
@@ -17,6 +18,7 @@ from apps.accounts.models import User
 email='''$EMAIL'''.strip().lower()
 pw='''$PASSWORD'''
 name='''$NAME'''
+nickname='''$NICKNAME'''
 birthday='''$BIRTHDAY'''
 gender='''$GENDER'''
 phone='''$PHONE_NUMBER'''
@@ -28,9 +30,11 @@ else:
         email=email,
         password=pw,
         name=name,
+        nickname=nickname,
         birthday=birthday,
         gender=gender,
         phone=phone,
+        is_active=True,
     )
     print('생성 완료:', user.id, user.email)
 "
