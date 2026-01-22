@@ -4,7 +4,7 @@ from .check_serializer import (
     NicknameCheckResponseSerializer,
     NicknameCheckSerializer,
 )
-from .login_refresh_logout_serializer import (
+from .login_serializer import (
     LoginResponseSerializer,
     LoginSerializer,
     LogoutResponseSerializer,
