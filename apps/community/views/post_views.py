@@ -195,7 +195,7 @@ class PostLikeView(APIView):
         }
 
         return Response(
-            PostLikeResponseSerializer(data=data),
+            PostLikeResponseSerializer(data).data,
             status=status.HTTP_200_OK,
         )
 
@@ -244,6 +244,6 @@ class PostLikeView(APIView):
         }
 
         return Response(
-            PostLikeResponseSerializer(data=data),
+            PostLikeResponseSerializer(data).data,
             status=status.HTTP_200_OK,
         )
