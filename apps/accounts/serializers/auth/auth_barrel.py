@@ -14,7 +14,7 @@ from apps.accounts.serializers.auth.login_serializer import (
 )
 from apps.accounts.serializers.auth.signup_serializer import (
     SignupResponseSerializer,
-    SignupSerializer
+    SignupSerializer,
 )
 
 __all__ = [
