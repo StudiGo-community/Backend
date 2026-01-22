@@ -27,18 +27,6 @@ PasswordResetVerifyCodeResponseSerializer
 class PasswordResetSendCodeSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
 
-    def validate_email(self, value: str) -> str:
-        try:
-            user = User.objects.get(email=value)
-            # 소셜 전용 계정 체크 (has_usable_password로 확인)
-            if not user.has_usable_password():
-                raise serializers.ValidationError(
-                    "소셜 로그인 계정입니다. 해당 소셜 서비스로 로그인해주세요."
-                )
-        except User.DoesNotExist:
-            raise serializers.ValidationError("가입되지 않은 이메일입니다.")
-        return value
-
 
 class PasswordResetSendCodeResponseSerializer(serializers.Serializer[Any]):
 
@@ -114,32 +102,9 @@ class PasswordChangeSerializer(serializers.Serializer[Any], BaseMixin):
         return self.validate_password_format(value)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        user = self.context["request"].user
-
-        # 소셜 전용 계정 체크
-        if not user.has_usable_password():
-            raise serializers.ValidationError(
-                {"detail": "소셜 로그인 계정은 비밀번호를 사용하지 않습니다."}
-            )
-
-        # 현재 비밀번호 확인
-        if not user.check_password(attrs["current_password"]):
-            raise serializers.ValidationError(
-                {"current_password": "현재 비밀번호가 일치하지 않습니다."}
-            )
-
-        # 비밀번호 일치 확인
         self.validate_password_match(
             attrs["new_password"], attrs["new_password_confirm"]
         )
-
-        # 현재 비밀번호와 동일한지 체크
-        if attrs["current_password"] == attrs["new_password"]:
-            raise serializers.ValidationError(
-                {"new_password": "현재 비밀번호와 동일합니다."}
-            )
-
-        attrs["user"] = user
         return attrs
 
 
