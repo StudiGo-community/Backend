@@ -159,3 +159,7 @@ class PostLikeResponseSerializer(serializers.ModelSerializer[Post]):
     post_id = serializers.IntegerField(read_only=True)
     liked = serializers.BooleanField(read_only=True)
     like_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Post
+        fields = ("post_id", "liked", "like_count")
