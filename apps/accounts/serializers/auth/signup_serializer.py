@@ -1,10 +1,9 @@
-from apps.accounts.serializers.auth.auth_common import (
-    Any,
-    BaseMixin,
-    TypedDict,
-    User,
-    serializers,
-)
+from typing import Any, TypedDict
+
+from rest_framework import serializers
+
+from apps.accounts.models.users import User
+from apps.accounts.serializers.base import BaseMixin
 from apps.core.enumeration.account_user_enumeration import GenderChoices
 
 
@@ -70,45 +69,7 @@ class SignupSerializer(serializers.Serializer[Any], BaseMixin):
                 {"privacy_agreed": "개인정보처리방침에 동의해주세요."}
             )
 
-        # 중복 검증 (최종 확인)
-        if User.objects.filter(email=attrs["email"]).exists():
-            raise serializers.ValidationError({"email": "이미 가입된 이메일입니다."})
-        if User.objects.filter(nickname=attrs["nickname"]).exists():
-            raise serializers.ValidationError(
-                {"nickname": "이미 사용 중인 닉네임입니다."}
-            )
-        if User.objects.filter(phone=attrs["phone"]).exists():
-            raise serializers.ValidationError(
-                {"phone": "이미 가입된 휴대폰 번호입니다."}
-            )
-
         return attrs
-
-    def create(self, validated_data: dict[str, Any]) -> User:
-        """User 생성 (View에서 토큰 검증 후 호출)"""
-        # 불필요한 필드 제거
-        validated_data.pop("password_confirm")
-        validated_data.pop("email_verification_token")
-        validated_data.pop("phone_verification_token")
-        validated_data.pop("terms_agreed")
-        validated_data.pop("privacy_agreed")
-        validated_data.pop("marketing_agreed", None)
-
-        password = validated_data.pop("password")
-
-        # UserManager.create_user() 사용
-        user = User.objects.create_user(
-            email=validated_data.pop("email"),
-            password=password,
-            nickname=validated_data.pop("nickname"),
-            name=validated_data.pop("name"),
-            gender=validated_data.pop("gender"),
-            phone=validated_data.pop("phone"),
-            birthday=validated_data.pop("birthday"),
-            is_active=True,  # 회원가입 완료 시 활성화
-        )
-
-        return user
 
 
 class SignupResponseSerializer(serializers.Serializer[Any]):
