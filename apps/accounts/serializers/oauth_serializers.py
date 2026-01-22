@@ -2,7 +2,6 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.accounts.models.users import OAuthAccount, User
 from apps.accounts.serializers.base import BaseMixin
 from apps.core.enumeration.account_user_enumeration import (
     GenderChoices,
@@ -137,7 +136,7 @@ SocialSignupCompleteResponseSerializer
 
 
 class SocialSignupCompleteSerializer(serializers.Serializer[Any], BaseMixin):
-    # 임시 토큰 (OAuth에서 발급, 15분 유효, View에서 검증)
+    # 임시 토큰 (OAuth에서 발급, 15분 유효, View에서 검증?)
     temporary_token = BaseMixin.get_token_field()
 
     # 추가 정보
@@ -157,15 +156,9 @@ class SocialSignupCompleteSerializer(serializers.Serializer[Any], BaseMixin):
 
     def validate_nickname(self, value: str) -> str:
         value = self.validate_nickname_format(value)
-        if User.objects.filter(nickname=value).exists():
-            raise serializers.ValidationError("이미 사용 중인 닉네임입니다.")
-        return value
 
     def validate_phone(self, value: str) -> str:
         value = self.validate_phone_format(value)
-        if User.objects.filter(phone=value).exists():
-            raise serializers.ValidationError("이미 가입된 휴대폰 번호입니다.")
-        return value
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         # 약관 동의 검증
@@ -179,44 +172,6 @@ class SocialSignupCompleteSerializer(serializers.Serializer[Any], BaseMixin):
             )
 
         return attrs
-
-    def create(self, validated_data: dict[str, Any]) -> User:
-        # check one more time
-        social_data = self.context.get("social_data")
-        if not social_data:
-            raise serializers.ValidationError({"detail": "소셜 인증 정보가 없습니다."})
-
-        # 불필요한 필드 제거
-        validated_data.pop("temporary_token")
-        validated_data.pop("phone_verification_token")
-        validated_data.pop("terms_agreed")
-        validated_data.pop("privacy_agreed")
-        validated_data.pop("marketing_agreed", None)
-
-        # UserManager.create_user() 사용 (비밀번호 없음 - 소셜 로그인 전용)
-        user = User.objects.create_user(
-            email=social_data["email"],
-            password=None,  # 소셜 로그인은 비밀번호 없음
-            nickname=validated_data["nickname"],
-            name=validated_data.get("name") or social_data.get("name", ""),
-            gender=validated_data["gender"],
-            phone=validated_data["phone"],
-            birthday=validated_data["birthday"],
-            profile_image_url=social_data.get("profile_image"),
-            is_active=True,  # 회원가입 완료 시 활성화
-        )
-
-        # OAuthAccount 생성
-        OAuthAccount.objects.create(
-            user=user,
-            provider=social_data["provider"],
-            provider_user_id=social_data["provider_user_id"],
-            social_email=social_data["email"],
-            access_token=social_data.get("access_token", ""),
-            refresh_token=social_data.get("refresh_token", ""),
-        )
-
-        return user
 
 
 class SocialSignupCompleteResponseSerializer(serializers.Serializer[Any]):
