@@ -26,12 +26,12 @@ from apps.community.serializers.post_serializers import (
 )
 from apps.community.services.post_services import (
     create_post,
+    delete_post,
     get_post_detail,
     get_post_list,
     like_post,
     patch_post,
     unlike_post,
-    delete_post,
 )
 from apps.core.enumeration.community_enumerations import PostCategory
 from apps.core.enumeration.parameter_enumeration import SearchField, Sort

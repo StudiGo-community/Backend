@@ -216,6 +216,7 @@ def patch_post(
         .get(pk=post.pk),
     )
 
+
 @transaction.atomic
 def delete_post(*, post: Post) -> None:
     post.status = PostCommentStatus.DELETED
