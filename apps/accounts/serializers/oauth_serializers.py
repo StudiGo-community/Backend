@@ -154,25 +154,6 @@ class SocialSignupCompleteSerializer(serializers.Serializer[Any], BaseMixin):
     privacy_agreed = serializers.BooleanField()
     marketing_agreed = serializers.BooleanField(default=False, required=False)
 
-    def validate_nickname(self, value: str) -> str:
-        value = self.validate_nickname_format(value)
-
-    def validate_phone(self, value: str) -> str:
-        value = self.validate_phone_format(value)
-
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        # 약관 동의 검증
-        if not attrs.get("terms_agreed"):
-            raise serializers.ValidationError(
-                {"terms_agreed": "이용약관에 동의해주세요."}
-            )
-        if not attrs.get("privacy_agreed"):
-            raise serializers.ValidationError(
-                {"privacy_agreed": "개인정보처리방침에 동의해주세요."}
-            )
-
-        return attrs
-
 
 class SocialSignupCompleteResponseSerializer(serializers.Serializer[Any]):
     message = serializers.CharField(default="회원가입이 완료되었습니다.")
