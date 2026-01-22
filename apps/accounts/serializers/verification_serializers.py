@@ -36,37 +36,6 @@ class EmailSendCodeSerializer(serializers.Serializer[Any], BaseMixin):
         default=EmailVerificationPurpose.SIGNUP,
     )
 
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        email = attrs["email"]
-        purpose = attrs["purpose"]
-
-        user_exists = User.objects.filter(email=email).exists()
-
-        if purpose == EmailVerificationPurpose.SIGNUP:
-            if user_exists:
-                raise serializers.ValidationError(
-                    {"email": "이미 가입된 이메일입니다."}
-                )
-
-        elif purpose == EmailVerificationPurpose.PASSWORD_RESET:
-            if not user_exists:
-                raise serializers.ValidationError(
-                    {"email": "가입되지 않은 이메일입니다."}
-                )
-            user = User.objects.get(email=email)
-            # 소셜 전용 계정 체크 (password가 비어있거나 unusable이면 소셜 전용)
-            if not user.has_usable_password():
-                raise serializers.ValidationError(
-                    {
-                        "email": "소셜 로그인 계정입니다. 해당 소셜 서비스로 로그인해주세요."
-                    }
-                )
-
-        else:
-            raise serializers.ValidationError({"email": "존재하지 않는 계정입니다."})
-
-        return attrs
-
 
 class EmailVerifyCodeSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
@@ -112,26 +81,6 @@ class PhoneSendCodeSerializer(serializers.Serializer[Any], BaseMixin):
 
     def validate_phone(self, value: str) -> str:
         return self.validate_phone_format(value)
-
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        phone = attrs["phone"]
-        purpose = attrs["purpose"]
-
-        user_exists = User.objects.filter(phone=phone).exists()
-
-        if purpose == PhoneVerificationPurpose.SIGNUP:
-            if user_exists:
-                raise serializers.ValidationError(
-                    {"phone": "이미 가입된 휴대폰 번호입니다."}
-                )
-
-        elif purpose == PhoneVerificationPurpose.EMAIL_FINDING:
-            if not user_exists:
-                raise serializers.ValidationError(
-                    {"phone": "가입되지 않은 휴대폰 번호입니다."}
-                )
-
-        return attrs
 
 
 class PhoneVerifyCodeSerializer(serializers.Serializer[Any], BaseMixin):
