@@ -24,7 +24,6 @@ LogoutSerializer
 """
 
 
-
 """
 [로그인]
 LoginSerializer
@@ -53,6 +52,7 @@ class LoginSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
     password = BaseMixin.get_password_field()
     remember_me = serializers.BooleanField(default=False, required=False)
+
 
 class LoginResponseSerializer(serializers.Serializer[Any]):
 
@@ -89,10 +89,12 @@ TokenRefreshResponseSerializer
 class TokenRefreshSerializer(serializers.Serializer[Any]):
     refresh_token = serializers.CharField()
 
+
 class TokenRefreshResponseSerializer(serializers.Serializer[Any]):
     access_token = serializers.CharField()
     token_type = serializers.CharField(default="Bearer")
     expires_in = serializers.IntegerField(help_text="Access Token 만료시간(초)")
+
 
 """
 [로그아웃]
@@ -107,6 +109,7 @@ LogoutResponseSerializer
 
 class LogoutSerializer(serializers.Serializer[Any]):
     refresh_token = serializers.CharField(required=False, allow_blank=True)
+
 
 class LogoutResponseSerializer(serializers.Serializer[Any]):
     message = serializers.CharField(default="로그아웃되었습니다.")

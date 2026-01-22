@@ -21,18 +21,22 @@ NicknameCheckResponseSerializer
 닉네임 중복 확인 응답
 """
 
+
 class EmailCheckSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
+
 
 class EmailCheckResponseSerializer(serializers.Serializer[Any]):
     available = serializers.BooleanField()
     message = serializers.CharField()
+
 
 class NicknameCheckSerializer(serializers.Serializer[Any], BaseMixin):
     nickname = BaseMixin.get_nickname_field()
 
     def validate_nickname(self, value: str) -> str:
         return self.validate_nickname_format(value)
+
 
 class NicknameCheckResponseSerializer(serializers.Serializer[Any]):
     available = serializers.BooleanField()
