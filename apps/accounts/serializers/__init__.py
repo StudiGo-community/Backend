@@ -1,6 +1,6 @@
 # Base
 # 회원가입/로그인/로그아웃
-from apps.accounts.serializers.auth.__init__ import (
+from apps.accounts.serializers.auth.auth_barrel import (
     EmailCheckResponseSerializer,
     EmailCheckSerializer,
     LoginResponseSerializer,
