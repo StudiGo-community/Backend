@@ -25,7 +25,12 @@ from apps.accounts.services.login_throttle import (
     clear_login_failures,
     record_login_failure,
 )
-from apps.accounts.utils.cookies import clear_refresh_cookie, set_refresh_cookie
+from apps.accounts.utils.cookies import (
+    clear_access_cookie,
+    clear_refresh_cookie,
+    set_access_cookie,
+    set_refresh_cookie,
+)
 from apps.core.enumeration.account_user_enumeration import UserStatus
 
 ACCESS_LIFETIME = timedelta(seconds=settings.JWT_ACCESS_TOKEN_LIFETIME)
@@ -138,6 +143,7 @@ class LoginView(APIView):
             status=status.HTTP_200_OK,
         )
         set_refresh_cookie(response, refresh, max_age=refresh_max_age)
+        set_access_cookie(response, access, max_age=expires_in)
         return response
 
 
@@ -178,7 +184,9 @@ class TokenRefreshAPIView(APIView):
                 "expires_in": expires_in,
             }
         )
-        return Response(out.data, status=status.HTTP_200_OK)
+        resp = Response(out.data, status=status.HTTP_200_OK)
+        set_access_cookie(resp, access, max_age=expires_in)
+        return resp
 
 
 class LogoutAPIView(APIView):
@@ -205,12 +213,15 @@ class LogoutAPIView(APIView):
         )
 
         # 응답은 항상 쿠키 삭제
-        resp = Response({"detail": "로그아웃되었습니다."}, status=status.HTTP_200_OK)
-        clear_refresh_cookie(resp)
+        response = Response(
+            {"detail": "로그아웃되었습니다."}, status=status.HTTP_200_OK
+        )
+        clear_refresh_cookie(response)
+        clear_access_cookie(response)
 
         # refresh 없으면 “이미 로그아웃”으로 성공 처리
         if not refresh_raw:
-            return resp
+            return response
 
         # blacklist 가능하면 시도 (token_blacklist 앱이 켜져있어야 정상 동작)
         try:
@@ -218,6 +229,6 @@ class LogoutAPIView(APIView):
             token.blacklist()
         except Exception:
             # 만료/위조/이미 블랙리스트 등은 그냥 성공 처리
-            return resp
+            return response
 
-        return resp
+        return response
