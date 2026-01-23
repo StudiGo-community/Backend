@@ -9,13 +9,11 @@ class Status(models.TextChoices):
 
 
 class Message(TimeStampedModel):
-
-    room = (
-        models.ForeignKey("room", on_delete=models.CASCADE, related_name="message"),
-    )  # 채팅방
+    # 채팅방
+    room = models.ForeignKey("Room", on_delete=models.CASCADE, related_name="message")
 
     sender = models.ForeignKey(
-        "membership", on_delete=models.CASCADE, related_name="message"
+        "Membership", on_delete=models.CASCADE, related_name="message"
     )  # 메세지 보낸 사람의 ID
 
     content = models.TextField()
@@ -28,7 +26,7 @@ class Message(TimeStampedModel):
         db_table = "chat_message"
         indexes = [
             models.Index(
-                fields=["room_id", "created_at"], name="idx_chat_room_created_at"
+                fields=["room", "created_at"], name="idx_chat_room_created_at"
             ),
         ]
 

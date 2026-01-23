@@ -18,7 +18,12 @@ class Translation(TimeStampedModel):
 
     class Meta:
         db_table = "chat_translation"
-        constraints = [models.UniqueConstraint(fields=["message", "target_language"])]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["message", "target_language"],
+                name="uq_chat_translation_message_target_lang",
+            )
+        ]
         indexes = [
             models.Index(fields=["message", "target_language"]),
         ]

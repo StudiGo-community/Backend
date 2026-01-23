@@ -9,6 +9,7 @@ class Room(TimeStampedModel):
         max_length=200, null=True, blank=True
     )  # 채팅방 설명 (해시태그)
     participant_count = models.IntegerField()  # 채팅방 인원 수
+    last_message_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         indexes = [
