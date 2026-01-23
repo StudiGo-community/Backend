@@ -19,11 +19,14 @@ from apps.community.models.comments import Comment
 from apps.community.models.posts import Post
 from apps.community.serializers.comment_serializers import (
     CommentCreateSerializer,
+    CommentListItemSerializer,
+    CommentListResponseSerializer,
     CommentResponseSerializer,
 )
 from apps.community.services.comment_services import (
     create_comment,
     delete_comment,
+    get_post_comments,
 )
 from apps.core.enumeration.community_enumerations import PostCommentStatus
 
@@ -166,3 +169,62 @@ class CommentDeleteAPIView(APIView):
 
         delete_comment(comment_id=comment_id, user=user)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CommentListAPIView(APIView):
+    @extend_schema(
+        tags=["커뮤니티"],
+        operation_id="comments_list",
+        summary="게시글 댓글 조회",
+        description="특정 게시글에 달린 댓글을 페이지네이션 방식으로 조회합니다.",
+        parameters=[
+            OpenApiParameter(
+                name="page",
+                type=OpenApiTypes.INT,
+                required=False,
+                description="페이지 번호 (기본 1)",
+            ),
+            OpenApiParameter(
+                name="size",
+                type=OpenApiTypes.INT,
+                required=False,
+                description="페이지당 댓글 수 (기본 10)",
+            ),
+            OpenApiParameter(
+                name="sort",
+                enum=["LATEST", "OLDEST"],
+                required=False,
+                description="정렬 방식 (기본 LATEST)",
+            ),
+        ],
+        responses={200: CommentListResponseSerializer},
+    )
+    def get(self, request: Request, post_id: int) -> Response:
+        post = get_object_or_404(Post, pk=post_id)
+
+        page = int(request.query_params.get("page", 1))
+        size = int(request.query_params.get("size", 10))
+        sort = request.query_params.get("sort", "LATEST")
+
+        result = get_post_comments(
+            post=post,
+            page=page,
+            size=size,
+            sort=sort,  # type: ignore[arg-type]
+        )
+
+        return Response(
+            {
+                "comments": CommentListItemSerializer(
+                    result["comments"], many=True
+                ).data,
+                "pagination": {
+                    "page": result["page"],
+                    "size": result["size"],
+                    "total_count": result["total_count"],
+                    "total_pages": result["total_pages"],
+                    "has_next": result["has_next"],
+                },
+            },
+            status=status.HTTP_200_OK,
+        )
