@@ -95,3 +95,71 @@ class CommentCreateAPIView(APIView):
             CommentResponseSerializer(comment).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+
+class CommentDeleteAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["커뮤니티"],
+        operation_id="comments_delete",
+        summary="댓글 삭제",
+        description="댓글 작성자가 댓글을 삭제합니다.",
+        parameters=[
+            OpenApiParameter(
+                name="comment_id",
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description="댓글 ID",
+            )
+        ],
+        responses={
+            204: OpenApiResponse(description="삭제 완료"),
+            401: OpenApiResponse(
+                description="인증 필요",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="인증 필요",
+                        value={"detail": "인증이 필요합니다."},
+                    )
+                ],
+            ),
+            403: OpenApiResponse(
+                description="삭제 권한 없음",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="권한 없음",
+                        value={"detail": "삭제 권한이 없습니다."},
+                    )
+                ],
+            ),
+            404: OpenApiResponse(
+                description="댓글 없음",
+                response=OpenApiTypes.OBJECT,
+                examples=[
+                    OpenApiExample(
+                        name="댓글 없음",
+                        value={"detail": "댓글을 찾을 수 없습니다."},
+                    )
+                ],
+            ),
+        },
+    )
+    def delete(self, request: Request, post_id: int, comment_id: int) -> Response:
+        comment = get_object_or_404(
+            Comment,
+            pk=comment_id,
+            status=PostCommentStatus.ACTIVE,
+        )
+
+        if comment.author != request.user:
+            return Response(
+                {"detail": "삭제 권한이 없습니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        delete_comment(comment_id=comment.id, user=request.user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
