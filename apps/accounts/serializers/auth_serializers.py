@@ -7,6 +7,12 @@ from rest_framework import serializers
 from apps.accounts.models.users import User
 
 
+class TokenPayloadSerializer(serializers.Serializer[Any]):
+    access_token = serializers.CharField()
+    token_type = serializers.CharField(default="Bearer")
+    expires_in = serializers.IntegerField()
+
+
 class LoginRequestSerializer(serializers.Serializer[Any]):
     email = serializers.EmailField()
     password = serializers.CharField(trim_whitespace=False)
@@ -14,12 +20,7 @@ class LoginRequestSerializer(serializers.Serializer[Any]):
 
 
 class LoginResponseSerializer(serializers.Serializer[Any]):
-    # token
-    access_token = serializers.CharField()
-    token_type = serializers.CharField(default="Bearer")
-    expires_in = serializers.IntegerField()
-
-    # user
+    token = TokenPayloadSerializer()
     user = serializers.SerializerMethodField()
 
     def get_user(self, obj: dict[str, Any]) -> dict[str, Any]:
