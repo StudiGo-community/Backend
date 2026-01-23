@@ -132,7 +132,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "apps.accounts.authentication.CookieOrHeaderJWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
 }
@@ -162,6 +162,13 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=24),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+# access 쿠키 옵션
+AUTH_ACCESS_COOKIE_NAME = "access"
+AUTH_ACCESS_COOKIE_PATH = "/"
+AUTH_ACCESS_COOKIE_SECURE = not DEBUG
+AUTH_ACCESS_COOKIE_HTTPONLY = True
+AUTH_ACCESS_COOKIE_SAMESITE = "Lax"
 
 # refresh 쿠키 옵션
 AUTH_REFRESH_COOKIE_NAME = "refresh"
