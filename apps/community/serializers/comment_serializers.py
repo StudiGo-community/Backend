@@ -11,11 +11,13 @@ MENTION_REGEX = re.compile(r"@([A-Za-z0-9_.가-힣]{1,30})")
 class CommentResponseSerializer(serializers.ModelSerializer[Comment]):
     author = AuthorSerializer(read_only=True)
     tagged_nicknames = serializers.SerializerMethodField()
+    post_id = serializers.IntegerField(source="post.id", read_only=True)
 
     class Meta:
         model = Comment
         fields = (
             "id",
+            "post_id",
             "author",
             "content",
             "tagged_nicknames",
