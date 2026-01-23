@@ -1,18 +1,23 @@
 from __future__ import annotations
 
-from typing import Any
+from datetime import timedelta
+from typing import Any, Optional, cast
 
+from django.conf import settings
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.serializers.auth_serializers import (
     LoginRequestSerializer,
     LoginResponseSerializer,
+    TokenPayloadSerializer,
 )
 from apps.accounts.services.auth_services import authenticate_user, issue_tokens
 from apps.accounts.services.login_throttle import (
@@ -20,8 +25,11 @@ from apps.accounts.services.login_throttle import (
     clear_login_failures,
     record_login_failure,
 )
-from apps.accounts.utils.cookies import set_refresh_cookie
+from apps.accounts.utils.cookies import clear_refresh_cookie, set_refresh_cookie
 from apps.core.enumeration.account_user_enumeration import UserStatus
+
+ACCESS_LIFETIME = timedelta(seconds=settings.JWT_ACCESS_TOKEN_LIFETIME)
+expires_in = int(ACCESS_LIFETIME.total_seconds())
 
 
 class LoginView(APIView):
@@ -116,9 +124,11 @@ class LoginView(APIView):
 
         out = LoginResponseSerializer(
             {
-                "access_token": access,
-                "token_type": "Bearer",
-                "expires_in": 3600,
+                "token": {
+                    "access_token": access,
+                    "token_type": "Bearer",
+                    "expires_in": expires_in,
+                },
                 "user": user,
             }
         )
@@ -129,3 +139,85 @@ class LoginView(APIView):
         )
         set_refresh_cookie(response, refresh, max_age=refresh_max_age)
         return response
+
+
+class TokenRefreshAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        tags=["유저"],
+        operation_id="auth_token_refresh",
+        summary="토큰 갱신",
+        description="HttpOnly 쿠키의 Refresh Token으로 Access Token을 재발급합니다.",
+        request=None,
+        responses={200: TokenPayloadSerializer},
+    )
+    def post(self, request: Request) -> Response:
+        refresh_raw: Optional[str] = request.COOKIES.get(
+            settings.AUTH_REFRESH_COOKIE_NAME
+        )
+        if not refresh_raw:
+            return Response(
+                {"detail": "리프레시 토큰이 필요합니다."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        try:
+            refresh = RefreshToken(cast(Any, refresh_raw))
+            access = str(refresh.access_token)
+        except TokenError:
+            return Response(
+                {"detail": "유효하지 않은 리프레시 토큰입니다."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        out = TokenPayloadSerializer(
+            instance={
+                "access_token": access,
+                "token_type": "Bearer",
+                "expires_in": expires_in,
+            }
+        )
+        return Response(out.data, status=status.HTTP_200_OK)
+
+
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["유저"],
+        operation_id="auth_logout",
+        summary="로그아웃",
+        description="Refresh Token을 무효화(blacklist)하고 쿠키를 삭제합니다.",
+        request=None,
+        responses={
+            200: {
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string", "example": "로그아웃되었습니다."}
+                },
+            }
+        },
+    )
+    def post(self, request: Request) -> Response:
+        refresh_raw: Optional[str] = request.COOKIES.get(
+            settings.AUTH_REFRESH_COOKIE_NAME
+        )
+
+        # 응답은 항상 쿠키 삭제
+        resp = Response({"detail": "로그아웃되었습니다."}, status=status.HTTP_200_OK)
+        clear_refresh_cookie(resp)
+
+        # refresh 없으면 “이미 로그아웃”으로 성공 처리
+        if not refresh_raw:
+            return resp
+
+        # blacklist 가능하면 시도 (token_blacklist 앱이 켜져있어야 정상 동작)
+        try:
+            token = RefreshToken(cast(Any, refresh_raw))
+            token.blacklist()
+        except Exception:
+            # 만료/위조/이미 블랙리스트 등은 그냥 성공 처리
+            return resp
+
+        return resp
