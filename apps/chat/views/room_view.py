@@ -25,7 +25,9 @@ class RoomListAPIView(APIView):
             RoomSerializer(rooms, many=True).data, status=status.HTTP_200_OK
         )
 
-    @extend_schema(summary="채팅방 목록 생성", tags=["채팅"], request=RoomCreateSerializer)
+    @extend_schema(
+        summary="채팅방 목록 생성", tags=["채팅"], request=RoomCreateSerializer
+    )
     def post(self, request: Request) -> Response:
         serializer = RoomCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
