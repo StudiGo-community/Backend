@@ -95,6 +95,29 @@ class PostCreateResponseSerializer(serializers.ModelSerializer[Post]):
         )
 
 
+class PostPatchSerializer(serializers.Serializer[Any]):
+    title = serializers.CharField(min_length=1, max_length=100, required=False)
+    content = serializers.CharField(min_length=1, required=False)
+    category = serializers.ChoiceField(choices=PostCategory.choices, required=False)
+    thumbnail_url = serializers.URLField(required=False, allow_null=True)
+
+
+class PostPatchResponseSerializer(serializers.ModelSerializer[Post]):
+    images = PostImageResponseSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "title",
+            "content",
+            "category",
+            "thumbnail_url",
+            "images",
+            "updated_at",
+        )
+
+
 class PostListItemSerializer(serializers.ModelSerializer[Post]):
     author = AuthorSerializer(read_only=True)
     content_preview = serializers.SerializerMethodField()
