@@ -215,3 +215,9 @@ def patch_post(
         .prefetch_related("images")
         .get(pk=post.pk),
     )
+
+
+@transaction.atomic
+def delete_post(*, post: Post) -> None:
+    post.status = PostCommentStatus.DELETED
+    post.save(update_fields=["status"])
