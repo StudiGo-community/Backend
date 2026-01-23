@@ -1,6 +1,6 @@
 from django.urls import path
 
-from apps.chat.views.room_view import RoomListAPIView, RoomDetailAPIView
+from apps.chat.views.room_view import RoomDetailAPIView, RoomListAPIView
 
 urlpatterns = [
     path("rooms", RoomListAPIView.as_view(), name="chat-room-list-create"),
