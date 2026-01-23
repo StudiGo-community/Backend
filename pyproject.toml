@@ -78,11 +78,15 @@ skip = ["migrations", "staticfiles"]
 # =========================
 [tool.mypy]
 python_version = "3.12"
-plugins = ["mypy_django_plugin.main"]
+plugins = [
+    "mypy_django_plugin.main",
+    "mypy_drf_plugin.main"
+]
 ignore_missing_imports = true
 strict = true
 warn_unused_configs = true
 exclude = 'migrations|staticfiles'
+explicit_package_bases = true
 
 # =========================
 # django-stubs 설정
