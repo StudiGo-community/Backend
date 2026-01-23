@@ -1,4 +1,4 @@
-from typing import Any
+from typing import cast
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
@@ -14,6 +14,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts.models import User
 from apps.community.models.comments import Comment
 from apps.community.models.posts import Post
 from apps.community.serializers.comment_serializers import (
@@ -85,9 +86,11 @@ class CommentCreateAPIView(APIView):
         # 게시글 존재 확인
         post = get_object_or_404(Post, pk=post_id)
 
+        user = cast(User, request.user)
+
         comment = create_comment(
-            post_id=post.id,
-            author=request.user,
+            post_id=post_id,
+            author=user,
             content=serializer.validated_data["content"],
         )
 
@@ -95,7 +98,6 @@ class CommentCreateAPIView(APIView):
             CommentResponseSerializer(comment).data,
             status=status.HTTP_201_CREATED,
         )
-
 
 
 class CommentDeleteAPIView(APIView):
@@ -154,6 +156,7 @@ class CommentDeleteAPIView(APIView):
             pk=comment_id,
             status=PostCommentStatus.ACTIVE,
         )
+        user = cast(User, request.user)
 
         if comment.author != request.user:
             return Response(
@@ -161,5 +164,5 @@ class CommentDeleteAPIView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        delete_comment(comment_id=comment.id, user=request.user)
+        delete_comment(comment_id=comment_id, user=user)
         return Response(status=status.HTTP_204_NO_CONTENT)

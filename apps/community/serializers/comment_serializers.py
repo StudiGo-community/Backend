@@ -40,5 +40,6 @@ class CommentResponseSerializer(serializers.ModelSerializer[Comment]):
                 result.append(nick)
         return result
 
-class CommentCreateSerializer(serializers.Serializer):
+
+class CommentCreateSerializer(serializers.Serializer[Comment]):
     content = serializers.CharField()
