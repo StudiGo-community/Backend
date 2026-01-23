@@ -7,10 +7,10 @@ class GenderChoices(models.TextChoices):
 
 
 class UserStatus(models.TextChoices):
-    ACTIVE = ("ACTIVE",)
-    DEACTIVATED = "DEACTIVATED"
-    BANNED = "BANNED"
-    DORMANT = "DORMANT"
+    ACTIVE = "ACTIVE", "ACTIVE"
+    DEACTIVATED = "DEACTIVATED", "DEACTIVATED"
+    BANNED = "BANNED", "BANNED"
+    DORMANT = "DORMANT", "DORMANT"
 
 
 class UserRoleChoices(models.TextChoices):
