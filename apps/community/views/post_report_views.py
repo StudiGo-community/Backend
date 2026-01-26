@@ -17,8 +17,8 @@ from rest_framework.views import APIView
 from apps.accounts.models import User
 from apps.community.models.posts import Post
 from apps.community.serializers.report_serializers import (
-    ReportCreateSerializer,
     PostReportResponseSerializer,
+    ReportCreateSerializer,
 )
 from apps.community.services.report_services import create_post_report
 
@@ -71,7 +71,9 @@ class PostReportCreateAPIView(APIView):
                 description="인증 필요",
                 response=OpenApiTypes.OBJECT,
                 examples=[
-                    OpenApiExample(name="인증 필요", value={"detail": "인증이 필요합니다."})
+                    OpenApiExample(
+                        name="인증 필요", value={"detail": "인증이 필요합니다."}
+                    )
                 ],
             ),
             404: OpenApiResponse(
@@ -108,7 +110,7 @@ class PostReportCreateAPIView(APIView):
 
         # 게시글 신고 생성
         report = create_post_report(
-            post=post,
+            post_id=post_id,
             reporter=user,
             reason=serializer.validated_data["reason"],
         )

@@ -1,4 +1,5 @@
 from django.db import models
+
 from apps.core.enumeration.community_enumerations import ReportStatus
 
 
@@ -34,6 +35,7 @@ class VerificationTimeStampedModel(models.Model):
 
     class Meta:
         abstract = True
+
 
 class BaseReport(models.Model):
     reporter = models.ForeignKey(

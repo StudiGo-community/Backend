@@ -17,8 +17,8 @@ from rest_framework.views import APIView
 from apps.accounts.models import User
 from apps.community.models.comments import Comment
 from apps.community.serializers.report_serializers import (
-    ReportCreateSerializer,
     CommentReportResponseSerializer,
+    ReportCreateSerializer,
 )
 from apps.community.services.report_services import create_comment_report
 
@@ -71,7 +71,9 @@ class CommentReportCreateAPIView(APIView):
                 description="인증 필요",
                 response=OpenApiTypes.OBJECT,
                 examples=[
-                    OpenApiExample(name="인증 필요", value={"detail": "인증이 필요합니다."})
+                    OpenApiExample(
+                        name="인증 필요", value={"detail": "인증이 필요합니다."}
+                    )
                 ],
             ),
             404: OpenApiResponse(
@@ -96,7 +98,7 @@ class CommentReportCreateAPIView(APIView):
             ),
         },
     )
-    def post(self, request: Request, comment_id: int) -> Response:
+    def post(self, request: Request, post_id: int, comment_id: int) -> Response:
         serializer = ReportCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -108,7 +110,8 @@ class CommentReportCreateAPIView(APIView):
 
         # 댓글 신고 생성
         report = create_comment_report(
-            comment=comment,
+            post_id=post_id,
+            comment_id=comment_id,
             reporter=user,
             reason=serializer.validated_data["reason"],
         )

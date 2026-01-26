@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, cast
 
 from rest_framework import serializers
 
-from apps.community.models.post_reports import PostReport
 from apps.community.models.comment_reports import CommentReport
+from apps.community.models.post_reports import PostReport
 from apps.core.enumeration.community_enumerations import ReportStatus
 
 
-class ReportCreateSerializer(serializers.Serializer):
+class ReportCreateSerializer(serializers.Serializer[Any]):
     reason = serializers.CharField(max_length=100)
 
     def validate_reason(self, value: str) -> str:
@@ -19,7 +19,7 @@ class ReportCreateSerializer(serializers.Serializer):
         return reason
 
 
-class PostReportResponseSerializer(serializers.Serializer):
+class PostReportResponseSerializer(serializers.Serializer[Any]):
     report_id = serializers.IntegerField()
     post_id = serializers.IntegerField()
     reason = serializers.CharField()
@@ -32,15 +32,15 @@ class PostReportResponseSerializer(serializers.Serializer):
             "RECEIVED" if report.status == ReportStatus.PENDING else report.status
         )
         return {
-            "report_id": report.id,
-            "post_id": report.post_id,
+            "report_id": cast(int, report.pk),
+            "post_id": cast(int, report.post.pk),
             "reason": report.reason,
             "status": status_value,
             "created_at": report.created_at,
         }
 
 
-class CommentReportResponseSerializer(serializers.Serializer):
+class CommentReportResponseSerializer(serializers.Serializer[Any]):
     report_id = serializers.IntegerField()
     comment_id = serializers.IntegerField()
     reason = serializers.CharField()
@@ -53,8 +53,8 @@ class CommentReportResponseSerializer(serializers.Serializer):
             "RECEIVED" if report.status == ReportStatus.PENDING else report.status
         )
         return {
-            "report_id": report.id,
-            "comment_id": report.comment_id,
+            "report_id": report.pk,
+            "comment_id": report.comment.pk,
             "reason": report.reason,
             "status": status_value,
             "created_at": report.created_at,

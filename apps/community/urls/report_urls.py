@@ -1,7 +1,7 @@
 from django.urls import path
 
-from apps.community.views.post_report_views import PostReportCreateAPIView
 from apps.community.views.comment_report_views import CommentReportCreateAPIView
+from apps.community.views.post_report_views import PostReportCreateAPIView
 
 urlpatterns = [
     path(
