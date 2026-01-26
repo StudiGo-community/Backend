@@ -6,7 +6,6 @@ from apps.core.models import TimeStampedModel
 class DailyQuote(TimeStampedModel):
     quote_date = models.DateField(unique=True)
     content = models.TextField()
-    author = models.CharField(max_length=255, null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
