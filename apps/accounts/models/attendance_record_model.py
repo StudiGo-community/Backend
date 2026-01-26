@@ -14,7 +14,7 @@ class AttendanceRecord(models.Model):
         """
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "created_date"],
+                fields=["user", "created_at"],
                 name="attendance_record_once_per_day",
             )
         ]
