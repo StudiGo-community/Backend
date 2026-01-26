@@ -1,13 +1,12 @@
 from django.db import models
 
 
-class VerificationStatus(models.TextChoices):
-    EMAIL = "EMAIL", "email"
-    PHONE = "PHONE", "phone"
+class EmailVerificationPurpose(models.TextChoices):
+    SIGNUP = "SIGNUP", "회원가입"
+    PASSWORD_RESET = "PASSWORD_RESET", "비밀번호 재설정"
 
 
-class VerificationPurpose(models.TextChoices):
-    EMAIL_SIGNUP = "EMAIL_SIGNUP", "email_signup"
-    EMAIL_PASSWORD_RESET = "EMAIL_PASSWORD_RESET", "email_password_reset"
-    PHONE_SIGNUP = "PHONE_SIGNUP", "phone_signup"
-    PHONE_PASSWORD_RESET = "PHONE_PASSWORD_RESET", "phone_password_reset"
+class PhoneVerificationPurpose(models.TextChoices):
+    SIGNUP = "SIGNUP", "회원가입"
+    FIND_EMAIL = "FIND_EMAIL", "이메일 찾기"
+    CHANGE_PHONE = "CHANGE_PHONE", "휴대폰 번호 변경"
