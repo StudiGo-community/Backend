@@ -22,25 +22,9 @@ class AuthLoginService:
                 }
             )
 
-        # 계정 상태
-        if user.status == UserStatus.DEACTIVATED:
-            raise AuthServiceError(
-                {
-                    "detail": "탈퇴한 계정입니다. 30일 이내 복구 가능합니다.",
-                    "error_code": "ACCOUNT_DEACTIVATED",
-                    "can_restore": "true",  # 제거하고 FE에서 error_code로 판단?
-                }
-            )
         if user.status == UserStatus.BANNED:
             raise AuthServiceError(
                 {"detail": "정지된 계정입니다.", "error_code": "ACCOUNT_BANNED"}
-            )
-        if user.status == UserStatus.DORMANT:
-            raise AuthServiceError(
-                {
-                    "detail": "휴면 계정입니다. 휴면 해제 후 이용해주세요.",
-                    "error_code": "ACCOUNT_DORMANT",
-                }
             )
 
         return user
