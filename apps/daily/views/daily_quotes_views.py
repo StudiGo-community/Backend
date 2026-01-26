@@ -1,5 +1,4 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -10,7 +9,6 @@ from apps.daily.serializers.daily_quotes_serializers import DailyQuoteResponseSe
 
 
 class DailyQuoteView(APIView):
-    permission_classes = [IsAuthenticated]
 
     @extend_schema(
         tags=["데일리"],
@@ -18,15 +16,6 @@ class DailyQuoteView(APIView):
         description="로그인한 사용자가 오늘의 문장을 조회합니다.",
         responses={
             200: DailyQuoteResponseSerializer,
-            401: OpenApiResponse(
-                description="인증 필요",
-                response={
-                    "type": "object",
-                    "properties": {
-                        "detail": {"type": "string"},
-                    },
-                },
-            ),
         },
     )
     def get(self, request):
