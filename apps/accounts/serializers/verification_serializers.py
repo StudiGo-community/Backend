@@ -2,12 +2,8 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.accounts.models.users import User
 from apps.accounts.serializers.base import BaseMixin
-from apps.core.enumeration.account_verification_enumeration import (
-    EmailVerificationPurpose,
-    PhoneVerificationPurpose,
-)
+from apps.core.enumeration.account_verification_enumeration import VerificationPurpose
 
 """
 이메일/휴대폰 인증 코드 발송 및 확인
@@ -32,8 +28,8 @@ EmailVerifyResponseSerializer
 class EmailSendCodeSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
     purpose = serializers.ChoiceField(
-        choices=EmailVerificationPurpose.choices,
-        default=EmailVerificationPurpose.SIGNUP,
+        choices=VerificationPurpose.choices,
+        default=VerificationPurpose.EMAIL_SIGNUP,
     )
 
 
@@ -41,8 +37,8 @@ class EmailVerifyCodeSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
     code = BaseMixin.get_email_code_field()
     purpose = serializers.ChoiceField(
-        choices=EmailVerificationPurpose.choices,
-        default=EmailVerificationPurpose.SIGNUP,
+        choices=VerificationPurpose.choices,
+        default=VerificationPurpose.EMAIL_SIGNUP,
     )
 
     def validate_code(self, value: str) -> str:
@@ -75,8 +71,8 @@ PhoneVerifyResponseSerializer(serializers.Serializer):
 class PhoneSendCodeSerializer(serializers.Serializer[Any], BaseMixin):
     phone = BaseMixin.get_phone_field()
     purpose = serializers.ChoiceField(
-        choices=PhoneVerificationPurpose.choices,
-        default=PhoneVerificationPurpose.SIGNUP,
+        choices=VerificationPurpose.choices,
+        default=VerificationPurpose.PHONE_SIGNUP,
     )
 
     def validate_phone(self, value: str) -> str:
@@ -87,8 +83,8 @@ class PhoneVerifyCodeSerializer(serializers.Serializer[Any], BaseMixin):
     phone = BaseMixin.get_phone_field()
     code = BaseMixin.get_phone_code_field()
     purpose = serializers.ChoiceField(
-        choices=PhoneVerificationPurpose.choices,
-        default=PhoneVerificationPurpose.SIGNUP,
+        choices=VerificationPurpose.choices,
+        default=VerificationPurpose.PHONE_SIGNUP,
     )
 
     def validate_phone(self, value: str) -> str:
