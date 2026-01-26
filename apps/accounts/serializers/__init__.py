@@ -1,20 +1,12 @@
 # Base
 # 회원가입/로그인/로그아웃
-from apps.accounts.serializers.auth.auth_barrel import (
-    EmailCheckResponseSerializer,
-    EmailCheckSerializer,
-    LoginResponseSerializer,
-    LoginSerializer,
-    LogoutResponseSerializer,
-    LogoutSerializer,
-    NicknameCheckResponseSerializer,
-    NicknameCheckSerializer,
-    SignupResponseSerializer,
-    SignupSerializer,
-    TokenRefreshResponseSerializer,
-    TokenRefreshSerializer,
-)
 from apps.accounts.serializers.base import BaseMixin
+
+from apps.accounts.serializers.auth_serializers import (
+    TokenPayloadSerializer,
+    LoginRequestSerializer,
+    LoginResponseSerializer,
+)
 
 # 소셜 로그인
 from apps.accounts.serializers.oauth_serializers import (
@@ -39,14 +31,13 @@ from apps.accounts.serializers.password_serializers import (
     PasswordResetVerifyCodeSerializer,
 )
 
-# 인증코드 발송/확인
-from apps.accounts.serializers.verification_serializers import (
-    EmailSendCodeSerializer,
-    EmailVerifyCodeSerializer,
-    EmailVerifyResponseSerializer,
-    PhoneSendCodeSerializer,
-    PhoneVerifyCodeSerializer,
-    PhoneVerifyResponseSerializer,
+# 이메일 인증코드 발송/확인
+from apps.accounts.serializers.email_verification_serializers import (
+    ResetPasswordEmailSendCodeRequestSerializer,
+    SignupEmailSendCodeRequestSerializer,
+    EmailSendCodeResponseSerializer,
+    EmailConfirmCodeRequestSerializer,
+    EmailConfirmCodeResponseSerializer,
 )
 
 # 이메일 찾기 (나중에)
@@ -56,26 +47,16 @@ from apps.accounts.serializers.verification_serializers import (
 __all__ = [
     # Base
     "BaseMixin",
-    # 인증코드 발송/확인
-    "EmailSendCodeSerializer",
-    "EmailVerifyCodeSerializer",
-    "EmailVerifyResponseSerializer",
-    "PhoneSendCodeSerializer",
-    "PhoneVerifyCodeSerializer",
-    "PhoneVerifyResponseSerializer",
-    # 회원가입/로그인/로그아웃
-    "EmailCheckSerializer",
-    "EmailCheckResponseSerializer",
-    "NicknameCheckSerializer",
-    "NicknameCheckResponseSerializer",
-    "SignupSerializer",
-    "SignupResponseSerializer",
-    "LoginSerializer",
+    # 이메일 인증코드 발송/확인
+    "ResetPasswordEmailSendCodeRequestSerializer",
+    "SignupEmailSendCodeRequestSerializer",
+    "EmailSendCodeResponseSerializer",
+    "EmailConfirmCodeRequestSerializer",
+    "EmailConfirmCodeResponseSerializer",
+    # 로그인
+    "TokenPayloadSerializer",
+    "LoginRequestSerializer",
     "LoginResponseSerializer",
-    "TokenRefreshSerializer",
-    "TokenRefreshResponseSerializer",
-    "LogoutSerializer",
-    "LogoutResponseSerializer",
     # 소셜 로그인
     "KakaoOAuthSerializer",
     "GoogleOAuthSerializer",
