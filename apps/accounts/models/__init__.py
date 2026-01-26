@@ -1,8 +1,8 @@
 # 외부에서 account.models.User 형태로 사용하기 위한 import
 from apps.accounts.models.attendance_record_model import AttendanceRecord
-from apps.accounts.models.verification_model import Verification
 from apps.accounts.models.password_reset_model import PasswordResetRequest
 from apps.accounts.models.users import OAuthAccount, User, UserManager
+from apps.accounts.models.verification_model import Verification
 
 __all__ = [
     # attendance_record
