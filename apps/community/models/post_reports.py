@@ -1,26 +1,22 @@
 from django.db import models
 
 from apps.core.enumeration.community_enumerations import ReportStatus
+from apps.core.models import BaseReport
 
 
-class PostReport(models.Model):
+class PostReport(BaseReport):
     post = models.ForeignKey(
-        "Post", on_delete=models.CASCADE, related_name="reports"
+        "Post",
+        on_delete=models.CASCADE,
+        related_name="reports",
     )  # 게시글 id
-    reporter = models.ForeignKey(
-        "accounts.User", on_delete=models.CASCADE, related_name="reports"
-    )  # 차단 대상 id
-    reason = models.CharField(max_length=100)  # 차단 사유
-    created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=10, choices=ReportStatus.choices, default=ReportStatus.PENDING
-    )  # 징행 상태
 
     class Meta:
         db_table = "post_reports"
         constraints = [
             models.UniqueConstraint(
-                fields=["post", "reporter"], name="unique_post_reports_post_reporter"
+                fields=["post", "reporter"],
+                name="unique_post_reports_post_reporter",
             )
         ]
         indexes = [
