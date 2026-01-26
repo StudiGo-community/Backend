@@ -1,14 +1,13 @@
 from django.db import models
 
 
-class EmailVerificationPurpose(models.TextChoices):
-    SIGNUP = "SIGNUP"
-    PASSWORD_RESET = "PASSWORD_RESET"
-    # EMAIL_CHANGE = "EMAIL_CHANGE"
+class VerificationStatus(models.TextChoices):
+    EMAIL = "EMAIL", "email"
+    PHONE = "PHONE", "phone"
 
 
-class PhoneVerificationPurpose(models.TextChoices):
-    SIGNUP = "SIGNUP"
-    PASSWORD_RESET = "PASSWORD_RESET"
-    EMAIL_FINDING = "EMAIL_FINDING"
-    # PHONE_CHANGE = "PHONE_CHANGE"
+class VerificationPurpose(models.TextChoices):
+    EMAIL_SIGNUP = "EMAIL_SIGNUP", "email_signup"
+    EMAIL_PASSWORD_RESET = "EMAIL_PASSWORD_RESET", "email_password_reset"
+    PHONE_SIGNUP = "PHONE_SIGNUP", "phone_signup"
+    PHONE_PASSWORD_RESET = "PHONE_PASSWORD_RESET", "phone_password_reset"
