@@ -26,11 +26,11 @@ class Verification(VerificationTimeStampedModel):
                 name="ck_verification_purpose_match_status",
                 check=(
                     (
-                        Q(channel=VerificationStatus.EMAIL)
+                        Q(status=VerificationStatus.EMAIL)
                         & Q(purpose_startswith="EMAIL_")
                     )
                     | (
-                        Q(channel=VerificationStatus.PHONE)
+                        Q(status=VerificationStatus.PHONE)
                         & Q(purpose_startswith="PHONE_")
                     )
                 ),
