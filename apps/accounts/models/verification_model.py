@@ -14,7 +14,7 @@ class Verification(VerificationTimeStampedModel):
         choices=VerificationStatus.choices,
     )
     target = models.CharField(
-        max_length=150, help_text="EMAIL일 시 email 입력, PHONE일 세 phone 저장"
+        max_length=150, help_text="EMAIL일 시 email 입력, PHONE일 시 phone 저장"
     )
     code = models.CharField(max_length=255)
     purpose = models.CharField(choices=VerificationPurpose.choices)
@@ -27,11 +27,11 @@ class Verification(VerificationTimeStampedModel):
                 check=(
                     (
                         Q(status=VerificationStatus.EMAIL)
-                        & Q(purpose_startswith="EMAIL_")
+                        & Q(purpose__startswith="EMAIL_")
                     )
                     | (
                         Q(status=VerificationStatus.PHONE)
-                        & Q(purpose_startswith="PHONE_")
+                        & Q(purpose__startswith="PHONE_")
                     )
                 ),
             )
