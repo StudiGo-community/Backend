@@ -1,11 +1,19 @@
 # Base
 # 회원가입/로그인/로그아웃
-from apps.accounts.serializers.base import BaseMixin
-
 from apps.accounts.serializers.auth_serializers import (
-    TokenPayloadSerializer,
     LoginRequestSerializer,
     LoginResponseSerializer,
+    TokenPayloadSerializer,
+)
+from apps.accounts.serializers.base import BaseMixin
+
+# 이메일 인증코드 발송/확인
+from apps.accounts.serializers.email_verification_serializers import (
+    EmailConfirmCodeRequestSerializer,
+    EmailConfirmCodeResponseSerializer,
+    EmailSendCodeResponseSerializer,
+    ResetPasswordEmailSendCodeRequestSerializer,
+    SignupEmailSendCodeRequestSerializer,
 )
 
 # 소셜 로그인
@@ -29,15 +37,6 @@ from apps.accounts.serializers.password_serializers import (
     PasswordResetSerializer,
     PasswordResetVerifyCodeResponseSerializer,
     PasswordResetVerifyCodeSerializer,
-)
-
-# 이메일 인증코드 발송/확인
-from apps.accounts.serializers.email_verification_serializers import (
-    ResetPasswordEmailSendCodeRequestSerializer,
-    SignupEmailSendCodeRequestSerializer,
-    EmailSendCodeResponseSerializer,
-    EmailConfirmCodeRequestSerializer,
-    EmailConfirmCodeResponseSerializer,
 )
 
 # 이메일 찾기 (나중에)
