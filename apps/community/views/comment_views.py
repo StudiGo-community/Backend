@@ -175,7 +175,7 @@ class CommentListAPIView(APIView):
     @extend_schema(
         tags=["커뮤니티"],
         operation_id="comments_list",
-        summary="게시글 댓글 조회",
+        summary="댓글 조회",
         description="특정 게시글에 달린 댓글을 페이지네이션 방식으로 조회합니다.",
         parameters=[
             OpenApiParameter(

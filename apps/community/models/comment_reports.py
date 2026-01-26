@@ -1,20 +1,15 @@
 from django.db import models
 
 from apps.core.enumeration.community_enumerations import ReportStatus
+from apps.core.models import BaseReport
 
 
-class CommentReport(models.Model):
+class CommentReport(BaseReport):
     comment = models.ForeignKey(
-        "Comment", on_delete=models.CASCADE, related_name="reports"
+        "Comment",
+        on_delete=models.CASCADE,
+        related_name="comment_reports",
     )
-    reporter = models.ForeignKey(
-        "accounts.User", on_delete=models.CASCADE, related_name="reports"
-    )
-    reason = models.CharField(max_length=100)
-    status = models.CharField(
-        max_length=10, default=ReportStatus.PENDING, choices=ReportStatus.choices
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "comment_reports"
