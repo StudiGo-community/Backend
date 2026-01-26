@@ -1,4 +1,5 @@
 from django.db import models
+from apps.core.enumeration.community_enumerations import ReportStatus
 
 
 class TimeStampedModel(models.Model):
@@ -30,6 +31,23 @@ class VerificationTimeStampedModel(models.Model):
     expires_at = models.DateTimeField(null=True, blank=True)
     verified_at = models.DateTimeField(null=True, blank=True)
     used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+class BaseReport(models.Model):
+    reporter = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.CASCADE,
+        related_name="reports",
+    )
+    reason = models.CharField(max_length=100)
+    status = models.CharField(
+        max_length=10,
+        choices=ReportStatus.choices,
+        default=ReportStatus.PENDING,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
