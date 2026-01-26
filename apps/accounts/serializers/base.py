@@ -122,11 +122,21 @@ class BaseMixin:
         return value
 
     def validate_email_code_format(self, value: str) -> str:
-        if not value.isalnum():
-            raise serializers.ValidationError("인증 코드 형식이 올바르지 않습니다.")
-        return value.upper()
+        code = value.strip()
+
+        if len(code) != 8:
+            raise serializers.ValidationError("이메일 인증 코드는 8자리여야 합니다.")
+        if not code.isalnum():
+            raise serializers.ValidationError(
+                "인증 코드 형식이 올바르지 않습니다: 영문/숫자만 사용"
+            )
+        return code.upper()
 
     def validate_phone_code_format(self, value: str) -> str:
+        code = value.strip()
+
+        if len(code) != 6:
+            raise serializers.ValidationError("휴대폰 인증 번호는 6자리여야 합니다.")
         if not value.isdigit():
             raise serializers.ValidationError("인증 번호는 숫자만 입력해주세요.")
         return value
