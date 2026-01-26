@@ -9,7 +9,7 @@ def translate_ko_to_es(text: str) -> str:
     """
     try:
         result = translator.translate(text, src="ko", dest="es")
-        return result.text
+        return str(result.text)
     except Exception as e:
-        print(e)# 실패케이스 임시처리
+        print(e)  # 실패케이스 임시처리
         return text

@@ -1,11 +1,11 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from drf_spectacular.utils import extend_schema, OpenApiResponse
-
-from apps.daily.services.daily_quotes_services import DailyQuoteService
 from apps.daily.serializers.daily_quotes_serializers import DailyQuoteResponseSerializer
+from apps.daily.services.daily_quotes_services import DailyQuoteService
 
 
 class DailyQuoteView(APIView):
@@ -18,6 +18,6 @@ class DailyQuoteView(APIView):
             200: DailyQuoteResponseSerializer,
         },
     )
-    def get(self, request):
+    def get(self, request: Request) -> Response:
         data = DailyQuoteService.get_today_daily_quote()
         return Response(data, status=status.HTTP_200_OK)
