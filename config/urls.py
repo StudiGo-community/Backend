@@ -30,6 +30,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.community.urls")),
     path("api/v1/", include("apps.chat.api.urls")),
+    path("api/v1/", include("apps.daily.urls")),
 ]
 
 if settings.DEBUG:
