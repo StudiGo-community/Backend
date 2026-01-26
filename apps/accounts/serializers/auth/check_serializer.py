@@ -6,6 +6,9 @@ from apps.accounts.serializers.base import BaseMixin
 
 """
 [중복확인]
+AvailabilityCheckResponseSerializer
+중복 확인 응답 공통 상속 시리얼라이저
+
 EmailCheckSerializer
 이메일 중복 확인
     POST /api/v1/auth/check-email
@@ -22,13 +25,17 @@ NicknameCheckResponseSerializer
 """
 
 
+class AvailabilityCheckResponseSerializer(serializers.Serializer[Any]):
+    available = serializers.BooleanField()
+    message = serializers.CharField()
+
+
 class EmailCheckSerializer(serializers.Serializer[Any], BaseMixin):
     email = BaseMixin.get_email_field()
 
 
-class EmailCheckResponseSerializer(serializers.Serializer[Any]):
-    available = serializers.BooleanField()
-    message = serializers.CharField()
+class EmailCheckResponseSerializer(AvailabilityCheckResponseSerializer):
+    pass
 
 
 class NicknameCheckSerializer(serializers.Serializer[Any], BaseMixin):
@@ -38,6 +45,5 @@ class NicknameCheckSerializer(serializers.Serializer[Any], BaseMixin):
         return self.validate_nickname_format(value)
 
 
-class NicknameCheckResponseSerializer(serializers.Serializer[Any]):
-    available = serializers.BooleanField()
-    message = serializers.CharField()
+class NicknameCheckResponseSerializer(AvailabilityCheckResponseSerializer):
+    pass
