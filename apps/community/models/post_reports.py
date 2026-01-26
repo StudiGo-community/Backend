@@ -8,7 +8,7 @@ class PostReport(BaseReport):
     post = models.ForeignKey(
         "Post",
         on_delete=models.CASCADE,
-        related_name="reports",
+        related_name="post_reports",
     )  # 게시글 id
 
     class Meta:

@@ -8,7 +8,7 @@ class CommentReport(BaseReport):
     comment = models.ForeignKey(
         "Comment",
         on_delete=models.CASCADE,
-        related_name="reports",
+        related_name="comment_reports",
     )
 
     class Meta:

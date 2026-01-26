@@ -39,7 +39,6 @@ class BaseReport(models.Model):
     reporter = models.ForeignKey(
         "accounts.User",
         on_delete=models.CASCADE,
-        related_name="reports",
     )
     reason = models.CharField(max_length=100)
     status = models.CharField(
