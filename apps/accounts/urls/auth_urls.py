@@ -1,7 +1,7 @@
 from django.urls import URLPattern, URLResolver, path
 
 from apps.accounts.views.auth_views import LoginView, LogoutAPIView, TokenRefreshAPIView
-from apps.accounts.views.check_email_views import CheckEmailView
+from apps.accounts.views.check_views import CheckEmailView, CheckNicknameView
 from apps.accounts.views.email_verification_views import (
     ResetPasswordEmailConfirmCodeView,
     ResetPasswordEmailSendCodeView,
@@ -14,6 +14,9 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("auth/refresh", TokenRefreshAPIView.as_view(), name="auth_refresh"),
     path("auth/logout", LogoutAPIView.as_view(), name="auth_logout"),
     path("auth/check-email", CheckEmailView.as_view(), name="auth_check_email"),
+    path(
+        "auth/check-nickname", CheckNicknameView.as_view(), name="auth_check_nickname"
+    ),
     path(
         "auth/email-verification/signup/send-code",
         SignupEmailSendCodeView.as_view(),
