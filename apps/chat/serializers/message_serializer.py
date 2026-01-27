@@ -1,6 +1,8 @@
 # 메세지 조회 / 삭제
 from __future__ import annotations
 
+from typing import Any
+
 from rest_framework import serializers
 
 from apps.chat.models.message import Message
@@ -20,3 +22,12 @@ class MessageListSerializer(serializers.ModelSerializer[Message]):
             "status",
             "created_at",
         ]
+
+class MessageCreateSerializer(serializers.Serializer[Any]):
+    content = serializers.CharField()
+
+class MessageDetailSerializer(MessageListSerializer):
+    class Meta:
+        model = Message
+        fields = "__all__"
+        read_only_fields = fields
