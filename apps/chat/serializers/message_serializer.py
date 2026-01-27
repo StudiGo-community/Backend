@@ -26,8 +26,8 @@ class MessageListSerializer(serializers.ModelSerializer[Message]):
 class MessageCreateSerializer(serializers.Serializer[Any]):
     content = serializers.CharField()
 
-class MessageDetailSerializer(MessageListSerializer):
-    class Meta:
-        model = Message
-        fields = "__all__"
-        read_only_fields = fields
+class MessageDetailSerializer(serializers.Serializer[Any]):
+    count = serializers.IntegerField()
+    page = serializers.IntegerField()
+    size = serializers.IntegerField()
+    results = MessageListSerializer(many=True)

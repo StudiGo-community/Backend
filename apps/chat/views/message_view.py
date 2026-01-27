@@ -15,17 +15,17 @@ from rest_framework.views import APIView
 from apps.accounts.models import User
 from apps.chat.models.room import Room
 from apps.chat.selectors.message_selector import get_room_messages
-from apps.chat.serializers.message_serializer import MessageListSerializer
+from apps.chat.serializers.message_serializer import MessageListSerializer, MessageCreateSerializer, \
+    MessageDetailSerializer
 from apps.chat.services.message_service import assert_can_read_room_messages, send_message
 
 
 class MessageListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(summary="채팅방 메세지 조회", tags=["채팅"])
+    @extend_schema(summary="채팅방 메세지 조회", tags=["채팅"],responses=MessageListSerializer)
     def get(self, request: Request, room_id: int) -> Response:
         room = get_object_or_404(Room, pk=room_id)
-
         user = cast(User, request.user)
 
         try:
@@ -54,12 +54,16 @@ class MessageListAPIView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    @extend_schema(summary="채팅방 메세지 전송", tags=["채팅"])
+    @extend_schema(
+        summary="채팅방 메세지 전송", tags=["채팅"],
+        request=MessageCreateSerializer,
+        responses=MessageDetailSerializer,
+    )
     def post(self, requeat: Request, room_id: int) -> Response:
         room = get_object_or_404(Room, pk=room_id)
         user = cast(User,requeat.user)
 
-        serializer = MessageListSerializer(data=requeat.data)
+        serializer = MessageCreateSerializer(data=requeat.data)
         serializer.is_valid(raise_exception=True)
 
         try:
