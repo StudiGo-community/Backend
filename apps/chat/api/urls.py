@@ -1,5 +1,6 @@
 from django.urls import path
 
+from apps.chat.views.membership_view import ChatRoomJoinAPIView, ChatRoomExitAPIView
 from apps.chat.views.room_view import RoomDetailAPIView, RoomListAPIView
 
 urlpatterns = [
@@ -9,4 +10,7 @@ urlpatterns = [
         RoomDetailAPIView.as_view(),
         name="chat-room-detail",
     ),
+    path("chat/<int:room_id>/", ChatRoomJoinAPIView.as_view(), name="chat-room-join"),
+    path("chat/<int:room_id>/exit",ChatRoomExitAPIView.as_view(),name="chat-room-exit")
+
 ]
