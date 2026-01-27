@@ -1,8 +1,8 @@
 # 메시지 저장/삭제(관리자), last_message_at 갱신
 from __future__ import annotations
 
-from django.utils import timezone
 from django.db.models import Q
+from django.utils import timezone
 
 from apps.accounts.models.users import User
 from apps.chat.models.bans import Bans
@@ -12,11 +12,12 @@ from apps.chat.models.room import Room
 
 def _is_banned(*, user: User, room: Room) -> bool:
     now = timezone.now()
-    return Bans.objects.filter(user=user, is_active=True).filter(
-        Q(room__isnull=True) | Q(room=room)
-    ).filter(
-        Q(ends_at__isnull=True) | Q(ends_at__gt=now)
-    ).exists()
+    return (
+        Bans.objects.filter(user=user, is_active=True)
+        .filter(Q(room__isnull=True) | Q(room=room))
+        .filter(Q(ends_at__isnull=True) | Q(ends_at__gt=now))
+        .exists()
+    )
 
 
 def assert_can_read_room_messages(*, user: User, room: Room) -> None:
