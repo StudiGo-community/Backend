@@ -2,7 +2,6 @@ import re
 
 from django.core.exceptions import ValidationError
 
-
 NICK_RE = re.compile(r"^[A-Za-z0-9가-힣_.]{2,20}$")
 RESERVED = {
     "admin",
@@ -28,8 +27,13 @@ KOR_BANNED_WORDS = {
     "꺼져",
 }
 EN_BANNED = {
-    "fuck", "shit", "bitch", "asshole", "bastard",
-    "nigger", "faggot",
+    "fuck",
+    "shit",
+    "bitch",
+    "asshole",
+    "bastard",
+    "nigger",
+    "faggot",
 }
 
 _ASCII_RE = re.compile(r"[A-Za-z]")  # 영어 포함 여부 판단
