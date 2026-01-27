@@ -8,6 +8,7 @@ from apps.accounts.views.email_verification_views import (
     SignupEmailConfirmCodeView,
     SignupEmailSendCodeView,
 )
+from apps.accounts.views.signup_views import EmailSignupView
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("auth/login", LoginView.as_view(), name="auth_login"),
@@ -37,4 +38,5 @@ urlpatterns: list[URLPattern | URLResolver] = [
         ResetPasswordEmailConfirmCodeView.as_view(),
         name="email_verification_reset_password_confirm_code",
     ),
+    path("auth/signup/email", EmailSignupView.as_view(), name="auth_signup_email"),
 ]
