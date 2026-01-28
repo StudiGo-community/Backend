@@ -3,9 +3,6 @@ from django.db import models
 from apps.core.models import TimeStampedModel
 
 
-
-
-
 class Message(TimeStampedModel):
     class Status(models.TextChoices):
         SENT = "SENT"

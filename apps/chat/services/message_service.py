@@ -38,7 +38,7 @@ def assert_can_read_room_messages(*, user: User, room: Room) -> None:
         raise PermissionError("채팅방에 입장한 상태에서만 메시지를 조회할 수 있습니다.")
 
 
-def _now() -> datetime :
+def _now() -> datetime:
     return timezone.now()
 
 
@@ -59,6 +59,7 @@ def _assert_can_send_message(*, user: User, room: Room) -> None:
     if membership is None:
         raise PermissionError("채팅방에 입장한 사용자만 메세지를 보낼 수 있습니다")
 
+
 @db_transaction.atomic
 def send_message(*, user: User, room: Room, content: str) -> Message:
     membership = get_active_membership(user=user, room=room)
@@ -66,10 +67,7 @@ def send_message(*, user: User, room: Room, content: str) -> Message:
         raise PermissionError("채팅방에 입장한 사용자만 메세지를 보낼 수 있습니다")
 
     msg = Message.objects.create(
-        sender=membership,
-        room=room,
-        content=content,
-        status=Message.Status.SENT
+        sender=membership, room=room, content=content, status=Message.Status.SENT
     )
 
     Room.objects.filter(id=room.id).update(last_message_at=_now())

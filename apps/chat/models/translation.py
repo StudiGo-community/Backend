@@ -10,7 +10,9 @@ class Language(models.TextChoices):
 
 class Translation(TimeStampedModel):
 
-    message = models.ForeignKey("Message", on_delete=models.CASCADE, related_name="translations")  # 번역할 메세지 id
+    message = models.ForeignKey(
+        "Message", on_delete=models.CASCADE, related_name="translations"
+    )  # 번역할 메세지 id
     target_language = models.CharField(
         choices=Language, default=Language.KO
     )  # 번역할 언어 (ko or es)

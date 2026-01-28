@@ -4,12 +4,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import AnonymousUser
-from django.utils import timezone
-
-from asgiref.sync import sync_to_async
 from django.db import transaction
+from django.utils import timezone
 
 from apps.chat.models import Membership, Room
 
@@ -60,7 +59,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if hasattr(self, "group_name"):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
-    async def receive(self, text_data: str | None = None, bytes_data: bytes | None = None) -> None:
+    async def receive(
+        self, text_data: str | None = None, bytes_data: bytes | None = None
+    ) -> None:
         user = self.scope["user"]
         if not user.is_authenticated:
             await self.close(code=4001)

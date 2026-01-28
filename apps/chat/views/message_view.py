@@ -5,7 +5,7 @@ from typing import cast
 
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -16,9 +16,9 @@ from apps.accounts.models import User
 from apps.chat.models.room import Room
 from apps.chat.selectors.message_selector import get_room_messages
 from apps.chat.serializers.message_serializer import (
-    MessageListSerializer,
     MessageCreateSerializer,
     MessageDetailSerializer,
+    MessageListSerializer,
 )
 from apps.chat.services.message_service import (
     assert_can_read_room_messages,
@@ -33,8 +33,12 @@ class MessageListAPIView(APIView):
         summary="채팅방 메세지 조회",
         tags=["채팅"],
         parameters=[
-            OpenApiParameter(name="page", required=False, type=int, description="페이지 번호"),
-            OpenApiParameter(name="size", required=False, type=int, description="페이지 크기"),
+            OpenApiParameter(
+                name="page", required=False, type=int, description="페이지 번호"
+            ),
+            OpenApiParameter(
+                name="size", required=False, type=int, description="페이지 크기"
+            ),
         ],
     )
     def get(self, request: Request, room_id: int) -> Response:
@@ -59,9 +63,9 @@ class MessageListAPIView(APIView):
         return Response(
             {
                 "room_id": room.id,
-            "messages": MessageListSerializer(items, many=True).data,
-            "next_cursor": next_cursor,
-            "has_more": has_more,
+                "messages": MessageListSerializer(items, many=True).data,
+                "next_cursor": next_cursor,
+                "has_more": has_more,
             },
             status=status.HTTP_200_OK,
         )

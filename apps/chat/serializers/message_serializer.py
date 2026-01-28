@@ -5,8 +5,8 @@ from typing import Any, Iterable
 
 from rest_framework import serializers
 
-from apps.chat.models.translation import Translation
 from apps.chat.models.message import Message
+from apps.chat.models.translation import Translation
 
 
 class SenderUserSerializer(serializers.Serializer[Any]):
@@ -28,7 +28,7 @@ class MessageListSerializer(serializers.Serializer[Any]):
 
     def _get_sender(self, obj: Message) -> dict[str, Any]:
         u = obj.sender.user
-        return{
+        return {
             "id": getattr(u, "id", None),
             "nickname": getattr(u, "nickname", None),
             "profile_image_url": getattr(u, "profile_image_url", None),

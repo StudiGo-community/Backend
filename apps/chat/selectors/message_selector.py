@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from django.db.models import QuerySet, Prefetch
+from django.db.models import Prefetch, QuerySet
 
 from apps.accounts.models import User
 from apps.chat.models import Membership, Translation
@@ -20,7 +20,9 @@ def get_room_messages(
         .prefetch_related(
             Prefetch(
                 "translations",
-                queryset=Translation.objects.only("message_id", "target_language", "translated_text"),
+                queryset=Translation.objects.only(
+                    "message_id", "target_language", "translated_text"
+                ),
             )
         )
         .order_by("-id")
@@ -30,6 +32,7 @@ def get_room_messages(
         qs = qs.filter(id__lt=cursor)
 
     return qs[: size + 1]
+
 
 def get_active_membership(*, user: User, room: Room) -> Optional[Membership]:
     return (
