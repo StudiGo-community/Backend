@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: AWS에서 키페어(near05-key) 선택
+  ExistingBucketName:
+    Type: String
+    Default: "studigo-dev-assets"
+    Description: (현재 템플릿에서는 사용 안 함 - IVS 제거됨)
+
+Resources:
+  # 고정 IP (Elastic IP)
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Tags:
+        - Key: Name
+          Value: studigo-static-ip
+
+  # 보안 그룹
+  MySG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH and FastAPI App
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 22, ToPort: 22, CidrIp: 0.0.0.0/0 }
+        - { IpProtocol: tcp, FromPort: 8000, ToPort: 8000, CidrIp: 0.0.0.0/0 }
+
+  # EC2 서버 (AMI ID 자동 조회 방식)
+  MyEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3a.medium
+      # 서울 리전의 최신 AL2023 이미지를 자동으로 찾아오도록 설정
+      ImageId: "{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64}}"
+      KeyName: !Ref KeyName
+      SecurityGroups: [!Ref MySG]
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          dnf update -y
+          dnf install -y docker docker-compose-plugin
+          systemctl start docker
+          systemctl enable docker
+          usermod -aG docker ec2-user
+          dd if=/dev/zero of=/swapfile bs=128M count=16
+          chmod 600 /swapfile
+          mkswap /swapfile
+          swapon /swapfile
+          echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
+
+  # 고정 IP 연결
+  EIPAssoc:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt MyEIP.AllocationId
+      InstanceId: !Ref MyEC2
+
+  # 이미지 저장소 (ECR)
+  MyECR:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: near05-api
+
+Outputs:
+  PublicIP:
+    Description: 고정 IP. GitHub Secret 'EC2_HOST'에 등록
+    Value: !Ref MyEIP
