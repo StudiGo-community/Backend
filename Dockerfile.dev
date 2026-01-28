@@ -1,3 +1,4 @@
+# 기존 도커파일(로컬용)
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
