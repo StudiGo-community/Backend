@@ -66,7 +66,7 @@ def send_message(*, user: User, room: Room, content: str) -> Message:
         raise PermissionError("채팅방에 입장한 사용자만 메세지를 보낼 수 있습니다")
 
     msg = Message.objects.create(
-        sender=user,
+        sender=membership,
         room=room,
         content=content,
         status=Message.Status.SENT

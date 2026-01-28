@@ -20,5 +20,4 @@ urlpatterns = [
         MessageListAPIView.as_view(),
         name="chat-message-list",
     ),
-    path("chat/<int:room_id>/messages", MessageListAPIView.as_view(), name="chat-message-list"),
 ]

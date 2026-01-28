@@ -3,20 +3,33 @@ from __future__ import annotations
 
 from typing import Optional
 
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Prefetch
 
 from apps.accounts.models import User
-from apps.chat.models import Membership
+from apps.chat.models import Membership, Translation
 from apps.chat.models.message import Message
 from apps.chat.models.room import Room
 
 
-def get_room_messages(*, room: Room) -> QuerySet[Message]:
-    return (
+def get_room_messages(
+    *, room: Room, cursor: int | None, size: int
+) -> QuerySet[Message]:
+    qs = (
         Message.objects.filter(room=room)
-        .select_related("sender", "room")
-        .order_by("-created_at")
+        .select_related("sender__user")
+        .prefetch_related(
+            Prefetch(
+                "translations",
+                queryset=Translation.objects.only("message_id", "target_language", "translated_text"),
+            )
+        )
+        .order_by("-id")
     )
+
+    if cursor is not None:
+        qs = qs.filter(id__lt=cursor)
+
+    return qs[: size + 1]
 
 def get_active_membership(*, user: User, room: Room) -> Optional[Membership]:
     return (
