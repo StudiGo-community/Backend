@@ -8,10 +8,17 @@ services:
     working_dir: /studigo
     #poetry run gunicorn --workers 3 --bind 0.0.0.0:8000 config.wsgi:application"
     command: >
-      sh -c "poetry install --no-interaction --no-ansi --no-root &&
-             poetry run python manage.py migrate &&
-             poetry run python manage.py collectstatic --noinput &&
+      sh -c "poetry run python manage.py migrate &&
              poetry run python manage.py runserver 0.0.0.0:8000"
+#     migrate: 별도로 실행하는 것 생각하기.
+
+#      주석처리 사유: 기존은 이슈 1) Dockerfile에서 poetry 설치
+#      2) --with dev 시 개발 의존성 포함되는데, 이미지 크기 증가 및 보안 위험 有
+#      3) migrate: 컨테이너 시작마다 실행 - 여러 컨테이너 동시 시작 시 위험.
+#      sh -c "poetry install --no-interaction --no-ansi --no-root &&
+#             poetry run python manage.py migrate &&
+#             poetry run python manage.py collectstatic --noinput &&
+#             poetry run python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:
