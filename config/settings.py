@@ -243,7 +243,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#실시간 채팅 웹소켓
+# 실시간 채팅 웹소켓
 ASGI_APPLICATION = "config.asgi.application"
 
 CHANNEL_LAYER = {
