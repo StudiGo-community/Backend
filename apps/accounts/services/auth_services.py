@@ -58,10 +58,7 @@ def logout(*, request: Request, response: Response) -> Response:
         return response
 
     # refresh blacklist
-    try:
-        token = RefreshToken(cast(Any, refresh_raw))
-        token.blacklist()
-    except Exception:
-        # 만료/위조/이미 블랙리스트 등은 그냥 성공 처리
-        return response
+    token = RefreshToken(cast(Any, refresh_raw))
+    token.blacklist()
+
     return response
