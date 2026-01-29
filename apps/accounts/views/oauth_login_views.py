@@ -20,7 +20,9 @@ class GoogleLoginView(APIView):
         tags=["유저"],
         operation_id="oauth_google_login",
         summary="소셜 로그인 시작 - 구글",
-        description=("스웨거로 테스트 불가" "/api/v1/oauth/google/login/ 접속해 테스트"),
+        description=(
+            "스웨거로 테스트 불가" "/api/v1/oauth/google/login/ 접속해 테스트"
+        ),
     )
     def get(self, request: Request) -> HttpResponse:
         state = secrets.token_urlsafe(24)
