@@ -22,8 +22,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker build --platform linux/amd64 \
-            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.DJANGO_CONTIANER_TAG }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.DJANGO_CONTIANER_TAG }}
+            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.DJANGO_CONTAINER_TAG }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.DJANGO_CONTAINER_TAG }}
 
       # 3. CI 환경 IP 가져오기
       - name: get GitHub Actions IP
