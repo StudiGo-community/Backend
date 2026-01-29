@@ -18,13 +18,8 @@ from apps.accounts.serializers.email_verification_serializers import (
 
 # 소셜 로그인
 from apps.accounts.serializers.oauth_serializers import (
-    GoogleOAuthSerializer,
-    GoogleProfileSerializer,
-    KakaoOAuthSerializer,
-    KakaoProfileSerializer,
-    OAuthResponseSerializer,
-    SocialSignupCompleteResponseSerializer,
-    SocialSignupCompleteSerializer,
+    SocialLinkConfirmRequestSerializer,
+    SocialSignupCompleteRequestSerializer,
 )
 
 # 비밀번호 찾기/재설정

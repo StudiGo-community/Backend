@@ -44,7 +44,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     ),
     path("auth/signup/email", EmailSignupView.as_view(), name="auth_signup_email"),
     path(
-        "users/withdrawal-token/password", WithdrawalIssueTokenByPasswordView.as_view()
+        "auth/withdrawal-token/password", WithdrawalIssueTokenByPasswordView.as_view()
     ),
     path("auth/withdrawal", WithdrawalView.as_view(), name="auth_withdrawal"),
 ]

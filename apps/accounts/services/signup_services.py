@@ -58,6 +58,7 @@ def signup_email(*, data: dict[str, Any]) -> SignupResult:
             name=data["name"],
             gender=data["gender"],
             birthday=data.get("birthday"),
+            agree_marketing=data["agree_marketing"],
         )
         user.set_password(data["password"])
         user.save()
