@@ -137,6 +137,7 @@ REST_FRAMEWORK = {
         "apps.accounts.authentication.CookieOrHeaderJWTAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "EXCEPTION_HANDLER": "apps.core.exceptions.custom_exception_handler",
 }
 
 REDIS_HOST = os.getenv("REDIS_HOST")
