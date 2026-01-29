@@ -7,7 +7,7 @@ from rest_framework import serializers
 from apps.daily.models.daily_question_submissions import DailyQuestionSubmission
 
 
-class DailyQuestionSubmissionCreateSerializer(serializers.Serializer):
+class DailyQuestionSubmissionCreateSerializer(serializers.Serializer[Any]):
     submitted_answer_text = serializers.CharField(max_length=100, allow_blank=False)
 
     def validate_submitted_answer_text(self, value: str) -> str:
@@ -17,7 +17,7 @@ class DailyQuestionSubmissionCreateSerializer(serializers.Serializer):
         return cleaned
 
 
-class DailyQuestionSubmissionResponseSerializer(serializers.ModelSerializer):
+class DailyQuestionSubmissionResponseSerializer(serializers.ModelSerializer[Any]):
     date = serializers.DateField(source="daily_question.question_date", read_only=True)
     explanation = serializers.CharField(
         source="daily_question.question.explanation", read_only=True

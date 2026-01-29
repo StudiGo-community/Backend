@@ -1,8 +1,10 @@
 from typing import List, Type
 
+from django.contrib.auth.models import AbstractBaseUser
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.authentication import BaseAuthentication
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -72,8 +74,12 @@ class DailyQuestionSubmissionTodayView(APIView):
         serializer.is_valid(raise_exception=True)
 
         try:
+            user = request.user
+            if not isinstance(user, AbstractBaseUser):
+                raise PermissionDenied("로그인이 필요합니다.")
+
             result = submit_today_question(
-                user=request.user,
+                user=user,
                 submitted_answer_text=serializer.validated_data[
                     "submitted_answer_text"
                 ],
