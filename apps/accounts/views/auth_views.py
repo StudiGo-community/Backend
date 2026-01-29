@@ -19,7 +19,7 @@ from apps.accounts.serializers.auth_serializers import (
     LoginResponseSerializer,
     TokenPayloadSerializer,
 )
-from apps.accounts.services.auth_services import authenticate_user, issue_tokens
+from apps.accounts.services.auth_services import authenticate_user, issue_tokens, logout
 from apps.accounts.services.login_throttle import (
     check_blocked,
     clear_login_failures,
@@ -208,27 +208,7 @@ class LogoutAPIView(APIView):
         },
     )
     def post(self, request: Request) -> Response:
-        refresh_raw: Optional[str] = request.COOKIES.get(
-            settings.AUTH_REFRESH_COOKIE_NAME
-        )
-
-        # 응답은 항상 쿠키 삭제
         response = Response(
             {"detail": "로그아웃되었습니다."}, status=status.HTTP_200_OK
         )
-        clear_refresh_cookie(response)
-        clear_access_cookie(response)
-
-        # refresh 없으면 “이미 로그아웃”으로 성공 처리
-        if not refresh_raw:
-            return response
-
-        # blacklist 가능하면 시도 (token_blacklist 앱이 켜져있어야 정상 동작)
-        try:
-            token = RefreshToken(cast(Any, refresh_raw))
-            token.blacklist()
-        except Exception:
-            # 만료/위조/이미 블랙리스트 등은 그냥 성공 처리
-            return response
-
-        return response
+        return logout(request=request, response=response)
