@@ -165,6 +165,9 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+# 로드밸런서에서 Https로 들어온 요청을 Http로 받는데, 다시 Https로 조정
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # access 쿠키 옵션
 AUTH_ACCESS_COOKIE_NAME = "access"
 AUTH_ACCESS_COOKIE_PATH = "/"
