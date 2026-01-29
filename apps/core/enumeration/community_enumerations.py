@@ -14,7 +14,6 @@ class PostCommentStatus(models.TextChoices):
 
 
 class PostCategory(models.TextChoices):
-    POPULAR = "POPULAR", "인기 게시판"
     RECRUIT = "RECRUIT", "모집 게시판"
     STUDY = "STUDY", "학습 게시판"
     FREE = "FREE", "자유 게시판"
