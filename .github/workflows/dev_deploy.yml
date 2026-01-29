@@ -20,16 +20,11 @@ jobs:
 
       # 2. Docker 이미지 빌드 & Push
       - name: Build and Push Docker Image
-        # 2-1. Django 컨테이너 빌드 및 푸시
-        # 2-2. nginx 컨테이너 빌드 및 푸시
         run: |
           docker build --platform linux/amd64 \
             -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.DJANGO_CONTIANER_TAG }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.DJANGO_CONTIANER_TAG }}
-          docker build --platform linux/amd64 \
-            -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.NGINX_CONTIANER_TAG }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{ secrets.NGINX_CONTIANER_TAG }}
-      
+
       # 3. CI 환경 IP 가져오기
       - name: get GitHub Actions IP
         id: ip
@@ -52,19 +47,21 @@ jobs:
           --cidr ${{ steps.ip.outputs.ipv4 }}/32
 
       # 6. SSH로 EC2에 배포
-      - name: Deploy to EC2 via SSH
-        env:
-          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
-        run: |
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
             cd ~/app
             
             cat > .env << 'ENVEOF'
             ${{ secrets.DJANGO_ENVS }}
             ENVEOF
             
-            docker compose up
+            docker compose up django -d --pull always --no-deps 
+            
             docker image prune -af
             
             echo "✅ Deployment completed!"

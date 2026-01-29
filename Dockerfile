@@ -29,7 +29,7 @@ COPY . .
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health/ || exit 1
 
-RUN chmod +x ./resource/scripts/entrypoint.sh
+RUN chmod +x ./resources/scripts/entrypoint.sh
 
 # 기본 실행 명령어 (* docker run 시 orverride 가능)
-CMD ["entrypoint.sh"]
+CMD ["./resources/scripts/entrypoint.sh"]
