@@ -25,12 +25,11 @@ RUN poetry install --no-interaction --no-ansi --no-root
 # 소스 코드 복사
 COPY . .
 
-# 포트 노출
-EXPOSE 8000
-
 # 헬스체크 추가
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health/ || exit 1
 
+RUN chmod +x ./resource/scripts/entrypoint.sh
+
 # 기본 실행 명령어 (* docker run 시 orverride 가능)
-CMD ["poetry","run","gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "config.wsgi:application"]
+CMD ["entrypoint.sh"]
