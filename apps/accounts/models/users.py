@@ -66,9 +66,6 @@ class OAuthAccount(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     provider = models.CharField(choices=SocialProviderChoices.choices, max_length=12)
     provider_user_id = models.CharField(max_length=255)
-    social_email = models.CharField(max_length=255)
-    access_token = models.CharField(max_length=255)
-    refresh_token = models.CharField(max_length=255)
 
     class Meta:
         db_table = "oauth_accounts"
