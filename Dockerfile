@@ -17,13 +17,13 @@ RUN pip install --no-cache-dir poetry
 RUN poetry config virtualenvs.create false
 
 # 의존성 먼저 복사 (캐시 활용)
-COPY pyproject.toml poetry.lock /studigo/
+COPY pyproject.toml poetry.lock ./
 
 # 프로덕션 의존성만 설치 (--with dev 제거)
-RUN poetry install --no-interaction --no-ansi --no-root --without dev
+RUN poetry install --no-interaction --no-ansi --no-root
 
 # 소스 코드 복사
-COPY . /studigo/
+COPY . .
 
 # 포트 노출
 EXPOSE 8000
@@ -33,4 +33,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health/ || exit 1
 
 # 기본 실행 명령어 (* docker run 시 orverride 가능)
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "config.wsgi:application"]
+CMD ["poetry","run","gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "config.wsgi:application"]
