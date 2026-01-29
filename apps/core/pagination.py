@@ -10,6 +10,7 @@ class PostsPagination(PageNumberPagination):
     page_size_query_param = None
 
     def get_paginated_response(self, data: Any) -> Response:
+        assert self.page is not None  # Mypy 해결용
         return Response(
             {
                 "count": self.page.paginator.count,
