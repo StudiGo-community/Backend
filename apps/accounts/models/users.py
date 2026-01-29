@@ -48,6 +48,7 @@ class User(AbstractBaseUser, TimeStampedModel):
     role = models.CharField(
         choices=UserRoleChoices.choices, max_length=20, default=UserRoleChoices.USER
     )
+    agree_marketing = models.BooleanField(default=False)
 
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

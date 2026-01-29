@@ -45,6 +45,7 @@ class EmailSignupView(APIView):
                 "name": result.user.name,
                 "gender": result.user.gender,
                 "birthday": result.user.birthday,
+                "agree_marketing": result.user.agree_marketing,
                 "created_at": result.user.created_at,
             }
         )

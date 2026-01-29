@@ -66,4 +66,5 @@ class SignupResponseSerializer(serializers.Serializer[Any]):
     name = serializers.CharField()
     gender = serializers.CharField()
     birthday = serializers.DateField(allow_null=True)
+    agree_marketing = serializers.BooleanField()
     created_at = serializers.DateTimeField()
