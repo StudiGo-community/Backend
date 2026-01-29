@@ -5,13 +5,13 @@ from apps.chat.views.message_view import MessageListAPIView
 from apps.chat.views.room_view import RoomDetailAPIView, RoomListAPIView
 
 urlpatterns = [
-    path("chat/rooms/", RoomListAPIView.as_view(), name="chat-room-list-create"),
+    path("chat/rooms", RoomListAPIView.as_view(), name="chat-room-list-create"),
     path(
-        "chat/rooms/<int:room_id>/",
+        "chat/rooms/<int:room_id>",
         RoomDetailAPIView.as_view(),
         name="chat-room-detail",
     ),
-    path("chat/<int:room_id>/", ChatRoomJoinAPIView.as_view(), name="chat-room-join"),
+    path("chat/<int:room_id>", ChatRoomJoinAPIView.as_view(), name="chat-room-join"),
     path(
         "chat/<int:room_id>/exit", ChatRoomExitAPIView.as_view(), name="chat-room-exit"
     ),
