@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-PASSWORD = "string"
+PASSWORD = "string135!"
 NAME = "테스트"
 BIRTHDAY = "2006-02-04"
 GENDER = "M"
@@ -47,18 +47,18 @@ def create_user(email, *, is_staff=False, is_superuser=False):
 created = 0
 
 # 1️⃣ 일반 유저
-emails = ["user@example.com"] + [f"user{i}@example.com" for i in range(1, 10)]
+emails = ["user@example.com"] + [f"user{i}@example.com" for i in range(11, 20)]
 for email in emails:
     if create_user(email):
         created += 1
 
 # 2️⃣ 스태프
-for i in range(1, 10):
+for i in range(11, 20):
     if create_user(f"staff{i}@example.com", is_staff=True):
         created += 1
 
 # 3️⃣ 관리자
-for i in range(1, 10):
+for i in range(11, 20):
     if create_user(
         f"admin{i}@example.com",
         is_staff=True,
