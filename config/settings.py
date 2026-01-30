@@ -34,6 +34,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "rest_framework_simplejwt",
     "channels",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
 LOCAL_APPS = [
