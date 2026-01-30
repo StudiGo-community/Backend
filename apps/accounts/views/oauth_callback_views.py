@@ -21,6 +21,19 @@ from apps.accounts.services.kakao_oauth_services import parse_profile as kakao_p
 from apps.accounts.utils.session_cache import consume_state
 
 from .oauth_handler import handle_social_callback
+from .oauth_login_views import ALLOWED_PURPOSE
+
+
+def _parse_purpose_from_state(state: str) -> str:
+    if ":" not in state:
+        return "login"
+
+    purpose, _ = state.split(":", 1)
+    purpose = purpose.strip().lower()
+
+    if purpose in ALLOWED_PURPOSE:
+        return purpose
+    return "login"
 
 
 class GoogleCallbackView(APIView):
@@ -61,6 +74,7 @@ class GoogleCallbackView(APIView):
             raise AuthenticationFailed({"detail": "소셜 인증 처리에 실패했습니다."})
 
         profile = google_parse(userinfo)
+        purpose = _parse_purpose_from_state(state)
 
         return handle_social_callback(
             provider="google",
@@ -68,6 +82,7 @@ class GoogleCallbackView(APIView):
             email=profile.get("email"),
             name=profile.get("name"),
             picture=profile.get("picture"),
+            purpose=purpose,
         )
 
 
@@ -109,6 +124,7 @@ class KakaoCallbackView(APIView):
             raise AuthenticationFailed({"detail": "소셜 인증 처리에 실패했습니다."})
 
         profile = kakao_parse(userinfo)
+        purpose = _parse_purpose_from_state(state)
 
         return handle_social_callback(
             provider="kakao",
@@ -116,4 +132,5 @@ class KakaoCallbackView(APIView):
             email=profile.get("email"),
             name=profile.get("name"),
             picture=profile.get("picture"),
+            purpose=purpose,
         )

@@ -11,6 +11,13 @@ from rest_framework.views import APIView
 
 from apps.accounts.utils.session_cache import save_state
 
+ALLOWED_PURPOSE = {"login", "withdrawal"}
+
+
+def _get_purpose(request: Request) -> str:
+    purpose = (request.query_params.get("purpose") or "login").strip().lower()
+    return purpose if purpose in ALLOWED_PURPOSE else "login"
+
 
 class GoogleLoginView(APIView):
     authentication_classes = []
@@ -25,7 +32,10 @@ class GoogleLoginView(APIView):
         ),
     )
     def get(self, request: Request) -> HttpResponse:
-        state = secrets.token_urlsafe(24)
+        purpose = _get_purpose(request)
+        nonce = secrets.token_urlsafe(24)
+
+        state = f"{purpose}:{nonce}"
         save_state("google", state)
 
         scope = "openid email profile"
@@ -51,7 +61,10 @@ class KakaoLoginView(APIView):
         description=("스웨거로 테스트 불가" "/api/v1/oauth/kakao/login/ 접속해 테스트"),
     )
     def get(self, request: Request) -> HttpResponse:
-        state = secrets.token_urlsafe(24)
+        purpose = _get_purpose(request)
+        nonce = secrets.token_urlsafe(24)
+
+        state = f"{purpose}:{nonce}"
         save_state("kakao", state)
 
         scope = "account_email profile_nickname profile_image"

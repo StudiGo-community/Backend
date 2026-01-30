@@ -16,6 +16,7 @@ from apps.accounts.utils.session_cache import (
     SocialSession,
     save_signup_session,
 )
+from apps.accounts.utils.verify_token import issue_verify_token
 
 
 class OAuthNextStatus:
@@ -34,9 +35,35 @@ def handle_social_callback(
     email: str | None,
     name: str | None,
     picture: str | None,
+    purpose: str = "login",
 ) -> Response:
     if not provider_user_id:
         raise AuthenticationFailed({"detail": "소셜 인증 처리에 실패했습니다."})
+
+    # 회원 탈퇴 전 소셜 재인증 - 기존 연동 계정인지 확인 후 토큰 발급
+    if purpose == "withdrawal":
+        oauth_account = (
+            OAuthAccount.objects.select_related("user")
+            .filter(provider=provider, provider_user_id=provider_user_id)
+            .first()
+        )
+        if not oauth_account:
+            raise AuthenticationFailed({"detail": "소셜 재인증에 실패했습니다."})
+
+        user = oauth_account.user
+        if user.pk is None:
+            raise AuthenticationFailed({"detail": "소셜 재인증에 실패했습니다."})
+
+        token = issue_verify_token(sub=str(user.pk), purpose="withdrawal")
+        ttl = int(getattr(settings, "VERIFY_TOKEN_EXPIRES_SECONDS", 600))
+        return Response(
+            {
+                "status": "WITHDRAWAL_VERIFIED",
+                "withdrawal_token": token,
+                "expires_in": ttl,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     # 이메일 필수
     if not email:

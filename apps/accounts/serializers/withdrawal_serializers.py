@@ -5,6 +5,14 @@ from typing import Any
 from rest_framework import serializers
 
 
+class WithdrawalTokenMethodResponseSerializer(serializers.Serializer[Any]):
+    next_step = serializers.ChoiceField(choices=["password", "social"])
+    providers = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+    )
+
+
 class WithdrawalSerializer(serializers.Serializer[Any]):
     withdrawal_token = serializers.CharField(
         write_only=True, required=False, allow_blank=False

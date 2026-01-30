@@ -11,6 +11,7 @@ from apps.accounts.views.email_verification_views import (
 from apps.accounts.views.signup_views import EmailSignupView
 from apps.accounts.views.withdrawal_views import (
     WithdrawalIssueTokenByPasswordView,
+    WithdrawalTokenMethodView,
     WithdrawalView,
 )
 
@@ -43,6 +44,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
         name="email_verification_reset_password_confirm_code",
     ),
     path("auth/signup/email", EmailSignupView.as_view(), name="auth_signup_email"),
+    path("auth/withdrawal-token", WithdrawalTokenMethodView.as_view()),
     path(
         "auth/withdrawal-token/password", WithdrawalIssueTokenByPasswordView.as_view()
     ),
