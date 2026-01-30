@@ -1,8 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-DJANGO_CONTAINER="django"
-
 read -p "이메일을 입력하세요: " EMAIL
 read -p "닉네임을 입력하세요(중복불가): " NICKNAME
 read -s -p "비밀번호를 입력하세요: " PASSWORD
@@ -13,7 +11,7 @@ BIRTHDAY="2006-02-04"
 GENDER="M"
 PHONE_NUMBER="01012345678"
 
-docker exec -i "$DJANGO_CONTAINER" python manage.py shell -c "
+python manage.py shell -c "
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
