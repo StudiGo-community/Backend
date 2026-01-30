@@ -96,5 +96,14 @@ class ChatConsumer(AsyncWebsocketConsumer):  # type: ignore[misc]
             }
         )
 
+    async def message_deleted(self, event: dict[str, Any]) -> None:
+        await self.send_json(
+            {
+                "type": "MESSAGE_DELETED",
+                "room_id": event["room_id"],
+                "message_id": event["message_id"],
+            }
+        )
+
     async def send_json(self, data: dict[str, Any]) -> None:
         await self.send(text_data=json.dumps(data, ensure_ascii=False))
