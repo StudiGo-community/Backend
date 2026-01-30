@@ -42,7 +42,7 @@ def _get_active_membership(*, user: User) -> Optional[Membership]:
     )
 
 
-@transaction.atomic
+@transaction.atomic  ## <- 이거 왜??
 def join_room(*, user: User, room: Room) -> Membership:
     """
     - 차단 사용자 입장 불가

@@ -33,6 +33,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "drf_spectacular",
     "rest_framework_simplejwt",
+    "channels",
 ]
 
 LOCAL_APPS = [
@@ -242,6 +243,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# 실시간 채팅 웹소켓
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYER = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {"hosts": [("redis", 6379)]},
+    }
+}
 # OAuth (Google/Kakao)
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
