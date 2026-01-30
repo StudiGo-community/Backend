@@ -32,11 +32,10 @@ from apps.accounts.serializers.oauth_serializers import (
 from apps.accounts.serializers.reset_password_serializers import (
     ResetPasswordRequestSerializer,
 )
-
 from apps.accounts.serializers.profile_serializers import (
-    UserProfileSerializer,
-    ProfileUpdateSerializer,
     PasswordChangeSerializer,
+    ProfileUpdateSerializer,
+    UserProfileSerializer,
 )
 
 # 이메일 찾기 (나중에)
