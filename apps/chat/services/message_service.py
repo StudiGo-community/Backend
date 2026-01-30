@@ -8,11 +8,12 @@ from django.db.models import Q
 from django.utils import timezone
 
 from apps.accounts.models.users import User
-from apps.chat.models import Message
+from apps.chat.models import Message, Translation
 from apps.chat.models.bans import Bans
 from apps.chat.models.membership import Membership
 from apps.chat.models.room import Room
 from apps.chat.selectors.message_selector import get_active_membership
+from apps.core.translation import translate_ko_to_es, translate_es_to_ko
 
 
 def _is_banned(*, user: User, room: Room) -> bool:
@@ -66,10 +67,39 @@ def send_message(*, user: User, room: Room, content: str) -> Message:
     if membership is None:
         raise PermissionError("채팅방에 입장한 사용자만 메세지를 보낼 수 있습니다")
 
+    # 메세지 보내기
     msg = Message.objects.create(
         sender=membership, room=room, content=content, status=Message.Status.SENT
     )
 
+    # 언어 판별
+    is_korean = any("가" <= ch <= "힣" for ch in content)
+
+    translations: list[Translation] = []
+
+    if is_korean:
+        es_text = translate_ko_to_es(content)
+        translations.append(
+            Translation(
+                message=msg,
+                target_language="es",
+                translated_text=es_text,
+            )
+        )
+    else:
+        ko_text = translate_es_to_ko(content)
+        translations.append(
+            Translation(
+                message=msg,
+                target_language="ko",
+                translated_text=ko_text,
+            )
+        )
+
+    # 번역 저장
+    Translation.objects.bulk_create(translations)
+
+    # 채팅방 갱신
     Room.objects.filter(id=room.id).update(last_message_at=_now())
 
     return msg
