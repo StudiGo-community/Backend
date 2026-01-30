@@ -33,6 +33,14 @@ from apps.accounts.serializers.reset_password_serializers import (
     ResetPasswordRequestSerializer,
 )
 
+from apps.accounts.serializers.profile_serializers import (
+    UserProfileSerializer,
+    ProfileUpdateSerializer,
+    PasswordChangeSerializer,
+)
+
+# 이메일 찾기 (나중에)
+
 # 프로필 (마이페이지) (나중에)
 
 __all__ = [
