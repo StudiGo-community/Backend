@@ -8,9 +8,6 @@ from apps.daily.models.daily_quotes import DailyQuote
 
 TODAY = date.today()
 YEAR = TODAY.year
-MONTH = TODAY.month
-
-last_day = calendar.monthrange(YEAR, MONTH)[1]
 
 QUOTES = [
     "꾸준함이 재능을 이긴다.",
@@ -27,23 +24,30 @@ QUOTES = [
 
 created_count = 0
 skipped_count = 0
+day_index = 0  # 연도 전체 기준 인덱스
 
-for day in range(1, last_day + 1):
-    quote_date = date(YEAR, MONTH, day)
+for month in range(1, 13):
+    last_day = calendar.monthrange(YEAR, month)[1]
 
-    if DailyQuote.objects.filter(quote_date=quote_date).exists():
-        skipped_count += 1
-        continue
+    for day in range(1, last_day + 1):
+        quote_date = date(YEAR, month, day)
 
-    content = QUOTES[(day - 1) % len(QUOTES)]
+        if DailyQuote.objects.filter(quote_date=quote_date).exists():
+            skipped_count += 1
+            day_index += 1
+            continue
 
-    DailyQuote.objects.create(
-        quote_date=quote_date,
-        content=content,
-        is_active=True,
-    )
-    created_count += 1
+        content = QUOTES[day_index % len(QUOTES)]
 
+        DailyQuote.objects.create(
+            quote_date=quote_date,
+            content=content,
+            is_active=True,
+        )
+        created_count += 1
+        day_index += 1
+
+print(f"📅 대상 연도: {YEAR}년")
 print(f"✅ 생성: {created_count}개")
 print(f"⏭️  건너뜀: {skipped_count}개")
 EOF

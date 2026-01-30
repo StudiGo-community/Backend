@@ -10,9 +10,6 @@ from apps.daily.models.questions import Question
 
 TODAY = date.today()
 YEAR = TODAY.year
-MONTH = TODAY.month
-
-last_day = calendar.monthrange(YEAR, MONTH)[1]
 
 # 활성화된 문제들만 가져오기
 questions = list(
@@ -28,21 +25,24 @@ question_cycle = itertools.cycle(questions)
 created_count = 0
 skipped_count = 0
 
-for day in range(1, last_day + 1):
-    question_date = date(YEAR, MONTH, day)
+for month in range(1, 13):
+    last_day = calendar.monthrange(YEAR, month)[1]
 
-    if DailyQuestion.objects.filter(question_date=question_date).exists():
-        skipped_count += 1
-        continue
+    for day in range(1, last_day + 1):
+        question_date = date(YEAR, month, day)
 
-    question = next(question_cycle)
+        if DailyQuestion.objects.filter(question_date=question_date).exists():
+            skipped_count += 1
+            continue
 
-    DailyQuestion.objects.create(
-        question=question,
-        question_date=question_date,
-        is_active=True,
-    )
-    created_count += 1
+        question = next(question_cycle)
+
+        DailyQuestion.objects.create(
+            question=question,
+            question_date=question_date,
+            is_active=True,
+        )
+        created_count += 1
 
 print(f"✅ 생성: {created_count}개")
 print(f"⏭️  건너뜀: {skipped_count}개")
