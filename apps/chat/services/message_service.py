@@ -13,7 +13,7 @@ from apps.chat.models.bans import Bans
 from apps.chat.models.membership import Membership
 from apps.chat.models.room import Room
 from apps.chat.selectors.message_selector import get_active_membership
-from apps.core.translation import translate_ko_to_es, translate_es_to_ko
+from apps.core.translation import translate_es_to_ko, translate_ko_to_es
 
 
 def _is_banned(*, user: User, room: Room) -> bool:
@@ -78,26 +78,23 @@ def send_message(*, user: User, room: Room, content: str) -> Message:
     translations: list[Translation] = []
 
     if is_korean:
+        ko_text = content
         es_text = translate_ko_to_es(content)
-        translations.append(
-            Translation(
-                message=msg,
-                target_language="es",
-                translated_text=es_text,
-            )
-        )
     else:
+        es_text = content
         ko_text = translate_es_to_ko(content)
-        translations.append(
-            Translation(
-                message=msg,
-                target_language="ko",
-                translated_text=ko_text,
-            )
-        )
 
     # 번역 저장
-    Translation.objects.bulk_create(translations)
+    Translation.objects.update_or_create(
+        message=msg,
+        target_language="ko",
+        defaults={"translated_text": ko_text},
+    )
+    Translation.objects.update_or_create(
+        message=msg,
+        target_language="es",
+        defaults={"translated_text": es_text},
+    )
 
     # 채팅방 갱신
     Room.objects.filter(id=room.id).update(last_message_at=_now())
