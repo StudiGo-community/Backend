@@ -1,13 +1,15 @@
-from datetime import date
-
-from typing import cast, Any
-from rest_framework.request import Request
 from dataclasses import dataclass
+from datetime import date, datetime
+from typing import Any, cast
+
 from django.db import IntegrityError
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.permissions import IsAuthenticated
-from apps.accounts.serializers.profile_serializers import UserProfileSerializer
+from rest_framework.request import Request
+
 from apps.accounts.models import User
+from apps.accounts.serializers.profile_serializers import UserProfileSerializer
+
 
 @dataclass
 class ServiceResult:
@@ -15,13 +17,14 @@ class ServiceResult:
     data: Any = None
     error: str | None = None
 
+
 class MyPageProfileService:
 
     USER_FIELDS: list[str] = [
         "id",
         "email",
-        'nickname',
-        'name',
+        "nickname",
+        "name",
         "profile_image_url",
         "gender",
         "birthday",
@@ -30,9 +33,10 @@ class MyPageProfileService:
         "created_at",
     ]
 
+    @staticmethod
     def get_authenticated_user(request: Request) -> User:
         user = request.user
-        if not getattr(user, 'is_authenticated', False):
+        if not getattr(user, "is_authenticated", False):
             raise NotAuthenticated()
         return cast(User, user)
 
@@ -44,10 +48,7 @@ class MyPageProfileService:
         }
 
     def update_profile(self, user: User, data: dict[str, Any]) -> ServiceResult:
-        updatable_fields = {
-            "nickname",
-            "phone"
-        }
+        updatable_fields = {"nickname", "phone"}
         update_data: dict[str, Any] = {}
         for k, v in data.items():
             if k in updatable_fields:
@@ -58,12 +59,13 @@ class MyPageProfileService:
 
         return ServiceResult(success=True, data=self._serialize_user(user))
 
-
     def _serialize_user(self, user: User) -> dict[str, Any]:
         data: dict[str, Any] = {}
         for field in self.USER_FIELDS:
             value = getattr(user, field, None)
-            if hasattr(value, "isoformat"):
-                value=value.isoformat()
-            data[field] = value
+
+            if isinstance(value, (datetime, date)):
+                data[field] = value.isoformat()
+            else:
+                data[field] = value
         return data

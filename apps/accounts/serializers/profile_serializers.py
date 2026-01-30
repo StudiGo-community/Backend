@@ -1,5 +1,7 @@
-from rest_framework import serializers
+from typing import Any
+
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 """
 UserProfileSerializer
@@ -17,7 +19,8 @@ PasswordChangeSerializer
 
 User = get_user_model()
 
-class UserProfileSerializer(serializers.ModelSerializer):
+
+class UserProfileSerializer(serializers.ModelSerializer[Any]):
     email = serializers.EmailField()
 
     class Meta:
@@ -37,11 +40,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class ProfileUpdateSerializer(serializers.Serializer):
+class ProfileUpdateSerializer(serializers.Serializer[Any]):
     nickname = serializers.CharField(max_length=10, required=False)
-    image = serializers.ImageField() # 이미지 이거 맞던가?
+    image = serializers.ImageField()  # 이미지 이거 맞던가?
 
-class PasswordChangeSerializer(serializers.Serializer):
+
+class PasswordChangeSerializer(serializers.Serializer[Any]):
     current_password = serializers.CharField(write_only=True)
     new_password = serializers.CharField(write_only=True)
     new_password_confirm = serializers.CharField(write_only=True)
