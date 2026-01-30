@@ -1,8 +1,9 @@
 # apps/chat/serializers/message_serializer.py
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 
+from django.db.models import QuerySet
 from rest_framework import serializers
 
 from apps.chat.models.message import Message
@@ -26,25 +27,17 @@ class MessageListSerializer(serializers.Serializer[Any]):
     status = serializers.CharField()
     created_at = serializers.DateTimeField()
 
-    def _get_sender(self, obj: Message) -> dict[str, Any]:
-        u = obj.sender.user
-        return {
-            "id": getattr(u, "id", None),
-            "nickname": getattr(u, "nickname", None),
-            "profile_image_url": getattr(u, "profile_image_url", None),
-        }
-
     def _get_translations(self, obj: Message) -> Iterable[Translation]:
 
         # 1) related_name="translations" 케이스
         rel = getattr(obj, "translations", None)
         if rel is not None and hasattr(rel, "all"):
-            return rel.all()
+            return cast(QuerySet[Translation], rel.all())
 
         # 2) related_name 지정 안 한 기본 케이스
         rel2 = getattr(obj, "translation_set", None)
         if rel2 is not None and hasattr(rel2, "all"):
-            return rel2.all()
+            return cast(QuerySet[Translation], rel2.all())
 
         return []
 

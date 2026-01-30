@@ -7,10 +7,9 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import AnonymousUser
-from django.db import transaction
 from django.utils import timezone
 
-from apps.chat.models import Membership, Room
+from apps.chat.models import Membership
 
 
 @sync_to_async
@@ -22,7 +21,7 @@ def _has_active_membership(user_id: int, room_id: int) -> bool:
     ).exists()
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):  # type: ignore[misc]
     async def connect(self) -> None:
         user = self.scope.get("user")
 
