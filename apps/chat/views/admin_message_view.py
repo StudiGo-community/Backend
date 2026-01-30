@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import cast
 
-from drf_spectacular.utils import extend_schema, OpenApiResponse
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -26,14 +26,15 @@ class AdminMessageDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        summary="메세지 삭제(관리자)", tags=["채팅"],
+        summary="메세지 삭제(관리자)",
+        tags=["채팅"],
         responses={
             200: OpenApiResponse(description="메시지가 삭제되었습니다."),
             403: OpenApiResponse(description="관리자 권한이 필요합니다."),
             404: OpenApiResponse(description="메세지를 찾을 수 없습니다."),
-        }
+        },
     )
-    def delete(self, request: Request, room_id:int, message_id: int) -> Response:
+    def delete(self, request: Request, room_id: int, message_id: int) -> Response:
         admin = cast(User, request.user)
 
         if not _is_admin(admin):
@@ -42,7 +43,7 @@ class AdminMessageDeleteAPIView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        admin_delete_message(admin=admin, room_id=room_id,message_id=message_id)
+        admin_delete_message(admin=admin, room_id=room_id, message_id=message_id)
 
         return Response(
             {"message": "메시지가 삭제되었습니다."},

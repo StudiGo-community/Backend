@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from typing import Any
+
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
 
-def broadcast_room_event(*, room_id: int, event: dict) -> None:
+def broadcast_room_event(*, room_id: int, event: dict[str, Any]) -> None:
     """
     REST/서비스에서 호출해도 500 안 나게 '안전하게' WS 브로드캐스트.
     """
