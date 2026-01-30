@@ -23,6 +23,7 @@ class RoomListAPIView(APIView):
             RoomSerializer(rooms, many=True).data, status=status.HTTP_200_OK
         )
 
+
 class RoomDetailAPIView(APIView):
     @extend_schema(summary="채팅방 디테일", tags=["채팅"])
     def get(self, request: Request, room_id: int) -> Response:
