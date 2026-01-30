@@ -12,16 +12,49 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts.models import OAuthAccount
 from apps.accounts.serializers.withdrawal_serializers import (
     WithdrawalIssueTokenByPasswordSerializer,
     WithdrawalIssueTokenResponseSerializer,
     WithdrawalSerializer,
+    WithdrawalTokenMethodResponseSerializer,
 )
 from apps.accounts.services.withdrawal_services import withdraw_user
 from apps.accounts.utils.verify_token import issue_verify_token
 
 if TYPE_CHECKING:
     from apps.accounts.models import User
+
+
+class WithdrawalTokenMethodView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        tags=["유저"],
+        summary="회원탈퇴 인증 토큰 발급 방식 판단",
+        responses={200: WithdrawalTokenMethodResponseSerializer},
+    )
+    def get(self, request: Request) -> Response:
+        user = cast("User", request.user)
+
+        # 이메일/비밀번호 가입 이력 있음
+        if user.has_usable_password():
+            return Response({"next_step": "password"}, status=status.HTTP_200_OK)
+
+        # 소셜-only(= usable password 없음)
+        providers = list(
+            OAuthAccount.objects.filter(user=user)
+            .values_list("provider", flat=True)
+            .distinct()
+        )
+
+        if not providers:
+            raise ValidationError({"detail": "탈퇴 인증 방식을 확인할 수 없습니다."})
+
+        return Response(
+            {"next_step": "social", "providers": providers},
+            status=status.HTTP_200_OK,
+        )
 
 
 class WithdrawalIssueTokenByPasswordView(APIView):
