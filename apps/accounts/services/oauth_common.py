@@ -1,17 +1,9 @@
 from __future__ import annotations
 
-import re
 from typing import Any
 
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
-
-PHONE_RE = re.compile(r"\D+")
-
-
-def normalize_phone(phone: str) -> str:
-    # 숫자만 남기기 (ex: 010-1234-5678 -> 01012345678)
-    return PHONE_RE.sub("", phone or "").strip()
 
 
 def ensure_phone_not_exists(phone: str) -> None:
