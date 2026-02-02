@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 from apps.accounts.models import User
 from apps.chat.models.message import Message
-from apps.chat.serializers.message_report_serializer import (
+from apps.chat.serializers.message_report import (
     MessageReportCreateResponseSerializer,
     MessageReportCreateSerializer,
 )
