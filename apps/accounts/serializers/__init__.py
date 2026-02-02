@@ -16,6 +16,12 @@ from apps.accounts.serializers.email_verification_serializers import (
     SignupEmailSendCodeRequestSerializer,
 )
 
+# 이메일 찾기 (나중에)
+from apps.accounts.serializers.find_email_serializers import (
+    FindEmailRequestSerializer,
+    FindEmailResponseSerializer,
+)
+
 # 소셜 로그인
 from apps.accounts.serializers.oauth_serializers import (
     SocialLinkConfirmRequestSerializer,
@@ -23,18 +29,9 @@ from apps.accounts.serializers.oauth_serializers import (
 )
 
 # 비밀번호 찾기/재설정
-from apps.accounts.serializers.password_serializers import (
-    PasswordChangeResponseSerializer,
-    PasswordChangeSerializer,
-    PasswordResetResponseSerializer,
-    PasswordResetSendCodeResponseSerializer,
-    PasswordResetSendCodeSerializer,
-    PasswordResetSerializer,
-    PasswordResetVerifyCodeResponseSerializer,
-    PasswordResetVerifyCodeSerializer,
+from apps.accounts.serializers.reset_password_serializers import (
+    ResetPasswordRequestSerializer,
 )
-
-# 이메일 찾기 (나중에)
 
 # 프로필 (마이페이지) (나중에)
 
@@ -52,20 +49,8 @@ __all__ = [
     "LoginRequestSerializer",
     "LoginResponseSerializer",
     # 소셜 로그인
-    "KakaoOAuthSerializer",
-    "GoogleOAuthSerializer",
-    "OAuthResponseSerializer",
-    "KakaoProfileSerializer",
-    "GoogleProfileSerializer",
-    "SocialSignupCompleteSerializer",
-    "SocialSignupCompleteResponseSerializer",
+    "SocialLinkConfirmRequestSerializer",
+    "SocialSignupCompleteRequestSerializer",
     # 비밀번호 찾기/재설정
-    "PasswordResetSendCodeSerializer",
-    "PasswordResetSendCodeResponseSerializer",
-    "PasswordResetVerifyCodeSerializer",
-    "PasswordResetVerifyCodeResponseSerializer",
-    "PasswordResetSerializer",
-    "PasswordResetResponseSerializer",
-    "PasswordChangeSerializer",
-    "PasswordChangeResponseSerializer",
+    "ResetPasswordRequestSerializer",
 ]
