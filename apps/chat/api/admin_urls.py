@@ -10,7 +10,7 @@ urlpatterns = [
         AdminMessageDeleteAPIView.as_view(),
     ),
     # 관리자 벤 리스트
-    path("chat/bans",AdminBanListCreateAPIView.as_view()),
+    path("chat/bans", AdminBanListCreateAPIView.as_view()),
     # 관리자 벤 수정
-    path("chat/bans/<int:ban_id>",AdminBanUpdateAPIView.as_view()),
+    path("chat/bans/<int:ban_id>", AdminBanUpdateAPIView.as_view()),
 ]

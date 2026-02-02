@@ -1,7 +1,7 @@
 # 관리자 차단, 해제, 목록
 from __future__ import annotations
 
-from typing import cast
+from typing import List, cast
 
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -12,6 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from yaml import serialize
 
 from apps.accounts.models import User
 from apps.chat.models.bans import Bans
@@ -58,7 +59,10 @@ class AdminBanListCreateAPIView(APIView):
     def get(self, request: Request) -> Response:
         admin = cast(User, request.user)
         if not _is_admin(admin):
-            return Response({"detail": "관리자 권한이 필요합니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "관리자 권한이 필요합니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         qs = Bans.objects.all()
 
@@ -77,7 +81,9 @@ class AdminBanListCreateAPIView(APIView):
             qs = qs.filter(_active_filter())
 
         if expired == "true":
-            qs = qs.filter(is_active=True, ends_at__isnull=False, ends_at__lte=timezone.now())
+            qs = qs.filter(
+                is_active=True, ends_at__isnull=False, ends_at__lte=timezone.now()
+            )
 
         order_by = request.query_params.get("order_by") or "created_at"
         sort = request.query_params.get("sort") or "desc"
@@ -91,9 +97,12 @@ class AdminBanListCreateAPIView(APIView):
         paginator = Paginator(qs, size)
         page_obj = paginator.get_page(page)
 
+        items: List[Bans] = list(page_obj.object_list)
+        serializer = BanSerializer(items, many=True)
+
         return Response(
             {
-                "items": BanSerializer(page_obj.object_list, many=True).data,
+                "items": serializer.data,
                 "page": page,
                 "total": paginator.count,
             },
@@ -109,13 +118,17 @@ class AdminBanListCreateAPIView(APIView):
     def post(self, request: Request) -> Response:
         admin = cast(User, request.user)
         if not _is_admin(admin):
-            return Response({"detail": "관리자 권한이 필요합니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "관리자 권한이 필요합니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = BanCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         data = serializer.validated_data
         ban = create_ban(
+            admin=admin,
             user_id=data["user_id"],
             room_id=data.get("room_id"),
             ends_at=data.get("ends_at"),
@@ -137,7 +150,10 @@ class AdminBanUpdateAPIView(APIView):
     def patch(self, request: Request, ban_id: int) -> Response:
         admin = cast(User, request.user)
         if not _is_admin(admin):
-            return Response({"detail": "관리자 권한이 필요합니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "관리자 권한이 필요합니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         serializer = BanUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -146,7 +162,9 @@ class AdminBanUpdateAPIView(APIView):
         ban = update_ban(
             ban_id=ban_id,
             is_active=v.get("is_active"),
-            ends_at=v.get("ends_at") if "ends_at" in v else None,  # 키 있을 때만 반영하고 싶으면 서비스 조정
+            ends_at=(
+                v.get("ends_at") if "ends_at" in v else None
+            ),  # 키 있을 때만 반영하고 싶으면 서비스 조정
             reason=v.get("reason"),
         )
 

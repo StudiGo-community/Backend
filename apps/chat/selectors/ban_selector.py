@@ -16,7 +16,11 @@ def active_ban_q() -> Q:
 
 def is_user_banned(*, user: User, room: Room) -> bool:
     # 1) 전체 차단
-    if Bans.objects.filter(user=user, room__isnull=True).filter(active_ban_q()).exists():
+    if (
+        Bans.objects.filter(user=user, room__isnull=True)
+        .filter(active_ban_q())
+        .exists()
+    ):
         return True
 
     # 2) 특정 방 차단

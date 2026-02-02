@@ -13,14 +13,24 @@ from apps.chat.models.room import Room
 
 class BanSerializer(serializers.ModelSerializer[Bans]):
     user_id = serializers.IntegerField(source="user.id", read_only=True)
-    room_id = serializers.IntegerField(source="room.id", allow_null=True, read_only=True)
+    room_id = serializers.IntegerField(
+        source="room.id", allow_null=True, read_only=True
+    )
 
     # 응답 is_active는 "활성판정"으로 내려주고 싶으면 SerializerMethodField로 바꿔도 됨
     is_active = serializers.SerializerMethodField()
 
     class Meta:
         model = Bans
-        fields = ["id", "user_id", "room_id", "ends_at", "is_active", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "user_id",
+            "room_id",
+            "ends_at",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
 
     def get_is_active(self, obj: Bans) -> bool:
         if not obj.is_active:
@@ -34,7 +44,9 @@ class BanCreateSerializer(serializers.Serializer[Any]):
     user_id = serializers.IntegerField()
     room_id = serializers.IntegerField(required=False, allow_null=True)
     ends_at = serializers.DateTimeField(required=False, allow_null=True)
-    reason = serializers.CharField(required=False, allow_blank=True)  # 지금은 저장 안 해도 받기만
+    reason = serializers.CharField(
+        required=False, allow_blank=True
+    )  # 지금은 저장 안 해도 받기만
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         # user 존재 확인
