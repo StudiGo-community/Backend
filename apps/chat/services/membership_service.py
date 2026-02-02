@@ -67,7 +67,6 @@ def join_room(*, user: User, room: Room) -> Membership:
         left_at=None,
     )
 
-    # 동시성 고려해서 F() 업데이트
     Room.objects.filter(id=room.id).update(participant_count=F("participant_count") + 1)
     return membership
 
