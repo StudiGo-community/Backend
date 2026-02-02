@@ -8,7 +8,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts.serializers import PasswordResetSerializer
 from apps.accounts.serializers.profile_serializers import ProfileUpdateSerializer
+from apps.accounts.services.mypage.password_change_service import PasswordService
 from apps.accounts.services.mypage.profile_service import MyPageProfileService
 
 
@@ -180,7 +182,7 @@ class PasswordChangeView(PermissionClass):
         "**필수 입력:**\n"
         "- current_password: 현재 비밀번호"
         "- new_password: 새 비밀번호"
-        "- new_password_confirm: 새 비밀번호 확인"
+        "- new_password_confirmation: 새 비밀번호 확인"
         "\n**검증 사항:**"
         "- 현재 비밀번호 일치 여부"
         "- 새 비밀번호 일치 여부"
@@ -188,4 +190,18 @@ class PasswordChangeView(PermissionClass):
         examples=[],
     )
     def put(self, request: Request) -> Response:
+        serializer = PasswordResetSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = serializer.validated_data
+        result = PasswordService.change_password(
+            user = request.user,
+            current_password = data["current_password"],
+            new_password = data["new_password"],
+            new_password_confirm = data["new_password_confirm"],
+        )
+
+        if not result.success:
+            return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(status=status.HTTP_200_OK)
