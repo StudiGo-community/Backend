@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from django.db import models
 
-from apps.core.models import TimeStampedModel
 from apps.accounts.models import User
 from apps.chat.models.message import Message
+from apps.core.models import TimeStampedModel
 
 
 class MessageReport(TimeStampedModel):
