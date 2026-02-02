@@ -10,7 +10,6 @@ PASSWORD = "string135!"
 NAME = "테스트"
 BIRTHDAY = "2006-02-04"
 GENDER = "M"
-PHONE = "01012345678"
 
 def create_user(email, phone, *, is_staff=False, is_superuser=False):
     if User.objects.filter(email=email).exists():
@@ -30,7 +29,7 @@ def create_user(email, phone, *, is_staff=False, is_superuser=False):
         nickname=nickname,
         birthday=BIRTHDAY,
         gender=GENDER,
-        phone=PHONE,
+        phone=phone,
         is_active=True,
     )
 
