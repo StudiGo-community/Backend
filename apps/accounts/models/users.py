@@ -39,7 +39,7 @@ class User(AbstractBaseUser, TimeStampedModel):
     nickname = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=10)
     gender = models.CharField(choices=GenderChoices.choices, max_length=1)
-    phone = models.CharField(max_length=15)
+    phone = models.CharField(max_length=15, unique=True)
     birthday = models.DateField(null=True, blank=True)
     profile_image_url = models.URLField(null=True, blank=True)
     status = models.CharField(

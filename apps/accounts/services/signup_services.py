@@ -57,6 +57,7 @@ def signup_email(*, data: dict[str, Any]) -> SignupResult:
             nickname=nickname,
             name=data["name"],
             gender=data["gender"],
+            phone=data["phone"],
             birthday=data.get("birthday"),
             agree_marketing=data["agree_marketing"],
         )

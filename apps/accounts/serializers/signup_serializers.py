@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from typing import Any
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from apps.accounts.utils.nickname_validator import validate_nickname
 from apps.core.enumeration.account_user_enumeration import GenderChoices
+
+User = get_user_model()
 
 
 class SignupRequestSerializer(serializers.Serializer[Any]):
@@ -20,6 +23,7 @@ class SignupRequestSerializer(serializers.Serializer[Any]):
     nickname = serializers.CharField(min_length=2, max_length=12)
     name = serializers.CharField(max_length=10)
     gender = serializers.ChoiceField(choices=GenderChoices.choices)
+    phone = serializers.CharField(max_length=15)
     birthday = serializers.DateField(required=False, allow_null=True)
 
     agree_terms = serializers.BooleanField()
@@ -29,6 +33,28 @@ class SignupRequestSerializer(serializers.Serializer[Any]):
     # 닉네임 중복 확인/이메일 인증 토큰
     nickname_check_token = serializers.CharField(write_only=True)
     email_verify_token = serializers.CharField(write_only=True)
+
+    def validate_phone(self, value: str) -> str:
+        phone = value.replace("-", "").replace(" ", "")
+
+        # 휴대폰 형식 검증
+        if not phone.isdigit():
+            raise serializers.ValidationError(
+                {"detail": "휴대폰 번호 형식이 올바르지 않습니다."}
+            )
+
+        if not (10 <= len(phone) <= 11):
+            raise serializers.ValidationError(
+                {"detail": "휴대폰 번호 길이가 올바르지 않습니다."}
+            )
+
+        # 중복 체크
+        if User.objects.filter(phone=phone).exists():
+            raise serializers.ValidationError(
+                {"detail": "이미 가입된 휴대폰 번호입니다."}
+            )
+
+        return phone
 
     def validate(self, attrs: Any) -> Any:
         # 비밀번호 확인
@@ -65,6 +91,7 @@ class SignupResponseSerializer(serializers.Serializer[Any]):
     nickname = serializers.CharField()
     name = serializers.CharField()
     gender = serializers.CharField()
+    phone = serializers.CharField()
     birthday = serializers.DateField(allow_null=True)
     agree_marketing = serializers.BooleanField()
     created_at = serializers.DateTimeField()

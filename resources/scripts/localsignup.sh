@@ -2,6 +2,7 @@
 set -euo pipefail
 
 read -p "이메일을 입력하세요: " EMAIL
+read -p "휴대폰번호를 입력하세요: " PHONE_NUMBER
 read -p "닉네임을 입력하세요(중복불가): " NICKNAME
 read -s -p "비밀번호를 입력하세요: " PASSWORD
 echo ""
@@ -9,7 +10,6 @@ echo ""
 NAME="테스트"
 BIRTHDAY="2006-02-04"
 GENDER="M"
-PHONE_NUMBER="01012345678"
 
 python manage.py shell -c "
 from django.contrib.auth import get_user_model
