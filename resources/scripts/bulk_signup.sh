@@ -12,10 +12,14 @@ BIRTHDAY = "2006-02-04"
 GENDER = "M"
 PHONE = "01012345678"
 
-def create_user(email, *, is_staff=False, is_superuser=False):
+def create_user(email, phone, *, is_staff=False, is_superuser=False):
     if User.objects.filter(email=email).exists():
         print(f"⏭️  이미 존재: {email}")
         return False
+
+    if User.objects.filter(phone=phone).exists():
+      print(f"⏭️  휴대폰 중복: {phone}")
+      return False
 
     nickname = email.split("@")[0]
 
@@ -47,20 +51,30 @@ def create_user(email, *, is_staff=False, is_superuser=False):
 created = 0
 
 # 1️⃣ 일반 유저
-emails = ["user@example.com"] + [f"user{i}@example.com" for i in range(11, 20)]
-for email in emails:
-    if create_user(email):
+if create_user("user@example.com", "01000000000"):
+    created += 1
+
+for i in range(1, 10):
+    if create_user(
+        f"user{i}@example.com",
+        f"010100000{i:02d}",
+    ):
         created += 1
 
 # 2️⃣ 스태프
-for i in range(11, 20):
-    if create_user(f"staff{i}@example.com", is_staff=True):
+for i in range(1, 10):
+    if create_user(
+        f"staff{i}@example.com",
+        f"010200000{i:02d}",
+        is_staff=True,
+    ):
         created += 1
 
 # 3️⃣ 관리자
-for i in range(11, 20):
+for i in range(1, 10):
     if create_user(
         f"admin{i}@example.com",
+        f"010300000{i:02d}",
         is_staff=True,
         is_superuser=True,
     ):
