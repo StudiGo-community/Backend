@@ -35,7 +35,9 @@ class MessageReportCreateAPIView(APIView):
         serializer = MessageReportCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        report_message(user=user, message=msg, reason=serializer.validated_data["reason"])
+        report_message(
+            user=user, message=msg, reason=serializer.validated_data["reason"]
+        )
 
         return Response(
             {"message": "신고가 접수되었습니다."},
