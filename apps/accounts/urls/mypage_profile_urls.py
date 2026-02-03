@@ -3,6 +3,7 @@ from django.urls import URLPattern, URLResolver, path
 from apps.accounts.views.mypage_profile_views import (
     PasswordChangeView,
     ProfileView,
+    ProfileImageView
 )
 
 urlpatterns: list[URLPattern | URLResolver] = [
