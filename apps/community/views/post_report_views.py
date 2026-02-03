@@ -1,5 +1,6 @@
 from typing import cast
 
+from django.db import IntegrityError
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
     OpenApiExample,
@@ -109,11 +110,19 @@ class PostReportCreateAPIView(APIView):
         user = cast(User, request.user)
 
         # 게시글 신고 생성
-        report = create_post_report(
-            post_id=post_id,
-            reporter=user,
-            reason=serializer.validated_data["reason"],
-        )
+        try:
+            report = create_post_report(
+                post_id=post_id,
+                reporter=user,
+                reason=serializer.validated_data["reason"],
+            )
+        except IntegrityError as e:
+            if "unique_post_reports_post_reporter" in str(e):
+                return Response(
+                    {"detail": "이미 해당 게시글을 신고했습니다."},
+                    status=status.HTTP_409_CONFLICT,
+                )
+            raise
 
         return Response(
             PostReportResponseSerializer.from_instance(report),
