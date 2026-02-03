@@ -161,6 +161,10 @@ api/v1/users/me/profile/password
 
 
 class PasswordChangeView(PermissionClass):
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.profile_service = MyPageProfileService()
+
     @extend_schema(
         tags=["마이페이지"],
         summary="마이페이지 유저 비밀번호 변경",
@@ -176,12 +180,14 @@ class PasswordChangeView(PermissionClass):
         examples=[],
     )
     def put(self, request: Request) -> Response:
+        user = self.profile_service.get_authenticated_user(request)
+
         serializer = PasswordChangeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
         result = PasswordService.change_password(
-            user=request.user,
+            user=user,
             current_password=data["current_password"],
             new_password=data["new_password"],
             new_password_confirm=data["new_password_confirm"],
