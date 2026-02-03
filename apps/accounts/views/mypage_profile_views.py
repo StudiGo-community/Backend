@@ -149,23 +149,6 @@ class ProfileView(PermissionClass):
             status=status.HTTP_200_OK,
         )
 
-    @extend_schema(
-        tags=["마이페이지"],
-        summary="마이페이지 프로필 이미지 삭제",
-        description="프로필 이미지를 삭제합니다.",
-    )
-    def delete(self, request: Request) -> Response:
-        user = self.profile_service.get_authenticated_user(request)
-        result = self.profile_service.delete_profile_image(user)
-
-        if not result.success:
-            return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(
-            {"message": "프로필 이미지가 삭제되었습니다."},
-            status=status.HTTP_200_OK,
-        )
-
 
 """
 api/v1/users/me/profile/password
