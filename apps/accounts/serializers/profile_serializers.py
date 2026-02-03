@@ -1,7 +1,10 @@
 from typing import Any
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
+
+from apps.accounts.utils.nickname_validator import validate_nickname
 
 """
 UserProfileSerializer
@@ -41,7 +44,15 @@ class UserProfileSerializer(serializers.ModelSerializer[Any]):
 
 
 class ProfileUpdateSerializer(serializers.Serializer[Any]):
-    nickname = serializers.CharField(max_length=10, required=False)
+    nickname = serializers.CharField(max_length=20, required=False)
+    phone = serializers.CharField(max_length=20, required=False)
+
+    def validate_nickname(self, value: str) -> str:
+        try:
+            validate_nickname(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(e.message)
+        return value
 
 
 class ProfileImageSerializer(serializers.Serializer[Any]):
