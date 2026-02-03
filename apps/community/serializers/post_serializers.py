@@ -137,8 +137,8 @@ class PostListItemSerializer(serializers.ModelSerializer[Post]):
             "images",
             "like_count",
             "comment_count",
+            "view_count",
             "is_liked",
-            "created_at",
             "updated_at",
         )
 

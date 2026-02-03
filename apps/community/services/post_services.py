@@ -178,19 +178,27 @@ def get_post_detail(*, request: Any, user: Any, post_id: int) -> Any | None:
 
 
 def like_post(*, user: AbstractBaseUser, post: Post) -> int:
-    PostLike.objects.get_or_create(  # type: ignore[attr-defined]
+    _, created = PostLike.objects.get_or_create(  # type: ignore[attr-defined]
         user=user,
         post=post,
     )
+    if created:
+        cast(Any, Post).objects.filter(pk=post.pk).update(
+            like_count=F("like_count") + 1
+        )
     post.refresh_from_db(fields=["like_count"])
     return post.like_count
 
 
 def unlike_post(*, user: AbstractBaseUser, post: Post) -> int:
-    PostLike.objects.filter(  # type: ignore[attr-defined]
+    deleted, _ = PostLike.objects.filter(  # type: ignore[attr-defined]
         user=user,
         post=post,
     ).delete()
+    if deleted:
+        cast(Any, Post).objects.filter(pk=post.pk).update(
+            like_count=F("like_count") - 1
+        )
     post.refresh_from_db(fields=["like_count"])
     return post.like_count
 
