@@ -179,13 +179,13 @@ class PasswordChangeView(PermissionClass):
         summary="마이페이지 유저 비밀번호 변경",
         description="사용자가 비밀번호를 변경합니다.\n\n"
         "**필수 입력:**\n"
-        "- current_password: 현재 비밀번호"
-        "- new_password: 새 비밀번호"
-        "- new_password_confirm: 새 비밀번호 확인"
-        "\n**검증 사항:**"
-        "- 현재 비밀번호 일치 여부"
-        "- 새 비밀번호 일치 여부"
-        "- 현재 비밀번호와 새 비밀번호 다름 여부",
+        "- current_password: 현재 비밀번호\n"
+        "- new_password: 새 비밀번호\n"
+        "- new_password_confirm: 새 비밀번호 확인\n"
+        "\n**검증 사항:**\n"
+        "- 현재 비밀번호 일치 여부\n"
+        "- 새 비밀번호 일치 여부\n"
+        "- 현재 비밀번호와 새 비밀번호 다름 여부\n",
         examples=[],
     )
     def put(self, request: Request) -> Response:
