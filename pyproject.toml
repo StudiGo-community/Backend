@@ -37,6 +37,7 @@ googletrans = "4.0.0-rc1"
 channels = "^4.3.2"
 channels-redis = "^4.3.0"
 requests = "^2.32.5"
+django-debug-toolbar = "^6.2.0"
 [tool.poetry.group.dev.dependencies]
 black = "^25.12.0"
 isort = "^7.0.0"
