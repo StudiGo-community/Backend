@@ -99,6 +99,8 @@ class ProfileView(PermissionClass):
         "- 디폴트로 현재 닉네임 입력되어 있음\n"
         "\n\n"
         "**프로필 이미지 수정:**\n"
+        "- FE에서 S3 업로드 후 URL 전달\n"
+        "- 빈 문자열 또는 null 전달 시 이미지 삭제"
         "- 이미지 없음(기본?)\n"
         "- 기본 제공 이미지 중 선택\n"
         "- 직접 이미지 업로드",
@@ -149,23 +151,22 @@ class ProfileView(PermissionClass):
             status=status.HTTP_200_OK,
         )
 
-
-"""
-api/v1/users/me/profile/image
-프로필 이미지 업로드 POST
-"""
-
-
-class ProfileImageView(PermissionClass):
-    parser_classes = [MultiPartParser, FormParser]
-
     @extend_schema(
         tags=["마이페이지"],
-        summary="마이페이지 유저 비밀번호 변경 API",
-        description="" "" "" "",
+        summary="마이페이지 프로필 이미지 삭제",
+        description="프로필 이미지를 삭제합니다.",
     )
-    def post(self, request: Request) -> Response:
-        return Response(status=status.HTTP_200_OK)
+    def delete(self, request: Request) -> Response:
+        user = self.profile_service.get_authenticated_user(request)
+        result = self.profile_service.delete_profile_image(user)
+
+        if not result.success:
+            return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"message": "프로필 이미지가 삭제되었습니다."},
+            status=status.HTTP_200_OK,
+        )
 
 
 """
@@ -182,7 +183,7 @@ class PasswordChangeView(PermissionClass):
         "**필수 입력:**\n"
         "- current_password: 현재 비밀번호"
         "- new_password: 새 비밀번호"
-        "- new_password_confirmation: 새 비밀번호 확인"
+        "- new_password_confirm: 새 비밀번호 확인"
         "\n**검증 사항:**"
         "- 현재 비밀번호 일치 여부"
         "- 새 비밀번호 일치 여부"

@@ -57,7 +57,61 @@ class MyPageProfileService:
         if not update_data:
             return ServiceResult(success=False, error="수정할 필드가 없습니다.")
 
+        if "nickname" in update_data:
+            if not self._is_nickname_available(user, update_data["nickname"]):
+                return ServiceResult(
+                    success=False, error="이미 사용 중인 닉네임입니다."
+                )
+
+        try:
+            for field, value in update_data.items():
+                setattr(user, field, value)
+
+            update_fields = list(update_data.keys())
+            if hasattr(user, "updated_at"):
+                update_fields.append("updated_at")
+
+            user.save(update_fields=update_fields)
+
+        except IntegrityError:
+            return ServiceResult(success=False, error="프로필 수정에 실패했습니다.")
+
         return ServiceResult(success=True, data=self._serialize_user(user))
+
+    def delete_profile_image(self, user: User) -> ServiceResult:
+        """
+        프로필 이미지 삭제 (URL을 None으로)
+
+        Args:
+            user: 유저 객체
+
+        Returns:
+            ServiceResult
+        """
+        if not user.profile_image_url:
+            return ServiceResult(
+                success=False, error="삭제할 프로필 이미지가 없습니다."
+            )
+
+        user.profile_image_url = None
+
+        update_fields = ["profile_image_url"]
+        if hasattr(user, "updated_at"):
+            update_fields.append("updated_at")
+
+        user.save(update_fields=update_fields)
+
+        return ServiceResult(success=True)
+
+    def _is_nickname_available(self, user: User, nickname: str) -> bool:
+        """닉네임 사용 가능 여부 확인 (자기 자신 제외, 대소문자 무시)"""
+        from apps.accounts.models.users import User as UserModel
+
+        return not (
+            UserModel.objects.exclude(pk=user.pk)
+            .filter(nickname__iexact=nickname)
+            .exists()
+        )
 
     def _serialize_user(self, user: User) -> dict[str, Any]:
         data: dict[str, Any] = {}

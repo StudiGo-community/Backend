@@ -42,7 +42,7 @@ class UserProfileSerializer(serializers.ModelSerializer[Any]):
 
 class ProfileUpdateSerializer(serializers.Serializer[Any]):
     nickname = serializers.CharField(max_length=10, required=False)
-    image = serializers.ImageField()  # 이미지 이거 맞던가?
+    image = serializers.URLField()  # 이미지 이거 맞던가?
 
 
 class PasswordChangeSerializer(serializers.Serializer[Any]):
