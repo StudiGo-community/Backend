@@ -27,16 +27,16 @@ from apps.accounts.serializers.oauth_serializers import (
     SocialLinkConfirmRequestSerializer,
     SocialSignupCompleteRequestSerializer,
 )
+from apps.accounts.serializers.profile_serializers import (
+    PasswordChangeSerializer,
+    ProfileImageSerializer,
+    ProfileUpdateSerializer,
+    UserProfileSerializer,
+)
 
 # 비밀번호 찾기/재설정
 from apps.accounts.serializers.reset_password_serializers import (
     ResetPasswordRequestSerializer,
-)
-from apps.accounts.serializers.profile_serializers import (
-    ProfileUpdateSerializer,
-    UserProfileSerializer,
-    PasswordChangeSerializer,
-    ProfileImageSerializer
 )
 
 # 이메일 찾기 (나중에)

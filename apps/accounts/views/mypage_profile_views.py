@@ -7,7 +7,11 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.serializers.profile_serializers import ProfileUpdateSerializer, PasswordChangeSerializer, ProfileImageSerializer
+from apps.accounts.serializers.profile_serializers import (
+    PasswordChangeSerializer,
+    ProfileImageSerializer,
+    ProfileUpdateSerializer,
+)
 from apps.accounts.services.mypage.password_change_service import PasswordService
 from apps.accounts.services.mypage.profile_service import MyPageProfileService
 
@@ -177,16 +181,17 @@ class PasswordChangeView(PermissionClass):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
         result = PasswordService.change_password(
-            user = request.user,
-            current_password = data["current_password"],
-            new_password = data["new_password"],
-            new_password_confirm = data["new_password_confirm"],
+            user=request.user,
+            current_password=data["current_password"],
+            new_password=data["new_password"],
+            new_password_confirm=data["new_password_confirm"],
         )
 
         if not result.success:
             return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_200_OK)
+
 
 """
 프로필 이미지 수정 API
@@ -197,6 +202,7 @@ api/v1/users/me/profile/image
 api/v1/users/me/profile/image
 이미지 삭제 DELETE
 """
+
 
 class ProfileImageView(APIView):
 
