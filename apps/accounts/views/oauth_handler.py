@@ -17,6 +17,7 @@ from apps.accounts.utils.session_cache import (
     save_signup_session,
 )
 from apps.accounts.utils.verify_token import issue_verify_token
+from apps.core.security import JWT_ACCESS_TOKEN_LIFETIME
 
 
 class OAuthNextStatus:
@@ -25,7 +26,7 @@ class OAuthNextStatus:
     LINK_REQUIRED = "LINK_REQUIRED"
 
 
-ACCESS_LIFETIME = timedelta(seconds=settings.JWT_ACCESS_TOKEN_LIFETIME)
+ACCESS_LIFETIME = timedelta(seconds=JWT_ACCESS_TOKEN_LIFETIME)
 
 
 def handle_social_callback(
