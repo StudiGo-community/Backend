@@ -2,14 +2,12 @@ from typing import Any
 
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import status
-from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.serializers import PasswordResetSerializer
-from apps.accounts.serializers.profile_serializers import ProfileUpdateSerializer
+from apps.accounts.serializers.profile_serializers import ProfileUpdateSerializer, PasswordChangeSerializer, ProfileImageSerializer
 from apps.accounts.services.mypage.password_change_service import PasswordService
 from apps.accounts.services.mypage.profile_service import MyPageProfileService
 
@@ -191,7 +189,7 @@ class PasswordChangeView(PermissionClass):
         examples=[],
     )
     def put(self, request: Request) -> Response:
-        serializer = PasswordResetSerializer(data=request.data)
+        serializer = PasswordChangeSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         data = serializer.validated_data
@@ -206,3 +204,84 @@ class PasswordChangeView(PermissionClass):
             return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_200_OK)
+
+"""
+프로필 이미지 수정 API
+
+api/v1/users/me/profile/image
+이미지 URL 업데이트 PATCH
+
+api/v1/users/me/profile/image
+이미지 삭제 DELETE
+"""
+
+class ProfileImageView(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.profile_service = MyPageProfileService()
+
+    @extend_schema(
+        tags=["마이페이지"],
+        summary="마이페이지 프로필 이미지 수정",
+        description=(
+            "프로필 이미지 URL을 업데이트합니다.\n\n"
+            "FE에서 S3 업로드 후 반환된 URL을 전달합니다."
+        ),
+        request=ProfileImageSerializer,
+        examples=[
+            OpenApiExample(
+                name="성공 응답 예시 (200)",
+                description="이미지 URL 업데이트 성공",
+                value={
+                    "message": "프로필이 수정되었습니다.",
+                    "user": {
+                        "id": 12345,
+                        "nickname": "새로운닉네임",
+                        "profile_image_url": "https://cdn.studigo.com/profiles/12345_new.png",
+                        "updated_at": "2026-01-09T15:30:00Z",
+                    },
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+        ],
+    )
+    def patch(self, request: Request) -> Response:
+        user = self.profile_service.get_authenticated_user(request)
+
+        serializer = ProfileImageSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        result = self.profile_service.update_profile_image(
+            user,
+            serializer.validated_data["profile_image_url"],
+        )
+
+        if not result.success:
+            return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"message": "프로필이 수정되었습니다.", "user": result.data},
+            status=status.HTTP_200_OK,
+        )
+
+    @extend_schema(
+        tags=["마이페이지"],
+        summary="마이페이지 프로필 이미지 삭제",
+        description="프로필 이미지를 삭제합니다.",
+    )
+    def delete(self, request: Request) -> Response:
+        user = self.profile_service.get_authenticated_user(request)
+        result = self.profile_service.delete_profile_image(user)
+
+        if not result.success:
+            return Response({"error": result.error}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {"message": "프로필 이미지가 삭제되었습니다."},
+            status=status.HTTP_200_OK,
+        )

@@ -35,6 +35,8 @@ from apps.accounts.serializers.reset_password_serializers import (
 from apps.accounts.serializers.profile_serializers import (
     ProfileUpdateSerializer,
     UserProfileSerializer,
+    PasswordChangeSerializer,
+    ProfileImageSerializer
 )
 
 # 이메일 찾기 (나중에)
@@ -59,4 +61,9 @@ __all__ = [
     "SocialSignupCompleteRequestSerializer",
     # 비밀번호 찾기/재설정
     "ResetPasswordRequestSerializer",
+    # Mypage
+    "ProfileUpdateSerializer",
+    "UserProfileSerializer",
+    "PasswordChangeSerializer",
+    "ProfileImageSerializer",
 ]

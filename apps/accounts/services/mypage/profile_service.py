@@ -78,6 +78,37 @@ class MyPageProfileService:
 
         return ServiceResult(success=True, data=self._serialize_user(user))
 
+    def update_profile_image(self, user: User, profile_image_url: str) -> ServiceResult:
+        """
+        프로필 이미지 URL 업데이트
+
+        Args:
+            user: 유저 객체
+            profile_image_url: 새 이미지 URL
+
+        Returns:
+            ServiceResult (id, nickname, profile_image_url, updated_at)
+        """
+        user.profile_image_url = profile_image_url
+
+        update_fields = ["profile_image_url"]
+        if hasattr(user, "updated_at"):
+            update_fields.append("updated_at")
+
+        user.save(update_fields=update_fields)
+
+        return ServiceResult(
+            success=True,
+            data={
+                "id": user.id,
+                "nickname": user.nickname,
+                "profile_image_url": user.profile_image_url,
+                "updated_at": (
+                    user.updated_at.isoformat() if hasattr(user, "updated_at") else None
+                ),
+            },
+        )
+
     def delete_profile_image(self, user: User) -> ServiceResult:
         """
         프로필 이미지 삭제 (URL을 None으로)
