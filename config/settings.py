@@ -247,3 +247,9 @@ CORS_ALLOW_CREDENTIALS = True
 # debug_toolbar 표시용
 INTERNAL_IPS = ["127.0.0.1", "localhost", "0.0.0.0"]
 INTERNAL_IPS += ["172.17.0.1", "172.18.0.1"]
+
+# AWS
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
+AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "")
