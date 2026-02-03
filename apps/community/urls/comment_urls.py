@@ -18,7 +18,7 @@ urlpatterns = [
         name="comment_delete",
     ),
     path(
-        "posts/<int:post_id>/comments",
+        "posts/<int:post_id>/comments/list",
         CommentListAPIView.as_view(),
         name="comments_list",
     ),
