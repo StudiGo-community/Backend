@@ -33,8 +33,8 @@ from apps.community.services.post_services import (
     patch_post,
     unlike_post,
 )
-from apps.core.enumeration.community_enumerations import PostCategory
-from apps.core.enumeration.parameter_enumeration import SearchField, Sort
+from apps.core.choices.community_choices import PostCategory
+from apps.core.choices.query_choices import SearchField, Sort
 from apps.core.pagination import PostsPagination
 
 

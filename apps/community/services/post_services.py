@@ -9,7 +9,7 @@ from apps.community.models.comments import Comment
 from apps.community.models.post_images import PostImage
 from apps.community.models.post_likes import PostLike
 from apps.community.models.posts import Post
-from apps.core.enumeration.community_enumerations import PostCategory, PostCommentStatus
+from apps.core.choices.community_choices import PostCategory, PostCommentStatus
 from apps.core.security import POST_VIEW_TTL_SECONDS
 
 

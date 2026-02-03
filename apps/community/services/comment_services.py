@@ -8,7 +8,7 @@ from rest_framework.generics import get_object_or_404
 from apps.accounts.models import User
 from apps.community.models.comments import Comment
 from apps.community.models.posts import Post
-from apps.core.enumeration.community_enumerations import PostCommentStatus
+from apps.core.choices.community_choices import PostCommentStatus
 
 SortType = Literal["LATEST", "OLDEST"]
 

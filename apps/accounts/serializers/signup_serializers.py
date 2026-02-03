@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from apps.accounts.utils.nickname_validator import validate_nickname
-from apps.core.enumeration.account_user_enumeration import GenderChoices
+from apps.core.choices.user_choices import GenderChoices
 
 User = get_user_model()
 

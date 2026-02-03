@@ -29,7 +29,7 @@ from apps.accounts.utils.cookies import (
     set_access_cookie,
     set_refresh_cookie,
 )
-from apps.core.enumeration.account_user_enumeration import UserStatus
+from apps.core.choices.user_choices import UserStatus
 from apps.core.security import JWT_ACCESS_TOKEN_LIFETIME
 
 ACCESS_LIFETIME = timedelta(seconds=JWT_ACCESS_TOKEN_LIFETIME)

@@ -28,7 +28,7 @@ from apps.community.services.comment_services import (
     delete_comment,
     get_post_comments,
 )
-from apps.core.enumeration.community_enumerations import PostCommentStatus
+from apps.core.choices.community_choices import PostCommentStatus
 
 
 class CommentCreateAPIView(APIView):
