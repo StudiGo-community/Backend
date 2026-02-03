@@ -20,7 +20,7 @@ from apps.accounts.services.email_verification_services import (
     reset_password_email_send_code,
     signup_email_send_code,
 )
-from apps.core.enumeration.account_verification_enumeration import (
+from apps.core.choices.verification_choices import (
     EmailVerificationPurpose,
 )
 

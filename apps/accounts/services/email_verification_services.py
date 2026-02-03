@@ -16,7 +16,7 @@ from apps.accounts.services.check_email_services import (
     verify_email_check_token,
 )
 from apps.accounts.utils.verify_token import issue_verify_token
-from apps.core.enumeration.account_verification_enumeration import (
+from apps.core.choices.verification_choices import (
     EmailVerificationPurpose,
 )
 

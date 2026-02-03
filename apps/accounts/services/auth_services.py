@@ -14,14 +14,17 @@ from apps.accounts.utils.cookies import (
     clear_access_cookie,
     clear_refresh_cookie,
 )
-
-ACCESS_LIFETIME = timedelta(seconds=settings.JWT_ACCESS_TOKEN_LIFETIME)
-
-REFRESH_LIFETIME_DEFAULT = timedelta(seconds=settings.JWT_REFRESH_TOKEN_LIFETIME)
-
-REFRESH_LIFETIME_REMEMBER = timedelta(
-    seconds=settings.JWT_REFRESH_TOKEN_LIFETIME_REMEMBERME
+from apps.core.security import (
+    JWT_ACCESS_TOKEN_LIFETIME,
+    JWT_REFRESH_TOKEN_LIFETIME,
+    JWT_REFRESH_TOKEN_LIFETIME_REMEMBERME,
 )
+
+ACCESS_LIFETIME = timedelta(seconds=JWT_ACCESS_TOKEN_LIFETIME)
+
+REFRESH_LIFETIME_DEFAULT = timedelta(seconds=JWT_REFRESH_TOKEN_LIFETIME)
+
+REFRESH_LIFETIME_REMEMBER = timedelta(seconds=JWT_REFRESH_TOKEN_LIFETIME_REMEMBERME)
 
 
 def authenticate_user(*, email: str, password: str) -> User | None:

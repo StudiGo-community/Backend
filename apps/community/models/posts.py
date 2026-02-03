@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.core.enumeration.community_enumerations import PostCategory, PostCommentStatus
+from apps.core.choices.community_choices import PostCategory, PostCommentStatus
 from apps.core.models import TimeStampedModel
 
 

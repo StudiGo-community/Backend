@@ -3,7 +3,7 @@ from typing import Any
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-from apps.core.enumeration.account_user_enumeration import (
+from apps.core.choices.user_choices import (
     GenderChoices,
     SocialProviderChoices,
     UserRoleChoices,

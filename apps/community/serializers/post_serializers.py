@@ -6,7 +6,7 @@ from apps.community.models.post_images import PostImage
 from apps.community.models.posts import Post
 from apps.community.serializers.comment_serializers import CommentResponseSerializer
 from apps.community.serializers.common_serializers import AuthorSerializer
-from apps.core.enumeration.community_enumerations import PostCategory
+from apps.core.choices.community_choices import PostCategory
 
 
 class PostImageInput(TypedDict):

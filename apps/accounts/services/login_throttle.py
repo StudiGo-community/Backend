@@ -3,19 +3,18 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass
 
-from django.conf import settings
 from django.core.cache import cache
+
+from apps.core.security import (
+    LOGIN_FAIL_BLOCK_COUNT_1,
+    LOGIN_FAIL_BLOCK_COUNT_2,
+    LOGIN_FAIL_BLOCK_TIME_1,
+    LOGIN_FAIL_BLOCK_TIME_2,
+    LOGIN_FAIL_COUNTER_TTL,
+)
 
 FAIL_KEY_PREFIX = "auth:login:fail:"
 BLOCK_KEY_PREFIX = "auth:login:block:"
-
-FAIL_LIMIT_1 = settings.LOGIN_FAIL_BLOCK_COUNT_1
-FAIL_LIMIT_2 = settings.LOGIN_FAIL_BLOCK_COUNT_2
-
-BLOCK_TIME_1 = settings.LOGIN_FAIL_BLOCK_TIME_1
-BLOCK_TIME_2 = settings.LOGIN_FAIL_BLOCK_TIME_2
-
-FAIL_COUNTER_TTL = settings.LOGIN_FAIL_COUNTER_TTL
 
 
 @dataclass(frozen=True)
@@ -61,19 +60,19 @@ def record_login_failure(email: str) -> BlockState:
     except ValueError:
         count = 1
 
-    cache.set(fkey, count, timeout=FAIL_COUNTER_TTL)
+    cache.set(fkey, count, timeout=LOGIN_FAIL_COUNTER_TTL)
 
     now = int(time.time())
 
-    if count >= FAIL_LIMIT_2:
-        until = now + BLOCK_TIME_2
-        cache.set(_block_key(email), until, timeout=BLOCK_TIME_2)
-        return BlockState(is_blocked=True, retry_after_seconds=BLOCK_TIME_2)
+    if count >= LOGIN_FAIL_BLOCK_COUNT_2:
+        until = now + LOGIN_FAIL_BLOCK_TIME_2
+        cache.set(_block_key(email), until, timeout=LOGIN_FAIL_BLOCK_TIME_2)
+        return BlockState(is_blocked=True, retry_after_seconds=LOGIN_FAIL_BLOCK_TIME_2)
 
-    if count >= FAIL_LIMIT_1:
-        until = now + BLOCK_TIME_1
-        cache.set(_block_key(email), until, timeout=BLOCK_TIME_1)
-        return BlockState(is_blocked=True, retry_after_seconds=BLOCK_TIME_1)
+    if count >= LOGIN_FAIL_BLOCK_COUNT_1:
+        until = now + LOGIN_FAIL_BLOCK_TIME_1
+        cache.set(_block_key(email), until, timeout=LOGIN_FAIL_BLOCK_TIME_1)
+        return BlockState(is_blocked=True, retry_after_seconds=LOGIN_FAIL_BLOCK_TIME_1)
 
     return BlockState(is_blocked=False, retry_after_seconds=0)
 

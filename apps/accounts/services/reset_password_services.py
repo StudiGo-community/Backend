@@ -6,7 +6,7 @@ from rest_framework.serializers import ValidationError
 
 from apps.accounts.services.check_email_services import normalize_email
 from apps.accounts.utils.verify_token import verify_and_consume
-from apps.core.enumeration.account_verification_enumeration import (
+from apps.core.choices.verification_choices import (
     EmailVerificationPurpose,
 )
 

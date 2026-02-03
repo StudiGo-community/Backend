@@ -16,7 +16,7 @@ from apps.accounts.services.check_nickname_services import (
 )
 from apps.accounts.utils.nickname_validator import validate_nickname
 from apps.accounts.utils.verify_token import verify_and_consume
-from apps.core.enumeration.account_verification_enumeration import (
+from apps.core.choices.verification_choices import (
     EmailVerificationPurpose,
 )
 

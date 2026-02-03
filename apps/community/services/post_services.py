@@ -1,6 +1,5 @@
 from typing import Any, Optional, cast
 
-from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.core.cache import cache
 from django.db import transaction
@@ -10,9 +9,8 @@ from apps.community.models.comments import Comment
 from apps.community.models.post_images import PostImage
 from apps.community.models.post_likes import PostLike
 from apps.community.models.posts import Post
-from apps.core.enumeration.community_enumerations import PostCategory, PostCommentStatus
-
-VIEW_TTL_SECONDS = settings.POST_VIEW_TTL_SECONDS
+from apps.core.choices.community_choices import PostCategory, PostCommentStatus
+from apps.core.security import POST_VIEW_TTL_SECONDS
 
 
 @transaction.atomic
@@ -122,7 +120,7 @@ def _get_view_key(*, request: Any, user: Any, post_id: int) -> str:
 def _increase_view_if_first(*, request: Any, user: Any, post_id: int) -> None:
     key = _get_view_key(request=request, user=user, post_id=post_id)
 
-    first = cache.add(key, 1, timeout=VIEW_TTL_SECONDS)
+    first = cache.add(key, 1, timeout=POST_VIEW_TTL_SECONDS)
     if not first:
         return
 

@@ -36,6 +36,7 @@ THIRD_PARTY_APPS = [
     "channels",
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
+    "debug_toolbar",
 ]
 
 LOCAL_APPS = [
@@ -49,6 +50,7 @@ LOCAL_APPS = [
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -159,8 +161,6 @@ CACHES = {
     }
 }
 
-POST_VIEW_TTL_SECONDS = 60 * 10
-
 AUTH_USER_MODEL = "accounts.User"
 
 # SimpleJWT 기본값
@@ -186,33 +186,6 @@ AUTH_REFRESH_COOKIE_PATH = "/"
 AUTH_REFRESH_COOKIE_SECURE = not DEBUG
 AUTH_REFRESH_COOKIE_HTTPONLY = True
 AUTH_REFRESH_COOKIE_SAMESITE = "Lax"
-
-# 로그인 연속 실패 기준
-LOGIN_FAIL_BLOCK_COUNT_1 = 5
-LOGIN_FAIL_BLOCK_COUNT_2 = 10
-
-# 로그인 연속 실패시 차단 시간
-LOGIN_FAIL_BLOCK_TIME_1 = 60 * 10  # 10분
-LOGIN_FAIL_BLOCK_TIME_2 = 60 * 60  # 1시간
-
-# 로그인 연속 실패 기준 시간
-LOGIN_FAIL_COUNTER_TTL = 60 * 60 * 2  # 2시간
-
-# Access Token
-JWT_ACCESS_TOKEN_LIFETIME = 60 * 60  # 1시간
-
-# Refresh Token
-JWT_REFRESH_TOKEN_LIFETIME = 60 * 60 * 24  # 24시간
-JWT_REFRESH_TOKEN_LIFETIME_REMEMBERME = 60 * 60 * 24 * 30  # 30일
-
-# 이메일/닉네임 중복 확인 만료 시간
-SIGNUP_CHECK_TTL = 60 * 5  # 5분
-
-# 이메일 인증
-EMAIL_VERIFICATION_TTL = 60 * 3
-EMAIL_VERIFICATION_COOLDOWN = 30
-EMAIL_VERIFICATION_MAX_ATTEMPTS = 5
-EMAIL_VERIFICATION_LIMIT_PER_HOUR = 3
 
 # Gmail SMTP
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -270,3 +243,7 @@ CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:3000"
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 CORS_ALLOW_CREDENTIALS = True
+
+# debug_toolbar 표시용
+INTERNAL_IPS = ["127.0.0.1", "localhost", "0.0.0.0"]
+INTERNAL_IPS += ["172.17.0.1", "172.18.0.1"]

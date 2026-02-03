@@ -6,7 +6,7 @@ from rest_framework import serializers
 
 from apps.community.models.comment_reports import CommentReport
 from apps.community.models.post_reports import PostReport
-from apps.core.enumeration.community_enumerations import ReportStatus
+from apps.core.choices.community_choices import ReportStatus
 
 
 class ReportCreateSerializer(serializers.Serializer[Any]):

@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.core.enumeration.community_enumerations import ReportStatus
+from apps.core.choices.community_choices import ReportStatus
 
 
 class TimeStampedModel(models.Model):

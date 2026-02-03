@@ -26,14 +26,13 @@ from apps.accounts.services.login_throttle import (
     record_login_failure,
 )
 from apps.accounts.utils.cookies import (
-    clear_access_cookie,
-    clear_refresh_cookie,
     set_access_cookie,
     set_refresh_cookie,
 )
-from apps.core.enumeration.account_user_enumeration import UserStatus
+from apps.core.choices.user_choices import UserStatus
+from apps.core.security import JWT_ACCESS_TOKEN_LIFETIME
 
-ACCESS_LIFETIME = timedelta(seconds=settings.JWT_ACCESS_TOKEN_LIFETIME)
+ACCESS_LIFETIME = timedelta(seconds=JWT_ACCESS_TOKEN_LIFETIME)
 expires_in = int(ACCESS_LIFETIME.total_seconds())
 
 
