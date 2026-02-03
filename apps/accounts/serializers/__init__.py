@@ -33,7 +33,6 @@ from apps.accounts.serializers.reset_password_serializers import (
     ResetPasswordRequestSerializer,
 )
 from apps.accounts.serializers.profile_serializers import (
-    PasswordChangeSerializer,
     ProfileUpdateSerializer,
     UserProfileSerializer,
 )
