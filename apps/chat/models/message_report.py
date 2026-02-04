@@ -14,7 +14,7 @@ class MessageReport(BaseReport):
     )
 
     class Meta:
-        db_table = "chat_message_reports"
+        db_table = "message_reports"
         constraints = [
             models.UniqueConstraint(
                 fields=["message", "reporter"],
