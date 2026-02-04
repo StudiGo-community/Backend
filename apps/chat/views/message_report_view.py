@@ -42,9 +42,7 @@ class MessageReportCreateAPIView(APIView):
             )
 
         # 중복 신고 방지 (DB constraint + 사전 체크)
-        if MessageReport.objects.filter(
-                reporter=user, message=message
-        ).exists():
+        if MessageReport.objects.filter(reporter=user, message=message).exists():
             return Response(
                 {"detail": "이미 신고한 메시지입니다."},
                 status=status.HTTP_400_BAD_REQUEST,

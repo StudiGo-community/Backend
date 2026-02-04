@@ -8,9 +8,7 @@ from apps.core.models import BaseReport
 
 class MessageReport(BaseReport):
     message = models.ForeignKey(
-        Message,
-        on_delete=models.CASCADE,
-        related_name="reports"
+        Message, on_delete=models.CASCADE, related_name="reports"
     )
 
     class Meta:
