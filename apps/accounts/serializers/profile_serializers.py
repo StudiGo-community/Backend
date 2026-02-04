@@ -44,8 +44,8 @@ class UserProfileSerializer(serializers.ModelSerializer[Any]):
 
 
 class ProfileUpdateSerializer(serializers.Serializer[Any]):
-    nickname = serializers.CharField(max_length=20, required=False)
-    phone = serializers.CharField(max_length=20, required=False)
+    nickname = serializers.CharField(max_length=10, required=False)
+    phone = serializers.CharField(max_length=15, required=False)
 
     def validate_nickname(self, value: str) -> str:
         try:

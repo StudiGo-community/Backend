@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import TYPE_CHECKING, Any
+from django.utils import timezone
 
 from apps.accounts.models.attendance_record_model import AttendanceRecord
 
@@ -54,11 +55,11 @@ class AttendanceService:
         target_date: date | None = None,
     ) -> WeeklyAttendance:
         if target_date is None:
-            target_date = date.today()
+            target_date = timezone.localdate()
 
         week_start = cls._get_week_start(target_date)
         week_end = week_start + timedelta(days=6)
-        today = date.today()
+        today = timezone.localdate()
 
         attendance_dates = cls._get_attendance_dates(user, week_start, week_end)
 
