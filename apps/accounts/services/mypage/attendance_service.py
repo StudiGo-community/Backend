@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date, timedelta
 from typing import TYPE_CHECKING, Any
+
 from django.utils import timezone
 
 from apps.accounts.models.attendance_record_model import AttendanceRecord
