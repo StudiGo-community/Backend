@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import F, Q
 from django.utils import timezone
 
@@ -60,12 +60,21 @@ def join_room(*, user: User, room: Room) -> Membership:
             raise PermissionError("이미 다른 채팅방에 접속 중입니다.")
         return active
 
-    membership = Membership.objects.create(
-        user=user,
-        room=room,
-        joined_at=_now(),
-        left_at=None,
-    )
+    try:
+        membership = Membership.objects.create(
+            user=user,
+            room=room,
+            joined_at=_now(),
+            left_at=None,
+        )
+    except IntegrityError:
+        # 동시 요청 등으로 인한 중복 멤버십 생성 시도 시, 기존 활성 멤버십 반환
+        existing = Membership.objects.filter(
+            user=user, room=room, left_at__isnull=True
+        ).first()
+        if existing:
+            return existing
+        raise
 
     # 동시성 고려해서 F() 업데이트
     Room.objects.filter(id=room.id).update(participant_count=F("participant_count") + 1)
