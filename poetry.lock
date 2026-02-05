@@ -334,22 +334,6 @@ asgiref = ">=3.6"
 django = ">=4.2"
 
 [[package]]
-name = "django-debug-toolbar"
-version = "6.2.0"
-description = "A configurable set of panels that display various debug information about the current request/response."
-optional = false
-python-versions = ">=3.10"
-groups = ["main"]
-files = [
-    {file = "django_debug_toolbar-6.2.0-py3-none-any.whl", hash = "sha256:1575461954e6befa720e999dec13fe4f1cc8baf40b6c3ac2aec5f340c0f9c85f"},
-    {file = "django_debug_toolbar-6.2.0.tar.gz", hash = "sha256:dc1c174d8fb0ea01435e02d9ceef735cf62daf37c1a6a5692d33b4127327679b"},
-]
-
-[package.dependencies]
-django = ">=4.2.9"
-sqlparse = ">=0.2"
-
-[[package]]
 name = "django-redis"
 version = "6.0.0"
 description = "Full featured redis cache backend for Django."
@@ -1521,4 +1505,4 @@ zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "8694a0d535555f941f43ea51c848076001be3097b196b248e7a6be4dd7b14c6d"
+content-hash = "0e7165a944d5956e63d5e37f7da5123f12248ab9d8b1aeafb3bf03df9bcf85f6"
