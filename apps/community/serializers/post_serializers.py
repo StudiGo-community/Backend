@@ -100,6 +100,48 @@ class PostPatchSerializer(serializers.Serializer[Any]):
     content = serializers.CharField(min_length=1, required=False)
     category = serializers.ChoiceField(choices=PostCategory.choices, required=False)
     thumbnail_url = serializers.URLField(required=False, allow_null=True)
+    images = PostImageInputSerializer(many=True, required=False, allow_empty=True)
+
+    def validate_images(self, images: list[PostImageInput]) -> list[PostImageInput]:
+        # order 중복 방지
+        orders = [img["order"] for img in images]
+        if len(orders) != len(set(orders)):
+            raise serializers.ValidationError("images.order 값이 중복되었습니다.")
+
+        # 1부터 연속된 값인지 검증
+        expected_orders = list(range(1, len(images) + 1))
+        if sorted(orders) != expected_orders:
+            raise serializers.ValidationError(
+                "images.order 값은 1부터 연속된 숫자여야 합니다."
+            )
+
+        # url 중복 방지
+        urls = [img["url"] for img in images]
+        if len(urls) != len(set(urls)):
+            raise serializers.ValidationError("images.url 값이 중복되었습니다.")
+        return images
+
+    def validate(self, attrs: Any) -> Any:
+        images = attrs.get("images")
+        thumbnail_url = attrs.get("thumbnail_url", None)
+
+        if images is not None:
+            if not images and thumbnail_url is not None:
+                raise serializers.ValidationError(
+                    {
+                        "thumbnail_url": "이미지가 있을 때만 thumbnail_url을 지정할 수 있습니다."
+                    }
+                )
+
+            if thumbnail_url is not None:
+                image_urls = {img["url"] for img in images}
+                if thumbnail_url not in image_urls:
+                    raise serializers.ValidationError(
+                        {
+                            "thumbnail_url": "thumbnail_url은 images에 포함된 url이어야 합니다."
+                        }
+                    )
+        return attrs
 
 
 class PostPatchResponseSerializer(serializers.ModelSerializer[Post]):
