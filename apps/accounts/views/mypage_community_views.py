@@ -29,12 +29,14 @@ class PermissionClass(APIView):
     permission_classes = (IsAuthenticated,)
 
 
-def _parse_int(value: Any, default: int) -> int:
+def _parse_int(value: Any, default: int = 10) -> int:
     try:
         parsed = int(value)
     except (TypeError, ValueError):
         return default
-    return parsed if parsed > 0 else default
+    if parsed <= 0:
+        return default
+    return min(parsed, default)
 
 
 def _parse_sort(value: Any) -> SortLatestOldest:
@@ -52,13 +54,11 @@ class MyPostsAPIView(PermissionClass):
         tags=["마이페이지"],
         operation_id="mypage_my_posts_list",
         summary="내 게시글 조회",
-        description=(
-            "마이페이지에서 로그인 사용자가 작성한 게시글 목록을 조회합니다.\n\n"
-            "- 기본 정렬: 최신순(latest)\n"
-            "- 정렬 옵션: latest / oldest\n"
-            "- 페이지네이션: page, size\n"
-            "- 게시글이 없으면 message를 반환합니다."
-        ),
+        description="마이페이지에서 로그인 사용자가 작성한 게시글 목록을 조회합니다.\n\n"
+        "- 기본 정렬: 최신순(latest)\n"
+        "- 정렬 옵션: latest / oldest\n"
+        "- 페이지네이션: page, size\n"
+        "- 게시글이 없으면 message를 반환합니다.",
         parameters=[
             OpenApiParameter(
                 name="page",
@@ -79,10 +79,13 @@ class MyPostsAPIView(PermissionClass):
                 description="정렬(latest|oldest, 기본 latest)",
             ),
         ],
-        responses={200: OpenApiTypes.OBJECT},
+        responses={
+            200: OpenApiResponse(MyPostListItemSerializer(many=True), description=""),
+        },
         examples=[
             OpenApiExample(
                 name="게시글 없음",
+                summary="",
                 value={
                     "posts": [],
                     "pagination": {

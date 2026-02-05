@@ -131,6 +131,6 @@ class MyPageCommunityService:
         queryset = (
             queryset.order_by("liked_at", "-created_at")
             if sort == "oldest"
-            else queryset.order_by("-liked_at", "-created_at")
+            else queryset.order_by("-liked_at", "created_at")
         )
         return self._paginate_queryset(queryset, page=page, size=size)
