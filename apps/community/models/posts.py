@@ -6,7 +6,7 @@ from apps.core.models import TimeStampedModel
 
 class Post(TimeStampedModel):
     author = models.ForeignKey(
-        "accounts.User", on_delete=models.CASCADE, related_name="posts"
+        "accounts.User", on_delete=models.SET_NULL, related_name="posts", null=True
     )  # user ID
 
     title = models.CharField(max_length=100)  # 제목
