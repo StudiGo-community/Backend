@@ -29,14 +29,16 @@ class PermissionClass(APIView):
     permission_classes = (IsAuthenticated,)
 
 
-def _parse_int(value: Any, default: int = 10) -> int:
+def _parse_int(value: Any, default: int = 10, *, max_value: int | None = None) -> int:
     try:
         parsed = int(value)
     except (TypeError, ValueError):
         return default
     if parsed <= 0:
         return default
-    return min(parsed, default)
+    if max_value is not None:
+        return min(parsed, max_value)
+    return parsed
 
 
 def _parse_sort(value: Any) -> SortLatestOldest:
@@ -86,7 +88,7 @@ class MyPostsAPIView(PermissionClass):
             ),
         ],
         responses={
-            200: OpenApiResponse(MyPostListItemSerializer(many=True), description=""),
+            200: OpenApiResponse(),
         },
         examples=[
             OpenApiExample(
