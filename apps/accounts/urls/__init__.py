@@ -1,6 +1,9 @@
 from django.urls import URLPattern, URLResolver
 
 from apps.accounts.urls.auth_urls import urlpatterns as auth_urls
+from apps.accounts.urls.mypage_community_urls import (
+    urlpatterns as mypage_community_urls,
+)
 from apps.accounts.urls.mypage_profile_urls import urlpatterns as mypage_profile_urls
 from apps.accounts.urls.oauth_urls import urlpatterns as oauth_urls
 
@@ -10,4 +13,5 @@ urlpatterns: list[URLPattern | URLResolver] = [
     *auth_urls,
     *oauth_urls,
     *mypage_profile_urls,
+    *mypage_community_urls,
 ]
