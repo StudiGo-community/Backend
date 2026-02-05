@@ -3,6 +3,7 @@
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -16,6 +17,8 @@ from apps.chat.serializers.room_serializer import (
 
 
 class RoomListAPIView(APIView):
+    permission_classes = [AllowAny]
+
     @extend_schema(summary="채팅방 목록 조회", tags=["채팅"])
     def get(self, request: Request) -> Response:
         rooms = get_rooms()
@@ -25,6 +28,8 @@ class RoomListAPIView(APIView):
 
 
 class RoomDetailAPIView(APIView):
+    permission_classes = [AllowAny]
+
     @extend_schema(summary="채팅방 디테일", tags=["채팅"])
     def get(self, request: Request, room_id: int) -> Response:
         room = get_object_or_404(Room, pk=room_id)

@@ -18,7 +18,12 @@ class Membership(models.Model):
     class Meta:
         db_table = "chat_membership"
         constraints = [
-            models.UniqueConstraint(fields=["room", "user"], name="unique_membership")
+            # 같은 방에서 동시에 한 건의 활성 멤버십만 허용
+            models.UniqueConstraint(
+                fields=["room", "user"],
+                condition=models.Q(left_at__isnull=True),
+                name="unique_active_membership",
+            )
         ]
         indexes = [
             models.Index(fields=["user", "joined_at"], name="idx_chat_user_joined_at"),
