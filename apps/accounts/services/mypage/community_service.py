@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from math import ceil
 from typing import Any, Literal, TypedDict, cast
 
-from django.db.models import F, QuerySet
+from django.db.models import F, Q, QuerySet
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.request import Request
 
@@ -53,20 +53,21 @@ class MyPageCommunityService:
 
         total_count = queryset.count()
         total_pages = ceil(total_count / safe_size) if total_count > 0 else 0
+        current_page = min(safe_page, total_pages) if total_pages > 0 else 1
 
-        offset = (safe_page - 1) * safe_size
+        offset = (current_page - 1) * safe_size
         if total_count == 0 or offset >= total_count:
             items: list[Any] = []
         else:
             items = list(queryset[offset : offset + safe_size])
 
-        has_next = safe_page < total_pages
-        has_previous = safe_page > 1 and total_pages > 0
+        has_next = current_page < total_pages
+        has_previous = current_page > 1 and total_pages > 0
 
         return {
             "items": items,
             "pagination": {
-                "current_page": safe_page,
+                "current_page": current_page,
                 "total_pages": total_pages,
                 "total_count": total_count,
                 "has_next": has_next,
@@ -124,6 +125,8 @@ class MyPageCommunityService:
         self, *, user: User, page: int, size: int, sort: SortLatestOldest
     ) -> PaginatedResult:
         queryset = Post.objects.filter(  # type: ignore[attr-defined]
+            Q(status__in=[PostCommentStatus.ACTIVE, PostCommentStatus.DELETED])
+            | Q(status=PostCommentStatus.BLINDED, author=user),
             likes__user=user,
         ).annotate(liked_at=F("likes__created_at"))
 

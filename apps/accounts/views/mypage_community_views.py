@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import (
@@ -41,6 +41,12 @@ def _parse_int(value: Any, default: int = 10) -> int:
 
 def _parse_sort(value: Any) -> SortLatestOldest:
     return "oldest" if str(value).lower() == "oldest" else "latest"
+
+
+def _bulk_delete_ids(request: Request) -> list[int]:
+    serializer = BulkDeleteSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    return cast(list[int], serializer.validated_data["ids"])
 
 
 class MyPostsAPIView(PermissionClass):
@@ -131,11 +137,31 @@ class MyPostsAPIView(PermissionClass):
     )
     def delete(self, request: Request) -> Response:
         user = self.service.get_authenticated_user(request)
+        ids = _bulk_delete_ids(request)
+        result = self.service.delete_my_posts(user=user, post_ids=ids)
 
-        serializer = BulkDeleteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"deleted_count": result.deleted_count}, status=status.HTTP_200_OK
+        )
 
-        ids: list[int] = serializer.validated_data["ids"]
+    @extend_schema(
+        tags=["마이페이지"],
+        operation_id="mypage_my_posts_bulk_delete_post",
+        summary="내 게시글 삭제(체크박스, POST)",
+        description=(
+            "체크박스로 선택한 내 게시글을 일괄 삭제(soft delete)합니다.\n"
+            "DELETE body를 처리하지 못하는 일부 클라이언트/프록시 환경을 위해 POST도 지원합니다."
+        ),
+        request=BulkDeleteSerializer,
+        responses={
+            200: OpenApiTypes.OBJECT,
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 필요"),
+        },
+    )
+    def post(self, request: Request) -> Response:
+        user = self.service.get_authenticated_user(request)
+        ids = _bulk_delete_ids(request)
         result = self.service.delete_my_posts(user=user, post_ids=ids)
 
         return Response(
@@ -217,11 +243,31 @@ class MyCommentsAPIView(PermissionClass):
     )
     def delete(self, request: Request) -> Response:
         user = self.service.get_authenticated_user(request)
+        ids = _bulk_delete_ids(request)
+        result = self.service.delete_my_comments(user=user, comment_ids=ids)
 
-        serializer = BulkDeleteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        return Response(
+            {"deleted_count": result.deleted_count}, status=status.HTTP_200_OK
+        )
 
-        ids: list[int] = serializer.validated_data["ids"]
+    @extend_schema(
+        tags=["마이페이지"],
+        operation_id="mypage_my_comments_bulk_delete_post",
+        summary="내 댓글 삭제(체크박스, POST)",
+        description=(
+            "체크박스로 선택한 내 댓글을 일괄 삭제(soft delete)합니다.\n"
+            "DELETE body를 처리하지 못하는 일부 클라이언트/프록시 환경을 위해 POST도 지원합니다."
+        ),
+        request=BulkDeleteSerializer,
+        responses={
+            200: OpenApiTypes.OBJECT,
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 필요"),
+        },
+    )
+    def post(self, request: Request) -> Response:
+        user = self.service.get_authenticated_user(request)
+        ids = _bulk_delete_ids(request)
         result = self.service.delete_my_comments(user=user, comment_ids=ids)
 
         return Response(
