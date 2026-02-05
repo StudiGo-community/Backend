@@ -209,10 +209,33 @@ def patch_post(
     post: Post,
     validated_data: dict[str, Any],
 ) -> Post:
+
+    images = validated_data.pop("images", None)
+
     for field, value in validated_data.items():
         setattr(post, field, value)
 
     post.save()
+
+    # images를 보냈을 때만 이미지 교체
+    if images is not None:
+        cast(Any, PostImage).objects.filter(post=post).delete()
+        if images:
+            cast(Any, PostImage).objects.bulk_create(
+                [
+                    PostImage(
+                        post=post,
+                        image_url=img["url"],
+                        sort_order=img["order"],
+                    )
+                    for img in images
+                ]
+            )
+
+        # images를 비웠으면 thumbnail_url도 같이 null 처리
+        if not images:
+            post.thumbnail_url = None
+            post.save(update_fields=["thumbnail_url"])
 
     return cast(
         Post,

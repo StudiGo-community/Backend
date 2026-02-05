@@ -10,7 +10,7 @@ class Comment(TimeStampedModel):
         "Post", on_delete=models.CASCADE, related_name="comments"
     )  # 게시글 id
     author = models.ForeignKey(
-        "accounts.User", on_delete=models.CASCADE, related_name="comments"
+        "accounts.User", on_delete=models.SET_NULL, related_name="comments", null=True
     )  # 유저 id
     content = models.TextField()  # 댓글 내용
 

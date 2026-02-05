@@ -1,8 +1,8 @@
 from math import ceil
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict, cast
 
 from django.db import transaction
-from django.db.models import QuerySet
+from django.db.models import F, QuerySet
 from rest_framework.generics import get_object_or_404
 
 from apps.accounts.models import User
@@ -22,6 +22,11 @@ def create_comment(*, post_id: int, author: User, content: str) -> Comment:
         author=author,
         content=content,
     )
+
+    cast(Any, Post).objects.filter(pk=post.pk).update(
+        comment_count=F("comment_count") + 1
+    )
+
     return comment
 
 
@@ -38,6 +43,10 @@ def delete_comment(*, comment_id: int, user: User) -> None:
 
     comment.status = PostCommentStatus.DELETED
     comment.save(update_fields=["status"])
+
+    cast(Any, Post).objects.filter(pk=comment.post.pk).update(
+        comment_count=F("comment_count") - 1
+    )
 
 
 class CommentPaginationResult(TypedDict):
