@@ -62,6 +62,7 @@ class PostCreateListAPIView(APIView):
             content=serializer.validated_data["content"],
             category=serializer.validated_data["category"],
             images=serializer.validated_data.get("images"),
+            thumbnail_url=serializer.validated_data.get("thumbnail_url"),
         )
 
         return Response(
