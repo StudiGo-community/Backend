@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any
 
 from asgiref.sync import sync_to_async
@@ -10,6 +11,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils import timezone
 
 from apps.chat.models import Membership
+
+logger = logging.getLogger(__name__)
 
 
 @sync_to_async
@@ -27,6 +30,7 @@ class ChatConsumer(AsyncWebsocketConsumer):  # type: ignore[misc]
 
         # 1) 인증 체크
         if not user or isinstance(user, AnonymousUser) or not user.is_authenticated:
+            logger.warning("WS connect rejected: unauthenticated")
             await self.close(code=4001)  # unauthorized
             return
 
@@ -38,6 +42,11 @@ class ChatConsumer(AsyncWebsocketConsumer):  # type: ignore[misc]
         # 3) 입장 상태 체크(REST에서 join 성공한 사람만 WS 붙게)
         ok = await _has_active_membership(user.id, self.room_id)
         if not ok:
+            logger.warning(
+                "WS connect rejected: not joined user_id=%s room_id=%s",
+                user.id,
+                self.room_id,
+            )
             await self.close(code=4003)  # forbidden (not joined)
             return
 
@@ -55,6 +64,11 @@ class ChatConsumer(AsyncWebsocketConsumer):  # type: ignore[misc]
         )
 
     async def disconnect(self, close_code: int) -> None:
+        logger.info(
+            "WS disconnected: room_id=%s code=%s",
+            getattr(self, "room_id", None),
+            close_code,
+        )
         if hasattr(self, "group_name"):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
