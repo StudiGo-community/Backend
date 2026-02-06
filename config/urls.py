@@ -18,6 +18,7 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import URLPattern, URLResolver, include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -27,6 +28,7 @@ from drf_spectacular.views import (
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
+    path("health/", lambda request: JsonResponse({"status": "ok"})),
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.community.urls")),
     path("api/v1/", include("apps.chat.api.urls")),
