@@ -1,3 +1,4 @@
+import json
 from typing import Any, TypedDict
 
 from rest_framework import serializers
@@ -184,14 +185,78 @@ class PostListItemSerializer(serializers.ModelSerializer[Post]):
             "updated_at",
         )
 
-    def get_content_preview(self, post: Post) -> str:
+    def get_content_preview(self, post: Any) -> str:
         max_length = 100
-        content = post.content or ""
-        content = content.strip().replace("\n", " ")
+        raw = post.content
 
-        if len(content) <= max_length:
-            return content
-        return content[:max_length].rstrip() + "…"
+        text = self._preview_text_from_content(raw)
+        text = " ".join(text.split())  # 공백/개행 정리
+
+        if len(text) <= max_length:
+            return text
+        return text[:max_length].rstrip() + "…"
+
+    def _preview_text_from_content(self, raw: Any) -> str:
+        if raw is None:
+            return ""
+
+        # JSONField 등으로 dict/list가 바로 들어오는 경우
+        if isinstance(raw, (dict, list)):
+            return self._collect_text_nodes(raw)
+
+        # 문자열로 들어오는 경우(JSON 문자열 or 그냥 텍스트)
+        if isinstance(raw, str):
+            stripped = raw.strip()
+            if not stripped:
+                return ""
+
+            # JSON처럼 생기면 파싱 시도
+            if (stripped.startswith("{") and stripped.endswith("}")) or (
+                stripped.startswith("[") and stripped.endswith("]")
+            ):
+                try:
+                    parsed = json.loads(stripped)
+                    if isinstance(parsed, (dict, list)):
+                        return self._collect_text_nodes(parsed)
+                except Exception:
+                    pass
+
+            # 파싱 실패면 그냥 텍스트 취급
+            return stripped
+
+        # 기타 타입은 안전하게 문자열화
+        return str(raw)
+
+    def _collect_text_nodes(self, obj: Any) -> str:
+        """
+        type=='text' 노드의 text 값만 순서대로 모은다.
+        """
+        parts: list[str] = []
+
+        def walk(node: Any) -> None:
+            if node is None:
+                return
+
+            if isinstance(node, dict):
+                # text 노드인 경우만 수집
+                if node.get("type") == "text":
+                    text = node.get("text")
+                    if isinstance(text, str) and text.strip():
+                        parts.append(text)
+                    return
+
+                # 그 외 노드는 content 등 하위로 계속 탐색
+                for value in node.values():
+                    walk(value)
+                return
+
+            if isinstance(node, list):
+                for item in node:
+                    walk(item)
+                return
+
+        walk(obj)
+        return " ".join(parts).strip()
 
 
 class PostDetailResponseSerializer(serializers.ModelSerializer[Post]):
