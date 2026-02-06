@@ -9,7 +9,7 @@ services:
     #poetry run gunicorn --workers 3 --bind 0.0.0.0:8000 config.wsgi:application"
     command: >
       sh -c "poetry run python manage.py migrate &&
-             poetry run daphne -b 0.0.0.0 -p 8000 config.asgi:application"
+             poetry run uvicorn config.asgi:application --host 0.0.0.0 --port 8000"
 #     migrate: 별도로 실행하는 것 생각하기.
 
 #      주석처리 사유: 기존은 이슈 1) Dockerfile에서 poetry 설치
