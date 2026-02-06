@@ -24,9 +24,7 @@ application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
         "websocket": AllowedHostsOriginValidator(
-            JwtAuthMiddlewareStack(
-                URLRouter(websocket_urlpatterns)
-            )
+            JwtAuthMiddlewareStack(URLRouter(websocket_urlpatterns))
         ),
     }
 )
