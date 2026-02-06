@@ -32,7 +32,7 @@ _typed_db_sync_to_async = cast(
 def _get_user_from_token(token: str) -> User | AnonymousUser:
     jwt_auth = JWTAuthentication()
     try:
-        validated = jwt_auth.get_validated_token(token.encode("utf-8"))
+        validated = jwt_auth.get_validated_token(token)  # type: ignore[arg-type]
         user = jwt_auth.get_user(validated)
         return cast(User, user)
     except (InvalidToken, TokenError, Exception):
