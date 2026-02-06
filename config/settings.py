@@ -220,7 +220,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # 실시간 채팅 웹소켓
 ASGI_APPLICATION = "config.asgi.application"
 
-CHANNEL_LAYER = {
+CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {"hosts": [("redis", 6379)]},
