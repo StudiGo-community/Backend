@@ -18,7 +18,6 @@ django_asgi_app = get_asgi_application()
 
 # Django 초기화 후 channels import
 from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.security.websocket import AllowedHostsOriginValidator
 
 from apps.chat.websocket.middlewares import JwtAuthMiddlewareStack
 from apps.chat.websocket.routing import websocket_urlpatterns
@@ -26,8 +25,6 @@ from apps.chat.websocket.routing import websocket_urlpatterns
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
-        "websocket": AllowedHostsOriginValidator(
-            JwtAuthMiddlewareStack(URLRouter(websocket_urlpatterns))
-        ),
+        "websocket": JwtAuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
     }
 )
