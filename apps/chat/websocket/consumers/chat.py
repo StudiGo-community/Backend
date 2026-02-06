@@ -2,9 +2,9 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any
 
-import logging
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import AnonymousUser
@@ -64,7 +64,11 @@ class ChatConsumer(AsyncWebsocketConsumer):  # type: ignore[misc]
         )
 
     async def disconnect(self, close_code: int) -> None:
-        logger.info("WS disconnected: room_id=%s code=%s", getattr(self, "room_id", None), close_code)
+        logger.info(
+            "WS disconnected: room_id=%s code=%s",
+            getattr(self, "room_id", None),
+            close_code,
+        )
         if hasattr(self, "group_name"):
             await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
