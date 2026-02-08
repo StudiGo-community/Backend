@@ -51,6 +51,7 @@ class MyPostListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Post])
 class MyCommentListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Comment]):
     content_preview = serializers.SerializerMethodField()
     post_id = serializers.IntegerField(source="post.id", read_only=True)
+    post_title = serializers.SerializerMethodField()
     is_deleted = serializers.SerializerMethodField()
 
     class Meta:

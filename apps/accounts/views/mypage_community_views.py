@@ -88,12 +88,35 @@ class MyPostsAPIView(PermissionClass):
             ),
         ],
         responses={
-            200: OpenApiResponse(),
+            200: OpenApiResponse(description="내 게시글 목록 조회 성공"),
         },
         examples=[
             OpenApiExample(
+                name="게시글 조회 성공",
+                summary="게시글이 존재하는 경우",
+                value={
+                    "posts": [
+                        {
+                            "id": 12,
+                            "title": "오늘 공부 인증",
+                            "content_preview": "집중해서 3시간 공부했어요.",
+                            "created_at": "2026-01-01T10:30:00+09:00",
+                        }
+                    ],
+                    "pagination": {
+                        "current_page": 1,
+                        "total_pages": 1,
+                        "total_count": 1,
+                        "has_next": False,
+                        "has_previous": False,
+                    },
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+            OpenApiExample(
                 name="게시글 없음",
-                summary="",
+                summary="게시글이 없는 경우",
                 value={
                     "posts": [],
                     "pagination": {
@@ -106,6 +129,7 @@ class MyPostsAPIView(PermissionClass):
                     "message": "작성한 게시글이 없습니다.",
                 },
                 response_only=True,
+                status_codes=["200"],
             ),
         ],
     )
@@ -208,7 +232,50 @@ class MyCommentsAPIView(PermissionClass):
                 description="정렬(latest|oldest, 기본 latest)",
             ),
         ],
-        responses={200: OpenApiTypes.OBJECT},
+        responses={200: OpenApiResponse(description="내 댓글 목록 조회 성공")},
+        examples=[
+            OpenApiExample(
+                name="댓글 조회 성공",
+                summary="댓글이 존재하는 경우",
+                value={
+                    "comments": [
+                        {
+                            "id": 21,
+                            "post_id": 12,
+                            "content_preview": "저도 같은 방식으로 공부해요!",
+                            "is_deleted": False,
+                            "created_at": "2026-01-01T11:00:00+09:00",
+                        }
+                    ],
+                    "pagination": {
+                        "current_page": 1,
+                        "total_pages": 1,
+                        "total_count": 1,
+                        "has_next": False,
+                        "has_previous": False,
+                    },
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+            OpenApiExample(
+                name="댓글 없음",
+                summary="댓글이 없는 경우",
+                value={
+                    "comments": [],
+                    "pagination": {
+                        "current_page": 1,
+                        "total_pages": 0,
+                        "total_count": 0,
+                        "has_next": False,
+                        "has_previous": False,
+                    },
+                    "message": "작성한 댓글이 없습니다.",
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+        ],
     )
     def get(self, request: Request) -> Response:
         user = self.service.get_authenticated_user(request)
@@ -314,7 +381,57 @@ class MyLikedPostsAPIView(PermissionClass):
                 description="정렬(latest|oldest, 기본 latest)",
             ),
         ],
-        responses={200: OpenApiTypes.OBJECT},
+        responses={200: OpenApiResponse(description="좋아요한 게시글 목록 조회 성공")},
+        examples=[
+            OpenApiExample(
+                name="좋아요한 게시글 조회 성공",
+                summary="좋아요한 게시글이 존재하는 경우",
+                value={
+                    "liked_posts": [
+                        {
+                            "id": 30,
+                            "title": "삭제되지 않은 게시글",
+                            "content_preview": "게시글 요약 내용입니다.",
+                            "created_at": "2026-01-02T09:30:00+09:00",
+                            "is_deleted": False,
+                        },
+                        {
+                            "id": 31,
+                            "title": "삭제된 게시글입니다.",
+                            "content_preview": "",
+                            "created_at": "2026-01-02T10:00:00+09:00",
+                            "is_deleted": True,
+                        },
+                    ],
+                    "pagination": {
+                        "current_page": 1,
+                        "total_pages": 1,
+                        "total_count": 2,
+                        "has_next": False,
+                        "has_previous": False,
+                    },
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+            OpenApiExample(
+                name="좋아요한 게시글 없음",
+                summary="좋아요한 게시글이 없는 경우",
+                value={
+                    "liked_posts": [],
+                    "pagination": {
+                        "current_page": 1,
+                        "total_pages": 0,
+                        "total_count": 0,
+                        "has_next": False,
+                        "has_previous": False,
+                    },
+                    "message": "좋아한 게시글이 없습니다.",
+                },
+                response_only=True,
+                status_codes=["200"],
+            ),
+        ],
     )
     def get(self, request: Request) -> Response:
         user = self.service.get_authenticated_user(request)
