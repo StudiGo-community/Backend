@@ -5,7 +5,7 @@ from math import ceil
 from typing import Any, Literal, TypedDict, cast
 
 from django.db import transaction
-from django.db.models import F, Q, QuerySet
+from django.db.models import Case, F, Q, QuerySet, Value, When
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.request import Request
 
@@ -142,23 +142,33 @@ class MyPageCommunityService:
 
     @transaction.atomic
     def delete_my_liked_posts(self, *, user: User, post_ids: list[int]) -> DeleteResult:
-        liked_post_ids = list(
-            PostLike.objects.filter(  # type: ignore[attr-defined]
+        locked_likes = list(
+            PostLike.objects.select_for_update()  # type: ignore[attr-defined]
+            .filter(
                 user=user,
                 post_id__in=post_ids,
-            ).values_list("post_id", flat=True)
+            )
+            .values_list("id", "post_id")
         )
 
-        if not liked_post_ids:
+        if not locked_likes:
             return DeleteResult(deleted_count=0)
 
+        locked_like_ids = [like_id for like_id, _ in locked_likes]
+        affected_post_ids = {post_id for _, post_id in locked_likes}
+
         deleted_count, _ = PostLike.objects.filter(  # type: ignore[attr-defined]
-            user=user,
-            post_id__in=liked_post_ids,
+            id__in=locked_like_ids,
         ).delete()
 
-        Post.objects.filter(id__in=liked_post_ids).update(  # type: ignore[attr-defined]
-            like_count=F("like_count") - 1
+        if deleted_count == 0:
+            return DeleteResult(deleted_count=0)
+
+        Post.objects.filter(id__in=affected_post_ids).update(  # type: ignore[attr-defined]
+            like_count=Case(
+                When(like_count__gt=0, then=F("like_count") - Value(1)),
+                default=Value(0),
+            )
         )
 
         return DeleteResult(deleted_count=deleted_count)
