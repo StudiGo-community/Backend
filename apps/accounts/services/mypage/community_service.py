@@ -4,12 +4,14 @@ from dataclasses import dataclass
 from math import ceil
 from typing import Any, Literal, TypedDict, cast
 
+from django.db import transaction
 from django.db.models import F, Q, QuerySet
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework.request import Request
 
 from apps.accounts.models import User
 from apps.community.models.comments import Comment
+from apps.community.models.post_likes import PostLike
 from apps.community.models.posts import Post
 from apps.core.choices.community_choices import PostCommentStatus
 
@@ -137,3 +139,26 @@ class MyPageCommunityService:
             else queryset.order_by("liked_at", "-created_at")
         )
         return self._paginate_queryset(queryset, page=page, size=size)
+
+    @transaction.atomic
+    def delete_my_liked_posts(self, *, user: User, post_ids: list[int]) -> DeleteResult:
+        liked_post_ids = list(
+            PostLike.objects.filter(  # type: ignore[attr-defined]
+                user=user,
+                post_id__in=post_ids,
+            ).values_list("post_id", flat=True)
+        )
+
+        if not liked_post_ids:
+            return DeleteResult(deleted_count=0)
+
+        deleted_count, _ = PostLike.objects.filter(  # type: ignore[attr-defined]
+            user=user,
+            post_id__in=liked_post_ids,
+        ).delete()
+
+        Post.objects.filter(id__in=liked_post_ids).update(  # type: ignore[attr-defined]
+            like_count=F("like_count") - 1
+        )
+
+        return DeleteResult(deleted_count=deleted_count)

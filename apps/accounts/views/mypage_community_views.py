@@ -453,3 +453,48 @@ class MyLikedPostsAPIView(PermissionClass):
             payload["message"] = "좋아한 게시글이 없습니다."
 
         return Response(payload, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        tags=["마이페이지"],
+        operation_id="mypage_my_liked_posts_bulk_delete",
+        summary="좋아요한 게시글 삭제(체크박스)",
+        description="체크박스로 선택한 좋아요한 게시글의 좋아요를 일괄 취소합니다.",
+        request=BulkDeleteSerializer,
+        responses={
+            200: OpenApiTypes.OBJECT,
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 필요"),
+        },
+    )
+    def delete(self, request: Request) -> Response:
+        user = self.service.get_authenticated_user(request)
+        ids = _bulk_delete_ids(request)
+        result = self.service.delete_my_liked_posts(user=user, post_ids=ids)
+
+        return Response(
+            {"deleted_count": result.deleted_count}, status=status.HTTP_200_OK
+        )
+
+    @extend_schema(
+        tags=["마이페이지"],
+        operation_id="mypage_my_liked_posts_bulk_delete_post",
+        summary="좋아요한 게시글 삭제(체크박스, POST)",
+        description=(
+            "체크박스로 선택한 좋아요한 게시글의 좋아요를 일괄 취소합니다.\n"
+            "DELETE body를 처리하지 못하는 일부 클라이언트/프록시 환경을 위해 POST도 지원합니다."
+        ),
+        request=BulkDeleteSerializer,
+        responses={
+            200: OpenApiTypes.OBJECT,
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 필요"),
+        },
+    )
+    def post(self, request: Request) -> Response:
+        user = self.service.get_authenticated_user(request)
+        ids = _bulk_delete_ids(request)
+        result = self.service.delete_my_liked_posts(user=user, post_ids=ids)
+
+        return Response(
+            {"deleted_count": result.deleted_count}, status=status.HTTP_200_OK
+        )
