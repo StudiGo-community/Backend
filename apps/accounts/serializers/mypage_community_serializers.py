@@ -38,6 +38,9 @@ class MyPostListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Post])
             "id",
             "title",
             "content_preview",
+            "view_count",
+            "comment_count",
+            "like_count",
             "created_at",
         )
 
@@ -55,6 +58,7 @@ class MyCommentListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Com
         fields = (
             "id",
             "post_id",
+            "post_title",
             "content_preview",
             "created_at",
             "is_deleted",
@@ -66,6 +70,11 @@ class MyCommentListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Com
     def get_is_deleted(self, comment: Comment) -> bool:
         # 원본 게시글이 삭제된 경우
         return getattr(comment.post, "status", None) == PostCommentStatus.DELETED
+
+    def get_post_title(self, comment: Comment) -> str:
+        if getattr(comment.post, "status", None) == PostCommentStatus.DELETED:
+            return "삭제된 게시글입니다."
+        return getattr(comment.post, "title", "")
 
 
 class MyLikedPostListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Post]):
@@ -79,6 +88,9 @@ class MyLikedPostListItemSerializer(_PreviewMixin, serializers.ModelSerializer[P
             "id",
             "title",
             "content_preview",
+            "view_count",
+            "comment_count",
+            "like_count",
             "created_at",
             "is_deleted",
         )
