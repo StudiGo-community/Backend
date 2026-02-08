@@ -76,6 +76,7 @@ class MyCommentListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Com
             return "삭제된 게시글입니다."
         return getattr(comment.post, "title", "")
 
+
 class MyLikedPostListItemSerializer(_PreviewMixin, serializers.ModelSerializer[Post]):
     title = serializers.SerializerMethodField()
     content_preview = serializers.SerializerMethodField()

@@ -1,6 +1,6 @@
 from typing import Any
 
-from drf_spectacular.utils import OpenApiExample, extend_schema
+from drf_spectacular.utils import OpenApiExample, OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -37,23 +37,21 @@ class ProfileView(PermissionClass):
     @extend_schema(
         tags=["마이페이지"],
         summary="마이페이지 유저 프로필 조회",
-        description="사용자가 마이페이지에 접속하여 본인의 기본 프로필 정보를 조회합니다.\n\n"
-        "**마이페이지 접근 경로:**\n\n"
-        "- 웹 페이지 우측 상단의 프로필 아이콘 클릭\n"
-        "- 모달 메뉴에서 [마이페이지] 클릭\n"
-        "\n\n"
-        "**프로필 조회 시 표시되는 정보:**\n"
-        "- 프로필 이미지\n"
-        "- 닉네임\n"
-        "- 이메일\n"
-        "- 가입일\n"
-        "- 오늘 출석 여부(출석 시: 오늘 출석 완료!)\n"
-        "\n\n"
-        "**Query Parameters:**\n"
-        "- blank",
+        description=(
+            "사용자가 마이페이지에서 본인의 기본 프로필 정보를 조회합니다.\n\n"
+            "**표시 정보:**\n"
+            "- 프로필 이미지\n"
+            "- 닉네임\n"
+            "- 이메일\n"
+            "- 가입일"
+        ),
+        responses={
+            200: OpenApiResponse(description="프로필 조회 성공"),
+            401: OpenApiResponse(description="인증 실패"),
+        },
         examples=[
             OpenApiExample(
-                name="올바른 예시(200)",
+                name="프로필 조회 성공",
                 description="인증된 사용자가 본인 프로필을 정상 조회한 경우",
                 value={
                     "user": {
@@ -70,11 +68,11 @@ class ProfileView(PermissionClass):
                     },
                 },
                 response_only=True,
-                status_codes=[200],
+                status_codes=["200"],
             ),
             OpenApiExample(
-                name="실패 응답 예시 - 인증 실패",
-                description='미인증 요청일 때 (오류 메세지: "Authentication credentials were not provided.")',
+                name="인증 실패",
+                description='미인증 요청일 때 (오류 메시지: "Authentication credentials were not provided.")',
                 value={"detail": "Authentication credentials were not provided."},
                 response_only=True,
                 status_codes=["401"],
@@ -89,29 +87,25 @@ class ProfileView(PermissionClass):
     @extend_schema(
         tags=["마이페이지"],
         summary="마이페이지 유저 프로필 수정",
-        description="사용자가 본인의 프로필 정보를 수정할 수 있습니다.\n\n"
-        "**수정 가능한 항목:**\n"
-        "- 닉네임\n"
-        "- 프로필 이미지\n"
-        "- 전화번호\n"
-        "\n\n"
-        "**닉네임 수정:**\n"
-        "- 닉네임 규칙: 2~20자, 한글/영문/숫자/_/'.'만 가능.\n"
-        "- 중복 확인 필수(대소문자 무시), 예약어/비속어 사용 불가.\n"
-        "- 현재 닉네임과 동일한 경우 중복 확인 없이 통과\n"
-        "- 디폴트로 현재 닉네임 입력되어 있음\n"
-        "\n\n"
-        "**프로필 이미지 수정:**\n"
-        "- FE에서 S3 업로드 후 URL 전달\n"
-        "- 이미지 없음(기본?)\n"
-        "- 기본 제공 이미지 중 선택\n"
-        "- 직접 이미지 업로드",
+        description=(
+            "사용자가 본인의 프로필 정보를 수정할 수 있습니다.\n\n"
+            "**수정 가능한 항목:**\n"
+            "- 닉네임\n"
+            "- 프로필 이미지\n"
+            "- 전화번호"
+        ),
         request=ProfileUpdateSerializer,
+        responses={
+            200: OpenApiResponse(description="프로필 수정 성공"),
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 실패"),
+        },
         examples=[
             OpenApiExample(
-                name="성공 응답 예시(200)",
-                description="인증된 사용자가 본인 프로필을 정상 조회한 경우",
+                name="프로필 수정 성공",
+                description="프로필 수정 후 응답",
                 value={
+                    "message": "프로필이 수정됐습니다.",
                     "user": {
                         "id": 1,
                         "email": "andrew@example.com",
@@ -123,17 +117,17 @@ class ProfileView(PermissionClass):
                         "phone": "01012345678",
                         "role": "USER",
                         "created_at": "2026-01-10T09:15:00+09:00",
-                    }
+                    },
                 },
                 response_only=True,
                 status_codes=["200"],
             ),
             OpenApiExample(
-                name="실패 응답 예시 - 인증 실패(401)",
-                description='미인증 요청일 때 (오류 메세지: "Authentication credentials were not provided.")',
-                value={"detail": "Authentication credentials were not provided."},
+                name="유효성 검사 실패",
+                description="입력값 형식 오류",
+                value={"nickname": ["닉네임 형식이 올바르지 않습니다."]},
                 response_only=True,
-                status_codes=["401"],
+                status_codes=["400"],
             ),
         ],
     )
@@ -177,7 +171,26 @@ class PasswordChangeView(PermissionClass):
         "- 현재 비밀번호 일치 여부\n"
         "- 새 비밀번호 일치 여부\n"
         "- 현재 비밀번호와 새 비밀번호 다름 여부\n",
-        examples=[],
+        request=PasswordChangeSerializer,
+        responses={
+            200: OpenApiResponse(description="비밀번호 변경 성공"),
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 실패"),
+        },
+        examples=[
+            OpenApiExample(
+                name="비밀번호 변경 성공",
+                value={},
+                response_only=True,
+                status_codes=["200"],
+            ),
+            OpenApiExample(
+                name="현재 비밀번호 불일치",
+                value={"error": "현재 비밀번호가 일치하지 않습니다."},
+                response_only=True,
+                status_codes=["400"],
+            ),
+        ],
     )
     def put(self, request: Request) -> Response:
         user = self.profile_service.get_authenticated_user(request)
@@ -228,7 +241,7 @@ class ProfileImageView(APIView):
         request=ProfileImageSerializer,
         examples=[
             OpenApiExample(
-                name="성공 응답 예시 (200)",
+                name="이미지 수정 선공",
                 description="이미지 URL 업데이트 성공",
                 value={
                     "message": "프로필이 수정되었습니다.",
@@ -268,6 +281,19 @@ class ProfileImageView(APIView):
         tags=["마이페이지"],
         summary="마이페이지 프로필 이미지 삭제",
         description="프로필 이미지를 삭제합니다.",
+        responses={
+            200: OpenApiResponse(description="프로필 이미지 삭제 성공"),
+            400: OpenApiResponse(description="잘못된 요청"),
+            401: OpenApiResponse(description="인증 실패"),
+        },
+        examples=[
+            OpenApiExample(
+                name="이미지 삭제 성공",
+                value={"message": "프로필 이미지가 삭제되었습니다."},
+                response_only=True,
+                status_codes=["200"],
+            ),
+        ],
     )
     def delete(self, request: Request) -> Response:
         user = self.profile_service.get_authenticated_user(request)
