@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional, cast
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
-from django.utils.timezone import make_aware
+from django.utils import timezone
 
 from apps.daily.models.daily_question_submissions import DailyQuestionSubmission
 from apps.daily.models.daily_questions import DailyQuestion
@@ -19,7 +19,7 @@ class DailyQuestionService:
         *,
         user: Optional[AbstractBaseUser],
     ) -> Dict[str, Any]:
-        today = date.today()
+        today = timezone.localdate()
         cache_key = f"daily_question:{today}"
 
         daily_question = get_object_or_404(
@@ -57,7 +57,7 @@ class DailyQuestionService:
         if cached is not None:
             return cached
 
-        expires_at = make_aware(datetime.combine(today + timedelta(days=1), time.min))
+        expires_at = timezone.make_aware(datetime.combine(today + timedelta(days=1), time.min))
 
         data: Dict[str, Any] = {
             "question_date": daily_question.question_date,

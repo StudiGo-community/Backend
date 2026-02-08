@@ -19,7 +19,6 @@ from apps.daily.services.daily_questions_services import DailyQuestionService
 
 class DailyQuestionTodayView(APIView):
 
-    authentication_classes = [JWTAuthentication]
     permission_classes = [AllowAny]
 
     @extend_schema(
