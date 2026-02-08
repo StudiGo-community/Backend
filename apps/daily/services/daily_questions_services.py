@@ -57,7 +57,9 @@ class DailyQuestionService:
         if cached is not None:
             return cached
 
-        expires_at = timezone.make_aware(datetime.combine(today + timedelta(days=1), time.min))
+        expires_at = timezone.make_aware(
+            datetime.combine(today + timedelta(days=1), time.min)
+        )
 
         data: Dict[str, Any] = {
             "question_date": daily_question.question_date,
