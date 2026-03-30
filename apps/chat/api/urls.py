@@ -1,6 +1,8 @@
 from django.urls import path
 
+from apps.chat.models import MessageReport
 from apps.chat.views.membership_view import ChatRoomExitAPIView, ChatRoomJoinAPIView
+from apps.chat.views.message_report_view import MessageReportCreateAPIView
 from apps.chat.views.message_view import MessageListAPIView
 from apps.chat.views.room_view import RoomDetailAPIView, RoomListAPIView
 
@@ -19,5 +21,10 @@ urlpatterns = [
         "chat/<int:room_id>/messages",
         MessageListAPIView.as_view(),
         name="chat-message-list",
+    ),
+    path(
+        "chat/messages/<int:message_id>/report",
+        MessageReportCreateAPIView.as_view(),
+        name="chat-message-report",
     ),
 ]

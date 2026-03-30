@@ -26,8 +26,8 @@ class AdminMessageDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     @extend_schema(
-        summary="메세지 삭제(관리자)",
-        tags=["채팅"],
+        summary="메세지 삭제",
+        tags=["채팅(관리자)"],
         responses={
             200: OpenApiResponse(description="메시지가 삭제되었습니다."),
             403: OpenApiResponse(description="관리자 권한이 필요합니다."),
